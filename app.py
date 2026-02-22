@@ -1,10 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 import requests
 import math
-import json
 import os
-import time
-from functools import lru_cache
+import re
 
 app = Flask(__name__)
 
@@ -56,195 +54,174 @@ CLINICS = [
     {"name": "Kyle, TX", "address": "135 Bunton Creek Rd #300, Kyle, TX 78640"},
 ]
 
-# Simple in-memory cache
-_geocache = {}
-_census_cache = {}
-_cms_cache = {}
-
 RADIUS_MILES = 10
 
-def haversine(lat1, lon1, lat2, lon2):
-    """Distance in miles between two lat/lon points."""
-    R = 3958.8
-    phi1, phi2 = math.radians(lat1), math.radians(lat2)
-    dphi = math.radians(lat2 - lat1)
-    dlambda = math.radians(lon2 - lon1)
-    a = math.sin(dphi/2)**2 + math.cos(phi1)*math.cos(phi2)*math.sin(dlambda/2)**2
-    return 2 * R * math.asin(math.sqrt(a))
+# In-memory cache
+_cache = {}
 
-def geocode_address(address):
-    """Return (lat, lon) for an address using Census Geocoder."""
-    if address in _geocache:
-        return _geocache[address]
-    try:
-        url = "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress"
-        params = {"address": address, "benchmark": "2020", "format": "json"}
-        r = requests.get(url, params=params, timeout=10)
-        data = r.json()
-        matches = data.get("result", {}).get("addressMatches", [])
-        if matches:
-            coords = matches[0]["coordinates"]
-            result = (float(coords["y"]), float(coords["x"]))
-            _geocache[address] = result
-            return result
-    except Exception as e:
-        print(f"Geocode error: {e}")
-    return None
+STATE_FIPS = {
+    "AL":"01","AK":"02","AZ":"04","AR":"05","CA":"06","CO":"08","CT":"09",
+    "DE":"10","DC":"11","FL":"12","GA":"13","HI":"15","ID":"16","IL":"17",
+    "IN":"18","IA":"19","KS":"20","KY":"21","LA":"22","ME":"23","MD":"24",
+    "MA":"25","MI":"26","MN":"27","MS":"28","MO":"29","MT":"30","NE":"31",
+    "NV":"32","NH":"33","NJ":"34","NM":"35","NY":"36","NC":"37","ND":"38",
+    "OH":"39","OK":"40","OR":"41","PA":"42","RI":"44","SC":"45","SD":"46",
+    "TN":"47","TX":"48","UT":"49","VT":"50","VA":"51","WA":"53","WV":"54",
+    "WI":"55","WY":"56",
+}
 
-def get_zip_from_address(address):
-    """Extract zip code from address string."""
-    import re
-    match = re.search(r'\b(\d{5})\b', address)
-    return match.group(1) if match else None
 
-def get_state_fips(state_abbr):
-    STATE_FIPS = {
-        "AL": "01", "AK": "02", "AZ": "04", "AR": "05", "CA": "06",
-        "CO": "08", "CT": "09", "DE": "10", "FL": "12", "GA": "13",
-        "HI": "15", "ID": "16", "IL": "17", "IN": "18", "IA": "19",
-        "KS": "20", "KY": "21", "LA": "22", "ME": "23", "MD": "24",
-        "MA": "25", "MI": "26", "MN": "27", "MS": "28", "MO": "29",
-        "MT": "30", "NE": "31", "NV": "32", "NH": "33", "NJ": "34",
-        "NM": "35", "NY": "36", "NC": "37", "ND": "38", "OH": "39",
-        "OK": "40", "OR": "41", "PA": "42", "RI": "44", "SC": "45",
-        "SD": "46", "TN": "47", "TX": "48", "UT": "49", "VT": "50",
-        "VA": "51", "WA": "53", "WV": "54", "WI": "55", "WY": "56",
-        "DC": "11",
-    }
-    return STATE_FIPS.get(state_abbr.upper(), "")
+def extract_zip(address):
+    m = re.search(r'\b(\d{5})\b', address)
+    return m.group(1) if m else None
+
 
 def extract_state(address):
-    """Extract state abbreviation from address."""
-    import re
-    match = re.search(r',\s*([A-Z]{2})\s+\d{5}', address)
-    if match:
-        return match.group(1)
-    # Try last two-letter word before zip
+    m = re.search(r',\s*([A-Z]{2})\s+\d{5}', address)
+    if m:
+        return m.group(1)
     parts = address.replace(',', ' ').split()
     for i, p in enumerate(parts):
         if len(p) == 2 and p.isupper() and i < len(parts) - 1:
             return p
     return None
 
-def get_census_data(lat, lon, state_abbr):
-    """Get ACS data for counties within 10-mile radius."""
-    cache_key = f"{lat:.4f},{lon:.4f}"
-    if cache_key in _census_cache:
-        return _census_cache[cache_key]
 
-    result = {
-        "population_density": None,
-        "median_income": None,
-        "insured_pct": None,
-        "error": None
-    }
-
+def geocode_address(address):
+    key = f"geo:{address}"
+    if key in _cache:
+        return _cache[key]
     try:
-        state_fips = get_state_fips(state_abbr)
-        if not state_fips:
-            result["error"] = "Could not determine state"
+        r = requests.get(
+            "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress",
+            params={"address": address, "benchmark": "2020", "format": "json"},
+            timeout=10
+        )
+        matches = r.json().get("result", {}).get("addressMatches", [])
+        if matches:
+            c = matches[0]["coordinates"]
+            result = (float(c["y"]), float(c["x"]))
+            _cache[key] = result
             return result
+    except Exception as e:
+        print(f"Geocode error: {e}")
+    return None
 
-        # Get all counties in the state with their geo info
-        # We'll query ACS for the county containing the address plus neighbors
-        # First, use Census geocoder to get the tract/county FIPS
-        geo_url = "https://geocoding.geo.census.gov/geocoder/geographies/coordinates"
-        geo_params = {
-            "x": lon, "y": lat,
-            "benchmark": "Public_AR_Current",
-            "vintage": "Current_Current",
-            "layers": "Counties",
-            "format": "json"
-        }
-        geo_r = requests.get(geo_url, params=geo_params, timeout=10)
-        geo_data = geo_r.json()
 
-        counties_in_geo = geo_data.get("result", {}).get("geographies", {}).get("Counties", [])
-        if not counties_in_geo:
-            result["error"] = "Could not determine county"
+def get_county_fips(lat, lon):
+    """Return (state_fips, county_fips) for a lat/lon."""
+    key = f"county:{lat:.4f},{lon:.4f}"
+    if key in _cache:
+        return _cache[key]
+    try:
+        r = requests.get(
+            "https://geocoding.geo.census.gov/geocoder/geographies/coordinates",
+            params={
+                "x": lon, "y": lat,
+                "benchmark": "Public_AR_Current",
+                "vintage": "Current_Current",
+                "layers": "Counties",
+                "format": "json"
+            },
+            timeout=10
+        )
+        counties = r.json().get("result", {}).get("geographies", {}).get("Counties", [])
+        if counties:
+            c = counties[0]
+            result = (c.get("STATE", ""), c.get("COUNTY", ""))
+            _cache[key] = result
             return result
+    except Exception as e:
+        print(f"County FIPS error: {e}")
+    return (None, None)
 
-        primary_county = counties_in_geo[0]
-        county_fips = primary_county.get("COUNTY", "")
 
-        # Query ACS for this county + adjacent (use state-level query with county filter)
-        # Variables: total pop, median income, insured counts
-        acs_url = "https://api.census.gov/data/2022/acs/acs5"
-        variables = "B01003_001E,B19013_001E,B27001_001E,B27001_005E,B27001_008E,B27001_011E,B27001_014E,B27001_017E,B27001_020E,B27001_023E,B27001_026E,B27001_029E,B01003_001E"
-
-        # Get area in sq miles for the county (approximate using ACS geographic data)
-        params = {
-            "get": f"{variables},NAME",
-            "for": f"county:{county_fips}",
-            "in": f"state:{state_fips}",
-        }
-        acs_r = requests.get(acs_url, params=params, timeout=15)
-        acs_data = acs_r.json()
-
-        if len(acs_data) < 2:
-            result["error"] = "No ACS data returned"
-            return result
-
-        headers = acs_data[0]
-        row = acs_data[1]
-        data_dict = dict(zip(headers, row))
-
-        total_pop = int(data_dict.get("B01003_001E", 0) or 0)
-        median_income = int(data_dict.get("B19013_001E", 0) or 0)
-
-        # Count insured (with any health insurance) vs total for insurance table
-        # B27001: Health Insurance Coverage Status by Sex by Age
-        # _005, _008, _011, _014, _017, _020, _023, _026, _029 are "with insurance" age buckets for male
-        insured_vars = ["B27001_005E","B27001_008E","B27001_011E","B27001_014E",
-                        "B27001_017E","B27001_020E","B27001_023E","B27001_026E","B27001_029E"]
-        total_insured = sum(int(data_dict.get(v, 0) or 0) for v in insured_vars)
-        total_universe = int(data_dict.get("B27001_001E", 1) or 1)
-        # Double for female (approximate symmetry)
-        insured_pct = min(100, round((total_insured * 2 / total_universe) * 100, 1)) if total_universe > 0 else None
-
-        # Population density: approximate using 10-mile radius circle (314.16 sq mi)
-        # County area can vary widely; use a rough density from total pop / circle area
-        density = round(total_pop / (math.pi * RADIUS_MILES ** 2), 1)
-
-        result["population_density"] = density
-        result["median_income"] = median_income if median_income > 0 else None
-        result["insured_pct"] = insured_pct
-
+def get_census_acs(state_fips, county_fips):
+    """Get population + median income from ACS 5-year estimates."""
+    key = f"acs:{state_fips},{county_fips}"
+    if key in _cache:
+        return _cache[key]
+    result = {"population": None, "median_income": None, "error": None}
+    try:
+        r = requests.get(
+            "https://api.census.gov/data/2022/acs/acs5",
+            params={
+                "get": "B01003_001E,B19013_001E,NAME",
+                "for": f"county:{county_fips}",
+                "in": f"state:{state_fips}",
+            },
+            timeout=12
+        )
+        data = r.json()
+        if len(data) >= 2:
+            headers = data[0]
+            row = data[1]
+            d = dict(zip(headers, row))
+            pop = int(d.get("B01003_001E", 0) or 0)
+            inc = int(d.get("B19013_001E", 0) or 0)
+            result["population"] = pop if pop > 0 else None
+            result["median_income"] = inc if inc > 0 else None
     except Exception as e:
         result["error"] = str(e)
-
-    _census_cache[cache_key] = result
+    _cache[key] = result
     return result
 
-def get_cms_data(zipcode):
-    """Get CPT 36475 procedure volume for zip codes near the clinic."""
-    if zipcode in _cms_cache:
-        return _cms_cache[zipcode]
 
+def get_sahie_insurance(state_fips, county_fips):
+    """Get insurance coverage % from Census SAHIE (Small Area Health Insurance Estimates)."""
+    key = f"sahie:{state_fips},{county_fips}"
+    if key in _cache:
+        return _cache[key]
+    result = {"insured_pct": None, "error": None}
+    try:
+        r = requests.get(
+            "https://api.census.gov/data/timeseries/healthins/sahie",
+            params={
+                "get": "NAME,PCTIC_PT,PCTUI_PT",
+                "for": f"county:{county_fips}",
+                "in": f"state:{state_fips}",
+                "time": "2022",
+            },
+            timeout=12
+        )
+        data = r.json()
+        if len(data) >= 2:
+            headers = data[0]
+            row = data[1]
+            d = dict(zip(headers, row))
+            pct = float(d.get("PCTIC_PT", 0) or 0)
+            result["insured_pct"] = round(pct, 1) if pct > 0 else None
+    except Exception as e:
+        result["error"] = str(e)
+    _cache[key] = result
+    return result
+
+
+def get_cms_data(zipcode):
+    """Get CPT 36475 Medicare procedure volume for the clinic's ZIP code."""
+    key = f"cms:{zipcode}"
+    if key in _cache:
+        return _cache[key]
     result = {"cpt36475_volume": None, "error": None}
     try:
-        # CMS Medicare Provider Utilization by Provider and Service
-        # Dataset: Medicare Physician & Other Practitioners
-        url = "https://data.cms.gov/data-api/v1/dataset/9767cb68-8ea9-4f0b-8179-9431abc89f11/data"
-        params = {
-            "filter[Rndrng_Prvdr_Zip5]": zipcode,
-            "filter[HCPCS_Cd]": "36475",
-            "size": 200,
-            "offset": 0
-        }
-        r = requests.get(url, params=params, timeout=15)
+        r = requests.get(
+            "https://data.cms.gov/data-api/v1/dataset/9767cb68-8ea9-4f0b-8179-9431abc89f11/data",
+            params={
+                "filter[Rndrng_Prvdr_Zip5]": zipcode,
+                "filter[HCPCS_Cd]": "36475",
+                "size": 500,
+            },
+            timeout=15
+        )
         data = r.json()
-
         if isinstance(data, list):
             total = sum(int(row.get("Tot_Srvcs", 0) or 0) for row in data)
             result["cpt36475_volume"] = total
         else:
             result["cpt36475_volume"] = 0
-
     except Exception as e:
         result["error"] = str(e)
-
-    _cms_cache[zipcode] = result
+    _cache[key] = result
     return result
 
 
@@ -256,40 +233,65 @@ def index():
 @app.route("/analyze", methods=["POST"])
 def analyze():
     data = request.get_json()
-    address = data.get("address", "").strip()
+    address = (data.get("address") or "").strip()
     if not address:
         return jsonify({"error": "No address provided"}), 400
 
-    # Geocode
     coords = geocode_address(address)
     if not coords:
-        return jsonify({"error": f"Could not geocode address: {address}"}), 400
+        return jsonify({"error": f"Could not geocode: {address}"}), 400
 
     lat, lon = coords
-    state = extract_state(address)
-    zipcode = get_zip_from_address(address)
+    state_abbr = extract_state(address)
+    zipcode = extract_zip(address)
 
-    # Census data
-    census = get_census_data(lat, lon, state or "NY")
+    state_fips, county_fips = get_county_fips(lat, lon)
 
-    # CMS data
+    # ACS: population + income
+    acs = {"population": None, "median_income": None, "error": None}
+    if state_fips and county_fips:
+        acs = get_census_acs(state_fips, county_fips)
+
+    # Population density over 10-mile radius circle
+    density = None
+    if acs.get("population"):
+        area = math.pi * RADIUS_MILES ** 2  # ~314.16 sq miles
+        density = round(acs["population"] / area, 1)
+
+    # SAHIE: insurance coverage
+    sahie = {"insured_pct": None, "error": None}
+    if state_fips and county_fips:
+        sahie = get_sahie_insurance(state_fips, county_fips)
+
+    # CMS: CPT 36475 volume
     cms = {"cpt36475_volume": None, "error": None}
     if zipcode:
         cms = get_cms_data(zipcode)
+
+    # Fair Health: construct direct OON lookup URL
+    fh_zip = zipcode or ""
+    fh_url = f"https://fairhealthconsumer.org/hcp/procedure-detail?code=36475&zipcode={fh_zip}&network=2"
+
+    errors = []
+    if acs.get("error"):
+        errors.append(f"ACS census: {acs['error']}")
+    if sahie.get("error"):
+        errors.append(f"Insurance (SAHIE): {sahie['error']}")
+    if cms.get("error"):
+        errors.append(f"CMS Medicare: {cms['error']}")
 
     return jsonify({
         "address": address,
         "lat": lat,
         "lon": lon,
         "zip": zipcode,
-        "population_density": census.get("population_density"),
-        "median_income": census.get("median_income"),
-        "insured_pct": census.get("insured_pct"),
-        "census_error": census.get("error"),
+        "state": state_abbr,
+        "population_density": density,
+        "median_income": acs.get("median_income"),
+        "insured_pct": sahie.get("insured_pct"),
         "cpt36475_volume": cms.get("cpt36475_volume"),
-        "cms_error": cms.get("error"),
-        "fair_health_url": f"https://fairhealthconsumer.org/",
-        "fair_health_note": "Search CPT 36475 for ZIP code " + (zipcode or "N/A"),
+        "fair_health_url": fh_url,
+        "errors": errors,
     })
 
 
