@@ -1,27 +1,56 @@
+* { box-sizing: border-box; }
+
 body {
   background-color: #f0f4f8;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  margin: 0;
 }
 
+/* ── Navbar ───────────────────────────────────────── */
 .navbar {
-  background: linear-gradient(135deg, #1a56db, #0d6efd) !important;
-  box-shadow: 0 2px 12px rgba(13,110,253,0.3);
+  background: linear-gradient(135deg, #1a3a8f, #1a56db) !important;
+  box-shadow: 0 2px 16px rgba(26,86,219,0.35);
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-/* Sidebar */
+.nav-tabs-header .nav-link {
+  color: rgba(255,255,255,0.7);
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 6px 14px;
+  transition: all 0.15s;
+  border: none;
+}
+.nav-tabs-header .nav-link:hover {
+  color: white;
+  background: rgba(255,255,255,0.15);
+}
+.nav-tabs-header .nav-link.active {
+  color: #1a56db;
+  background: white;
+}
+
+/* ── View panels ──────────────────────────────────── */
+.view-panel { }
+
+/* ── Sidebar cards ────────────────────────────────── */
 .card {
   border: none;
   border-radius: 14px;
 }
 .card-header {
-  background: linear-gradient(135deg, #1a56db, #0d6efd);
+  background: linear-gradient(135deg, #1a3a8f, #1a56db);
   color: white;
   border-radius: 14px 14px 0 0 !important;
   font-size: 0.88rem;
   padding: 12px 16px;
 }
+
+/* ── Clinic list ──────────────────────────────────── */
 .clinic-scroll {
-  max-height: 440px;
+  max-height: 420px;
   overflow-y: auto;
 }
 .clinic-scroll::-webkit-scrollbar { width: 4px; }
@@ -34,32 +63,31 @@ body {
   border-bottom: 1px solid #f0f0f0;
   cursor: pointer;
   transition: background 0.12s;
-  text-align: left;
-  width: 100%;
-  padding: 10px 16px;
 }
 .clinic-item:hover { background: #eef3ff; }
 .clinic-item.active {
   background: #dbeafe !important;
-  border-left: 3px solid #0d6efd;
+  border-left: 3px solid #1a56db;
+}
+.address-text {
+  font-size: 0.72rem;
+  color: #9ca3af;
 }
 
-/* Metric cards */
+/* ── Metric cards ─────────────────────────────────── */
 .metric-card {
   border-radius: 14px;
   transition: transform 0.15s, box-shadow 0.15s;
   border: 1px solid #e8ecf0 !important;
+  background: white;
 }
 .metric-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 24px rgba(0,0,0,0.09) !important;
 }
-.metric-icon {
-  font-size: 1.6rem;
-  margin-bottom: 6px;
-}
+.metric-icon { font-size: 1.5rem; margin-bottom: 6px; }
 .metric-label {
-  font-size: 0.73rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: #6c757d;
@@ -67,33 +95,47 @@ body {
   margin-bottom: 4px;
 }
 .metric-value {
-  font-size: 1.9rem;
+  font-size: 1.85rem;
   font-weight: 800;
   color: #111827;
   line-height: 1.2;
   margin-bottom: 4px;
 }
-.metric-sub {
-  font-size: 0.73rem;
-  color: #9ca3af;
-}
+.metric-sub { font-size: 0.72rem; color: #9ca3af; }
 .metric-source {
-  font-size: 0.65rem;
+  font-size: 0.64rem;
   color: #c0c7d0;
   margin-top: 10px;
   border-top: 1px solid #f3f4f6;
   padding-top: 6px;
 }
 
-/* Map */
-#map {
-  border-radius: 12px;
-  z-index: 0;
+/* ── Map containers ───────────────────────────────── */
+#map1, #map2, #map3 { z-index: 0; }
+#map1 { border-radius: 12px; }
+
+/* ── Legend dots ──────────────────────────────────── */
+.legend-swatch {
+  width: 22px;
+  height: 14px;
+  border-radius: 4px;
+  display: inline-block;
+  flex-shrink: 0;
 }
-.leaflet-popup-content b { color: #0d6efd; }
+.legend-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: middle;
+}
 
-/* Purple for UCR card */
-.text-purple { color: #7c3aed; }
-
-/* Spinner */
+/* ── Spinner ──────────────────────────────────────── */
 .spinner-border { width: 3rem; height: 3rem; }
+
+/* ── Market panel ─────────────────────────────────── */
+.text-warning-emphasis { color: #92400e; }
+
+/* ── Leaflet popup ────────────────────────────────── */
+.leaflet-popup-content b { color: #1a56db; }

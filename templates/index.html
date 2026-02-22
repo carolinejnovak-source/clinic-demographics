@@ -11,20 +11,42 @@
 </head>
 <body>
 
-<nav class="navbar navbar-dark px-4 py-3">
-  <span class="navbar-brand fw-bold fs-5">
+<!-- Navbar -->
+<nav class="navbar px-4 py-3 d-flex align-items-center justify-content-between">
+  <span class="navbar-brand fw-bold fs-6 text-white mb-0">
     <i class="fa fa-heartbeat me-2"></i>Vein Treatment Clinic — Demographics Analyzer
   </span>
+  <!-- Tab nav in header -->
+  <ul class="nav nav-pills nav-tabs-header mb-0" id="mainTabs">
+    <li class="nav-item">
+      <a class="nav-link active" href="#" onclick="switchTab('clinic'); return false;" id="tab-clinic">
+        <i class="fa fa-search-location me-1"></i>Clinic Analysis
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#" onclick="switchTab('allclinics'); return false;" id="tab-allclinics">
+        <i class="fa fa-map me-1"></i>All Clinics Map
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#" onclick="switchTab('market'); return false;" id="tab-market">
+        <i class="fa fa-layer-group me-1"></i>Market Analysis
+      </a>
+    </li>
+  </ul>
 </nav>
 
-<div class="container-fluid mt-3 px-4">
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  TAB 1: Individual Clinic Analysis                             -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="view-clinic" class="view-panel container-fluid mt-3 px-4">
   <div class="row g-4">
 
     <!-- Sidebar -->
     <div class="col-lg-3 col-md-4">
       <div class="card shadow-sm">
         <div class="card-header fw-semibold">
-          <i class="fa fa-map-marker-alt me-2"></i>Clinic Locations
+          <i class="fa fa-map-marker-alt me-2"></i>Select Clinic
         </div>
         <div class="card-body p-0">
           <div class="p-3 border-bottom">
@@ -40,7 +62,7 @@
                     data-name="{{ clinic.name }}"
                     onclick="selectClinic(this)">
               <div class="fw-semibold small">{{ clinic.name }}</div>
-              <div class="text-muted" style="font-size:0.73rem;">{{ clinic.address }}</div>
+              <div class="text-muted address-text">{{ clinic.address }}</div>
             </button>
             {% endfor %}
           </div>
@@ -56,30 +78,46 @@
           </button>
         </div>
       </div>
+
+      <!-- Legend -->
+      <div class="card shadow-sm mt-3 p-3">
+        <div class="fw-semibold small mb-2 text-muted text-uppercase" style="letter-spacing:.05em;">Drive Time Legend</div>
+        <div class="d-flex align-items-center mb-2">
+          <div class="legend-swatch" style="background:#1a56db;opacity:0.55;"></div>
+          <span class="small ms-2">10-min drive radius</span>
+        </div>
+        <div class="d-flex align-items-center mb-2">
+          <div class="legend-swatch" style="background:#93c5fd;opacity:0.5;"></div>
+          <span class="small ms-2">20-min drive radius</span>
+        </div>
+        <div class="small text-muted mt-2 border-top pt-2" style="font-size:0.7rem;">
+          <i class="fa fa-info-circle me-1"></i>
+          Based on <strong>Valhalla</strong> (OpenStreetMap routing engine) using posted speed limits by road type.
+          Represents <strong>average conditions</strong> — not rush hour or late-night traffic.
+        </div>
+      </div>
     </div>
 
-    <!-- Main Panel -->
+    <!-- Main Content -->
     <div class="col-lg-9 col-md-8">
 
       <!-- Welcome -->
       <div id="welcomePanel" class="text-center py-5 text-muted">
         <i class="fa fa-map-marked-alt fa-4x mb-3 text-primary opacity-25"></i>
-        <h5 class="fw-semibold">Select a clinic or enter a new address</h5>
-        <p class="small">Population density · Median income · Insurance coverage · CPT 36475 volume · Fair Health OON benchmarks</p>
+        <h5 class="fw-semibold">Select a clinic or enter a new address to begin</h5>
+        <p class="small">Population density · Median income · Insurance coverage · CPT 36475 volume · Fair Health OON</p>
       </div>
 
       <!-- Loading -->
       <div id="loadingPanel" class="text-center py-5 d-none">
         <div class="spinner-border text-primary mb-3" style="width:3rem;height:3rem;" role="status"></div>
         <div class="fw-semibold text-muted">Fetching demographic data...</div>
-        <div class="text-muted small mt-1">Census ACS · SAHIE · CMS Medicare · Census Geocoder</div>
+        <div class="text-muted small mt-1">Census ACS · SAHIE · CMS Medicare · Valhalla Routing</div>
       </div>
 
       <!-- Error -->
       <div id="errorPanel" class="d-none">
-        <div class="alert alert-danger">
-          <i class="fa fa-exclamation-circle me-2"></i><span id="errorMessage"></span>
-        </div>
+        <div class="alert alert-danger"><i class="fa fa-exclamation-circle me-2"></i><span id="errorMessage"></span></div>
       </div>
 
       <!-- Results -->
@@ -91,155 +129,250 @@
             <h5 class="mb-0 fw-bold" id="resultTitle"></h5>
             <small class="text-muted" id="resultAddress"></small>
           </div>
-          <span class="badge bg-primary ms-auto align-self-center px-3 py-2" id="resultZip" style="font-size:0.8rem;"></span>
+          <span class="badge bg-primary ms-auto align-self-center px-3 py-2" id="resultZip"></span>
         </div>
 
-        <!-- Map -->
+        <!-- Map (default / prominent) -->
         <div class="card shadow-sm mb-4">
-          <div class="card-body p-0" style="border-radius:12px; overflow:hidden;">
-            <div id="map" style="height:300px; width:100%;"></div>
+          <div class="card-body p-0" style="border-radius:12px;overflow:hidden;">
+            <div id="map1" style="height:340px;width:100%;"></div>
           </div>
-          <div class="card-footer py-2 px-3 bg-light">
-            <small class="text-muted"><i class="fa fa-circle me-1 text-primary opacity-50"></i>Blue shaded area = 10-mile radius from clinic</small>
+          <div class="card-footer py-2 px-3 bg-light d-flex gap-3 flex-wrap">
+            <small class="text-muted"><span class="legend-dot" style="background:#1a56db;"></span> 10-min drive</small>
+            <small class="text-muted"><span class="legend-dot" style="background:#93c5fd;"></span> 20-min drive</small>
+            <small class="text-muted ms-auto fst-italic">Valhalla routing · avg conditions · OSM speed limits</small>
           </div>
         </div>
 
         <!-- Metric Cards -->
         <div class="row g-3">
-
-          <!-- Population Density -->
           <div class="col-sm-6 col-xl-4">
-            <div class="metric-card card shadow-sm h-100">
-              <div class="card-body">
-                <div class="metric-icon text-primary"><i class="fa fa-users"></i></div>
-                <div class="metric-label">Population Density</div>
-                <div class="metric-value" id="metricDensity">—</div>
-                <div class="metric-sub">people per sq mile · 10-mi radius</div>
-                <div class="metric-source">Census ACS 2022 · County population</div>
-              </div>
-            </div>
+            <div class="metric-card card shadow-sm h-100"><div class="card-body">
+              <div class="metric-icon text-primary"><i class="fa fa-users"></i></div>
+              <div class="metric-label">Population Density</div>
+              <div class="metric-value" id="metricDensity">—</div>
+              <div class="metric-sub">people/sq mi · 10-mi radius</div>
+              <div class="metric-source">Census ACS 2022 · B01003</div>
+            </div></div>
           </div>
-
-          <!-- Median Income -->
           <div class="col-sm-6 col-xl-4">
-            <div class="metric-card card shadow-sm h-100">
-              <div class="card-body">
-                <div class="metric-icon text-success"><i class="fa fa-dollar-sign"></i></div>
-                <div class="metric-label">Median Household Income</div>
-                <div class="metric-value" id="metricIncome">—</div>
-                <div class="metric-sub">annual · per household</div>
-                <div class="metric-source">Census ACS 2022 · B19013</div>
-              </div>
-            </div>
+            <div class="metric-card card shadow-sm h-100"><div class="card-body">
+              <div class="metric-icon text-success"><i class="fa fa-dollar-sign"></i></div>
+              <div class="metric-label">Median Household Income</div>
+              <div class="metric-value" id="metricIncome">—</div>
+              <div class="metric-sub">annual · per household</div>
+              <div class="metric-source">Census ACS 2022 · B19013</div>
+            </div></div>
           </div>
-
-          <!-- Insurance Coverage -->
           <div class="col-sm-6 col-xl-4">
-            <div class="metric-card card shadow-sm h-100">
-              <div class="card-body">
-                <div class="metric-icon text-info"><i class="fa fa-shield-alt"></i></div>
-                <div class="metric-label">Health Insurance Coverage</div>
-                <div class="metric-value" id="metricInsured">—</div>
-                <div class="metric-sub">% of county population insured</div>
-                <div class="metric-source">Census SAHIE 2022 · PCTIC_PT</div>
-              </div>
-            </div>
+            <div class="metric-card card shadow-sm h-100"><div class="card-body">
+              <div class="metric-icon text-info"><i class="fa fa-shield-alt"></i></div>
+              <div class="metric-label">Health Insurance Coverage</div>
+              <div class="metric-value" id="metricInsured">—</div>
+              <div class="metric-sub">% of county population insured</div>
+              <div class="metric-source">Census SAHIE 2022 · PCTIC_PT</div>
+            </div></div>
           </div>
-
-          <!-- CPT 36475 Volume -->
           <div class="col-sm-6 col-xl-4">
-            <div class="metric-card card shadow-sm h-100">
-              <div class="card-body">
-                <div class="metric-icon text-warning"><i class="fa fa-syringe"></i></div>
-                <div class="metric-label">CPT 36475 — Medicare Volume</div>
-                <div class="metric-value" id="metricCPT">—</div>
-                <div class="metric-sub">total Medicare services · clinic ZIP</div>
-                <div class="metric-source">CMS Medicare Provider Utilization Data</div>
-              </div>
-            </div>
+            <div class="metric-card card shadow-sm h-100"><div class="card-body">
+              <div class="metric-icon text-warning"><i class="fa fa-syringe"></i></div>
+              <div class="metric-label">CPT 36475 — Medicare Volume</div>
+              <div class="metric-value" id="metricCPT">—</div>
+              <div class="metric-sub">total Medicare services · clinic ZIP</div>
+              <div class="metric-source">CMS Medicare Provider Utilization</div>
+            </div></div>
           </div>
-
-          <!-- Fair Health OON -->
           <div class="col-sm-6 col-xl-4">
-            <div class="metric-card card shadow-sm h-100">
-              <div class="card-body">
-                <div class="metric-icon text-danger"><i class="fa fa-chart-bar"></i></div>
-                <div class="metric-label">Fair Health — OON Benchmark</div>
-                <div class="metric-value" style="font-size:1.1rem; line-height:1.3;" id="metricFH">
-                  <span class="text-muted small">Look up by ZIP →</span>
-                </div>
-                <div class="metric-sub">CPT 36475 · Out-of-network · 50th percentile</div>
-                <div id="fairHealthLink" class="mt-2"></div>
-                <div class="metric-source">Fair Health Consumer · Out-of-Network</div>
-              </div>
-            </div>
+            <div class="metric-card card shadow-sm h-100"><div class="card-body">
+              <div class="metric-icon text-danger"><i class="fa fa-chart-bar"></i></div>
+              <div class="metric-label">Fair Health OON — 50th Pct</div>
+              <div class="metric-value" style="font-size:1rem;">Look up by ZIP</div>
+              <div class="metric-sub">CPT 36475 · Out-of-network</div>
+              <div id="fairHealthLink" class="mt-2"></div>
+              <div class="metric-source">Fair Health Consumer · OON</div>
+            </div></div>
           </div>
-
-          <!-- UCR / 95th Percentile -->
           <div class="col-sm-6 col-xl-4">
-            <div class="metric-card card shadow-sm h-100">
-              <div class="card-body">
-                <div class="metric-icon text-purple"><i class="fa fa-percent"></i></div>
-                <div class="metric-label">UCR — 95th Percentile</div>
-                <div class="metric-value" style="font-size:1.1rem; line-height:1.3;" id="metricUCR">
-                  <span class="text-muted small">Look up by ZIP →</span>
-                </div>
-                <div class="metric-sub">CPT 36475 · Usual, Customary & Reasonable · OON</div>
-                <div id="ucrLink" class="mt-2"></div>
-                <div class="metric-source">Fair Health Consumer · 95th Percentile OON</div>
-              </div>
-            </div>
+            <div class="metric-card card shadow-sm h-100"><div class="card-body">
+              <div class="metric-icon" style="color:#7c3aed;"><i class="fa fa-percent"></i></div>
+              <div class="metric-label">UCR — 95th Percentile</div>
+              <div class="metric-value" style="font-size:1rem;">Look up by ZIP</div>
+              <div class="metric-sub">CPT 36475 · Usual, Customary & Reasonable</div>
+              <div id="ucrLink" class="mt-2"></div>
+              <div class="metric-source">Fair Health Consumer · 95th Pct OON</div>
+            </div></div>
           </div>
+        </div>
 
-        </div><!-- /row -->
-
-        <!-- Data alerts -->
         <div id="dataAlerts" class="mt-3"></div>
-
-      </div><!-- /resultsPanel -->
+      </div>
     </div>
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  TAB 2: All Clinics Map                                        -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="view-allclinics" class="view-panel d-none" style="height:calc(100vh - 64px); display:flex; flex-direction:column;">
+  <div class="d-flex align-items-center px-4 py-2 bg-white border-bottom gap-3 flex-wrap">
+    <div>
+      <span class="fw-bold">All Clinic Locations</span>
+      <span class="text-muted small ms-2">— 20-min drive-time zones for all 45 active clinics</span>
+    </div>
+    <div class="ms-auto d-flex gap-3 flex-wrap align-items-center">
+      <span class="small"><span class="legend-dot" style="background:#1a56db;"></span> 10-min drive</span>
+      <span class="small"><span class="legend-dot" style="background:#93c5fd;"></span> 20-min drive</span>
+      <div id="allClinicsProgress" class="small text-muted"></div>
+      <button class="btn btn-sm btn-primary" id="loadAllBtn" onclick="loadAllClinics()">
+        <i class="fa fa-sync me-1"></i>Load All Isochrones
+      </button>
+    </div>
+  </div>
+  <div id="map2" style="flex:1; min-height:500px;"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  TAB 3: Market Analysis Map                                    -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="view-market" class="view-panel d-none" style="height:calc(100vh - 64px); display:flex; flex-direction:column;">
+  <div class="d-flex align-items-center px-4 py-2 bg-white border-bottom gap-3 flex-wrap">
+    <div>
+      <span class="fw-bold">Market Analysis</span>
+      <span class="text-muted small ms-2">— Existing clinics (blue) + Potential sites (yellow)</span>
+    </div>
+    <div class="ms-auto d-flex gap-3 flex-wrap align-items-center">
+      <span class="small"><span class="legend-dot" style="background:#1a56db;"></span> Existing 10-min</span>
+      <span class="small"><span class="legend-dot" style="background:#93c5fd;"></span> Existing 20-min</span>
+      <span class="small"><span class="legend-dot" style="background:#d97706;"></span> Potential 10-min</span>
+      <span class="small"><span class="legend-dot" style="background:#fcd34d;"></span> Potential 20-min</span>
+    </div>
+  </div>
+  <div class="d-flex" style="flex:1; min-height:0;">
+    <!-- Map -->
+    <div id="map3" style="flex:1; min-height:500px;"></div>
+
+    <!-- Potential sites panel -->
+    <div style="width:280px; background:#fff; border-left:1px solid #e5e7eb; display:flex; flex-direction:column; overflow:hidden;">
+      <div class="p-3 border-bottom bg-amber-50">
+        <div class="fw-semibold small mb-1"><i class="fa fa-plus-circle me-1 text-warning"></i>Add Potential Location</div>
+        <input id="potentialAddress" type="text" class="form-control form-control-sm mb-2"
+               placeholder="Enter address..."/>
+        <button class="btn btn-warning btn-sm w-100 fw-semibold text-dark" onclick="addPotentialSite()">
+          <i class="fa fa-map-pin me-1"></i>Add to Map
+        </button>
+        <div id="potentialStatus" class="small text-muted mt-1"></div>
+      </div>
+      <div style="overflow-y:auto; flex:1;">
+        <div class="p-2 border-bottom">
+          <span class="small fw-semibold text-muted text-uppercase" style="font-size:.7rem; letter-spacing:.05em;">Potential Sites</span>
+        </div>
+        <div id="potentialList"></div>
+      </div>
+      <div class="p-3 border-top">
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-secondary flex-fill" onclick="loadExistingOnMarket()">
+            <i class="fa fa-sync me-1"></i>Load Existing
+          </button>
+          <button class="btn btn-sm btn-outline-danger flex-fill" onclick="clearPotentialSites()">
+            <i class="fa fa-trash me-1"></i>Clear All
+          </button>
+        </div>
+        <div id="marketProgress" class="small text-muted mt-2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  Scripts                                                       -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-let map = null;
-let clinicMarker = null;
-let radiusCircle = null;
+const CLINICS = {{ clinics_json|safe }};
 
-function initMap(lat, lon, label) {
-  const RADIUS_METERS = 16093.4; // 10 miles
+// ── Map instances ─────────────────────────────────────────────────
+let map1 = null, map2 = null, map3 = null;
+let map1Layers = [];
+let map2Loaded = false;
+let map3ExistingLoaded = false;
+let potentialSites = [];
 
-  if (!map) {
-    map = L.map('map').setView([lat, lon], 11);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-  } else {
-    map.setView([lat, lon], 11);
-    if (clinicMarker) map.removeLayer(clinicMarker);
-    if (radiusCircle) map.removeLayer(radiusCircle);
+// ── Tab switching ─────────────────────────────────────────────────
+function switchTab(tab) {
+  ['clinic','allclinics','market'].forEach(t => {
+    document.getElementById(`view-${t}`).classList.add('d-none');
+    document.getElementById(`tab-${t}`).classList.remove('active');
+  });
+  document.getElementById(`view-${tab}`).classList.remove('d-none');
+  document.getElementById(`tab-${tab}`).classList.add('active');
+
+  if (tab === 'allclinics') {
+    setTimeout(() => {
+      if (!map2) initMap2();
+      else map2.invalidateSize();
+    }, 100);
   }
-
-  clinicMarker = L.marker([lat, lon])
-    .addTo(map)
-    .bindPopup(`<b>${label}</b>`)
-    .openPopup();
-
-  radiusCircle = L.circle([lat, lon], {
-    radius: RADIUS_METERS,
-    color: '#0d6efd',
-    fillColor: '#0d6efd',
-    fillOpacity: 0.08,
-    weight: 2,
-    dashArray: '6,4'
-  }).addTo(map);
-
-  // Fit map to the circle bounds
-  map.fitBounds(radiusCircle.getBounds());
+  if (tab === 'market') {
+    setTimeout(() => {
+      if (!map3) initMap3();
+      else map3.invalidateSize();
+    }, 100);
+  }
 }
 
+// ── Shared map tile layer ─────────────────────────────────────────
+function addTiles(map) {
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 18
+  }).addTo(map);
+}
+
+// ── Isochrone layer helpers ───────────────────────────────────────
+function addIsochroneToMap(map, isoData, name, colorSet) {
+  // colorSet: { inner: '#hex', outer: '#hex' }
+  if (!isoData || isoData.error || !isoData.features) return [];
+  const layers = [];
+  const features = isoData.features;
+
+  // Sort: larger (20-min) first so 10-min renders on top
+  const sorted = [...features].sort((a, b) => {
+    const ta = a.properties?.contour || 0;
+    const tb = b.properties?.contour || 0;
+    return tb - ta;
+  });
+
+  sorted.forEach(feature => {
+    const minutes = feature.properties?.contour || 0;
+    const isInner = minutes <= 10;
+    const color = isInner ? colorSet.inner : colorSet.outer;
+    const layer = L.geoJSON(feature, {
+      style: {
+        color: color,
+        fillColor: color,
+        fillOpacity: isInner ? 0.22 : 0.12,
+        weight: isInner ? 2.5 : 1.5,
+        dashArray: isInner ? null : '6,4',
+      }
+    }).bindPopup(`<b>${name}</b><br>${minutes}-min drive radius`);
+    layer.addTo(map);
+    layers.push(layer);
+  });
+  return layers;
+}
+
+function addMarker(map, lat, lon, name, color) {
+  const icon = L.divIcon({
+    className: '',
+    html: `<div style="background:${color};width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.4);"></div>`,
+    iconSize: [12, 12],
+    iconAnchor: [6, 6],
+  });
+  return L.marker([lat, lon], {icon}).bindPopup(`<b>${name}</b>`).addTo(map);
+}
+
+// ── TAB 1: Individual analysis ────────────────────────────────────
 function selectClinic(btn) {
   document.querySelectorAll('.clinic-item').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -272,55 +405,72 @@ function renderResults(d, name) {
   document.getElementById('resultAddress').textContent = d.address;
   document.getElementById('resultZip').textContent = d.zip ? 'ZIP ' + d.zip : '';
 
-  // Map
-  if (d.lat && d.lon) {
-    showState('results');
-    setTimeout(() => {
-      initMap(d.lat, d.lon, name);
-      if (map) map.invalidateSize();
-    }, 100);
-  } else {
-    showState('results');
-  }
-
-  // Metrics
   document.getElementById('metricDensity').textContent =
     d.population_density != null ? d.population_density.toLocaleString() : '—';
-
   document.getElementById('metricIncome').textContent =
     d.median_income ? '$' + d.median_income.toLocaleString() : '—';
-
   document.getElementById('metricInsured').textContent =
     d.insured_pct != null ? d.insured_pct + '%' : '—';
-
   document.getElementById('metricCPT').textContent =
     d.cpt36475_volume != null ? d.cpt36475_volume.toLocaleString() : '—';
 
-  // Fair Health OON link (50th pct)
   const zip = d.zip || '';
-  const fhOonUrl = `https://fairhealthconsumer.org/hcp/procedure-detail?code=36475&zipcode=${zip}&network=2`;
-  const fhUcrUrl = `https://fairhealthconsumer.org/hcp/procedure-detail?code=36475&zipcode=${zip}&network=2`;
-
+  const fhUrl = `https://fairhealthconsumer.org/hcp/procedure-detail?code=36475&zipcode=${zip}&network=2`;
   document.getElementById('fairHealthLink').innerHTML =
-    `<a href="${fhOonUrl}" target="_blank" class="btn btn-sm btn-outline-danger w-100">
-      <i class="fa fa-external-link-alt me-1"></i>OON 50th Pct Lookup
-    </a>`;
-
+    `<a href="${fhUrl}" target="_blank" class="btn btn-sm btn-outline-danger w-100">
+      <i class="fa fa-external-link-alt me-1"></i>OON 50th Pct Lookup</a>`;
   document.getElementById('ucrLink').innerHTML =
-    `<a href="${fhUcrUrl}" target="_blank" class="btn btn-sm btn-outline-secondary w-100">
-      <i class="fa fa-external-link-alt me-1"></i>95th Pct UCR Lookup
-    </a>
-    <div class="text-muted mt-1" style="font-size:0.7rem;">Select "95th percentile" on Fair Health for UCR</div>`;
+    `<a href="${fhUrl}" target="_blank" class="btn btn-sm btn-outline-secondary w-100">
+      <i class="fa fa-external-link-alt me-1"></i>95th Pct UCR Lookup</a>
+    <div class="text-muted mt-1" style="font-size:.7rem;">Select "95th percentile" on Fair Health</div>`;
 
-  // Errors/warnings
   let alerts = '';
-  if (d.errors && d.errors.length) {
-    d.errors.forEach(e => {
-      alerts += `<div class="alert alert-warning py-2 small mb-2">
-        <i class="fa fa-exclamation-triangle me-1"></i>${e}</div>`;
-    });
-  }
+  (d.errors || []).forEach(e => {
+    alerts += `<div class="alert alert-warning py-2 small mb-2"><i class="fa fa-exclamation-triangle me-1"></i>${e}</div>`;
+  });
   document.getElementById('dataAlerts').innerHTML = alerts;
+
+  showState('results');
+
+  // Render map after panel is visible
+  setTimeout(() => renderMap1(d, name), 80);
+}
+
+function renderMap1(d, name) {
+  if (!map1) {
+    map1 = L.map('map1').setView([d.lat, d.lon], 11);
+    addTiles(map1);
+  } else {
+    map1Layers.forEach(l => map1.removeLayer(l));
+    map1Layers = [];
+    map1.setView([d.lat, d.lon], 11);
+  }
+  map1.invalidateSize();
+
+  const isoLayers = addIsochroneToMap(map1, d.isochrone, name, {
+    inner: '#1a56db', outer: '#93c5fd'
+  });
+  const marker = addMarker(map1, d.lat, d.lon, name, '#1a56db');
+  map1Layers = [...isoLayers, marker];
+
+  // Fit to 20-min isochrone if available
+  if (d.isochrone && d.isochrone.features && d.isochrone.features.length > 0) {
+    try {
+      const outerFeature = d.isochrone.features.find(f => (f.properties?.contour || 0) >= 20);
+      if (outerFeature) {
+        const outerLayer = L.geoJSON(outerFeature);
+        map1.fitBounds(outerLayer.getBounds(), {padding: [20, 20]});
+      }
+    } catch(e) {}
+  }
+}
+
+function showState(state) {
+  ['welcomePanel','loadingPanel','errorPanel','resultsPanel'].forEach(id => {
+    document.getElementById(id).classList.add('d-none');
+  });
+  const ids = {loading:'loadingPanel', error:'errorPanel', results:'resultsPanel', welcome:'welcomePanel'};
+  document.getElementById(ids[state] || 'welcomePanel').classList.remove('d-none');
 }
 
 function showError(msg) {
@@ -328,26 +478,180 @@ function showError(msg) {
   showState('error');
 }
 
-function showState(state) {
-  ['welcomePanel','loadingPanel','errorPanel','resultsPanel'].forEach(id => {
-    document.getElementById(id).classList.add('d-none');
-  });
-  document.getElementById(
-    state === 'loading' ? 'loadingPanel' :
-    state === 'error'   ? 'errorPanel'   :
-    state === 'results' ? 'resultsPanel' : 'welcomePanel'
-  ).classList.remove('d-none');
-}
-
-// Clinic search filter
 document.getElementById('searchInput').addEventListener('input', function() {
   const q = this.value.toLowerCase();
   document.querySelectorAll('.clinic-item').forEach(btn => {
-    const match = btn.dataset.name.toLowerCase().includes(q) ||
-                  btn.dataset.address.toLowerCase().includes(q);
-    btn.style.display = match ? '' : 'none';
+    btn.style.display = (btn.dataset.name.toLowerCase().includes(q) ||
+                         btn.dataset.address.toLowerCase().includes(q)) ? '' : 'none';
   });
 });
+
+// ── TAB 2: All Clinics Map ────────────────────────────────────────
+function initMap2() {
+  map2 = L.map('map2').setView([39.5, -97.5], 4);
+  addTiles(map2);
+  map2.invalidateSize();
+}
+
+async function loadAllClinics() {
+  if (!map2) initMap2();
+  const btn = document.getElementById('loadAllBtn');
+  const prog = document.getElementById('allClinicsProgress');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>Loading...';
+
+  let done = 0;
+  const total = CLINICS.length;
+  prog.textContent = `Loading 0 / ${total}...`;
+
+  // Fetch in chunks of 5 concurrently
+  const chunks = [];
+  for (let i = 0; i < CLINICS.length; i += 5) {
+    chunks.push(CLINICS.slice(i, i + 5));
+  }
+
+  for (const chunk of chunks) {
+    await Promise.allSettled(chunk.map(async clinic => {
+      try {
+        const r = await fetch('/isochrone', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({address: clinic.address, name: clinic.name})
+        });
+        const d = await r.json();
+        if (!d.error && d.lat) {
+          addIsochroneToMap(map2, d.isochrone, clinic.name, {inner: '#1a56db', outer: '#93c5fd'});
+          addMarker(map2, d.lat, d.lon, clinic.name, '#1a56db');
+        }
+      } catch(e) {}
+      done++;
+      prog.textContent = `Loaded ${done} / ${total}...`;
+    }));
+  }
+
+  prog.textContent = `✓ All ${total} clinics loaded`;
+  btn.innerHTML = '<i class="fa fa-check me-1"></i>Loaded';
+  map2Loaded = true;
+}
+
+// ── TAB 3: Market Analysis ────────────────────────────────────────
+function initMap3() {
+  map3 = L.map('map3').setView([39.5, -97.5], 4);
+  addTiles(map3);
+  map3.invalidateSize();
+}
+
+async function loadExistingOnMarket() {
+  if (!map3) initMap3();
+  const prog = document.getElementById('marketProgress');
+  let done = 0;
+  const total = CLINICS.length;
+  prog.textContent = `Loading ${done} / ${total} existing...`;
+
+  const chunks = [];
+  for (let i = 0; i < CLINICS.length; i += 5) {
+    chunks.push(CLINICS.slice(i, i + 5));
+  }
+
+  for (const chunk of chunks) {
+    await Promise.allSettled(chunk.map(async clinic => {
+      try {
+        const r = await fetch('/isochrone', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({address: clinic.address, name: clinic.name})
+        });
+        const d = await r.json();
+        if (!d.error && d.lat) {
+          addIsochroneToMap(map3, d.isochrone, clinic.name, {inner: '#1a56db', outer: '#93c5fd'});
+          addMarker(map3, d.lat, d.lon, clinic.name, '#1a56db');
+        }
+      } catch(e) {}
+      done++;
+      prog.textContent = `Loaded ${done} / ${total}...`;
+    }));
+  }
+
+  prog.textContent = `✓ ${total} existing clinics loaded`;
+  map3ExistingLoaded = true;
+}
+
+async function addPotentialSite() {
+  const addr = document.getElementById('potentialAddress').value.trim();
+  if (!addr) { alert('Enter an address first.'); return; }
+
+  const status = document.getElementById('potentialStatus');
+  status.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>Geocoding...';
+
+  if (!map3) initMap3();
+
+  try {
+    const r = await fetch('/isochrone', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({address: addr, name: addr})
+    });
+    const d = await r.json();
+
+    if (d.error || !d.lat) {
+      status.textContent = '⚠ Could not geocode address';
+      return;
+    }
+
+    const id = Date.now();
+    const site = {id, address: addr, lat: d.lat, lon: d.lon, isoData: d.isochrone};
+    potentialSites.push(site);
+
+    addIsochroneToMap(map3, d.isochrone, addr, {inner: '#d97706', outer: '#fcd34d'});
+    addMarker(map3, d.lat, d.lon, addr, '#d97706');
+    map3.setView([d.lat, d.lon], 10);
+
+    document.getElementById('potentialAddress').value = '';
+    status.textContent = '✓ Added!';
+    setTimeout(() => { status.textContent = ''; }, 2000);
+
+    renderPotentialList();
+  } catch(e) {
+    status.textContent = '⚠ Error: ' + e.message;
+  }
+}
+
+function renderPotentialList() {
+  const el = document.getElementById('potentialList');
+  if (potentialSites.length === 0) {
+    el.innerHTML = '<div class="p-3 text-muted small">No potential sites added yet.</div>';
+    return;
+  }
+  el.innerHTML = potentialSites.map(s => `
+    <div class="px-3 py-2 border-bottom">
+      <div class="small fw-semibold text-warning-emphasis">${s.address}</div>
+      <div class="small text-muted">${s.lat.toFixed(4)}, ${s.lon.toFixed(4)}</div>
+    </div>
+  `).join('');
+}
+
+function clearPotentialSites() {
+  if (!confirm('Clear all potential sites?')) return;
+  potentialSites = [];
+  if (map3) {
+    map3.eachLayer(layer => {
+      if (layer instanceof L.GeoJSON || layer instanceof L.Marker) {
+        // Only remove the yellow ones — can't easily distinguish so just reload
+      }
+    });
+    // Reinit map3 and reload existing
+    map3.remove();
+    map3 = null;
+    initMap3();
+    if (map3ExistingLoaded) loadExistingOnMarket();
+  }
+  renderPotentialList();
+  document.getElementById('marketProgress').textContent = '';
+}
+
+// Initialize potential list display
+renderPotentialList();
 </script>
+
 </body>
 </html>
