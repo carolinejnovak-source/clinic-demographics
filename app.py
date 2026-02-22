@@ -4,7 +4,7 @@ import math
 import os
 import re
 import json
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import threading
 
 app = Flask(__name__)
 
@@ -68,23 +68,18 @@ STATE_FIPS = {
 }
 
 _cache = {}
+_preload_status = {"done": 0, "total": len(CLINICS), "complete": False}
 
+
+# ── Helpers ──────────────────────────────────────────────────────
 
 def extract_zip(address):
     m = re.search(r'\b(\d{5})\b', address)
     return m.group(1) if m else None
 
-
 def extract_state(address):
     m = re.search(r',\s*([A-Z]{2})\s+\d{5}', address)
-    if m:
-        return m.group(1)
-    parts = address.replace(',', ' ').split()
-    for i, p in enumerate(parts):
-        if len(p) == 2 and p.isupper() and i < len(parts) - 1:
-            return p
-    return None
-
+    return m.group(1) if m else None
 
 def geocode_address(address):
     key = f"geo:{address}"
@@ -103,42 +98,33 @@ def geocode_address(address):
             _cache[key] = result
             return result
     except Exception as e:
-        print(f"Geocode error: {e}")
+        print(f"Geocode error for {address}: {e}")
     return None
 
-
-def get_isochrone(lat, lon, times=(10, 20)):
-    """Fetch drive-time isochrone polygons from Valhalla (OpenStreetMap routing engine).
-    
-    Speed basis: OSM posted speed limits by road type.
-    NOT real-time traffic. Represents average/typical conditions.
-    """
-    key = f"iso:{lat:.4f},{lon:.4f}:{','.join(str(t) for t in times)}"
+def get_isochrone(lat, lon):
+    key = f"iso:{lat:.4f},{lon:.4f}"
     if key in _cache:
         return _cache[key]
     try:
-        payload = {
-            "locations": [{"lat": lat, "lon": lon}],
-            "costing": "auto",
-            "contours": [{"time": t, "color": ("1a56db" if t == 10 else "93c5fd")} for t in times],
-            "polygons": True,
-            "denoise": 0.5,
-            "generalize": 150
-        }
         r = requests.post(
             "https://valhalla1.openstreetmap.de/isochrone",
-            json=payload,
-            timeout=25
+            json={
+                "locations": [{"lat": lat, "lon": lon}],
+                "costing": "auto",
+                "contours": [{"time": 10}, {"time": 20}],
+                "polygons": True,
+                "denoise": 0.5,
+                "generalize": 150,
+            },
+            timeout=30
         )
         if r.status_code == 200:
             data = r.json()
             _cache[key] = data
             return data
-        else:
-            return {"error": f"Valhalla API error: {r.status_code}"}
     except Exception as e:
-        return {"error": str(e)}
-
+        print(f"Isochrone error for ({lat},{lon}): {e}")
+    return None
 
 def get_county_fips(lat, lon):
     key = f"county:{lat:.4f},{lon:.4f}"
@@ -147,13 +133,10 @@ def get_county_fips(lat, lon):
     try:
         r = requests.get(
             "https://geocoding.geo.census.gov/geocoder/geographies/coordinates",
-            params={
-                "x": lon, "y": lat,
-                "benchmark": "Public_AR_Current",
-                "vintage": "Current_Current",
-                "layers": "Counties",
-                "format": "json"
-            },
+            params={"x": lon, "y": lat,
+                    "benchmark": "Public_AR_Current",
+                    "vintage": "Current_Current",
+                    "layers": "Counties", "format": "json"},
             timeout=10
         )
         counties = r.json().get("result", {}).get("geographies", {}).get("Counties", [])
@@ -162,10 +145,9 @@ def get_county_fips(lat, lon):
             result = (c.get("STATE", ""), c.get("COUNTY", ""))
             _cache[key] = result
             return result
-    except Exception as e:
-        print(f"County FIPS error: {e}")
+    except:
+        pass
     return (None, None)
-
 
 def get_census_acs(state_fips, county_fips):
     key = f"acs:{state_fips},{county_fips}"
@@ -175,11 +157,9 @@ def get_census_acs(state_fips, county_fips):
     try:
         r = requests.get(
             "https://api.census.gov/data/2022/acs/acs5",
-            params={
-                "get": "B01003_001E,B19013_001E,NAME",
-                "for": f"county:{county_fips}",
-                "in": f"state:{state_fips}",
-            },
+            params={"get": "B01003_001E,B19013_001E",
+                    "for": f"county:{county_fips}",
+                    "in": f"state:{state_fips}"},
             timeout=12
         )
         data = r.json()
@@ -194,8 +174,7 @@ def get_census_acs(state_fips, county_fips):
     _cache[key] = result
     return result
 
-
-def get_sahie_insurance(state_fips, county_fips):
+def get_sahie(state_fips, county_fips):
     key = f"sahie:{state_fips},{county_fips}"
     if key in _cache:
         return _cache[key]
@@ -203,12 +182,10 @@ def get_sahie_insurance(state_fips, county_fips):
     try:
         r = requests.get(
             "https://api.census.gov/data/timeseries/healthins/sahie",
-            params={
-                "get": "NAME,PCTIC_PT",
-                "for": f"county:{county_fips}",
-                "in": f"state:{state_fips}",
-                "time": "2022",
-            },
+            params={"get": "PCTIC_PT",
+                    "for": f"county:{county_fips}",
+                    "in": f"state:{state_fips}",
+                    "time": "2022"},
             timeout=12
         )
         data = r.json()
@@ -221,8 +198,7 @@ def get_sahie_insurance(state_fips, county_fips):
     _cache[key] = result
     return result
 
-
-def get_cms_data(zipcode):
+def get_cms(zipcode):
     key = f"cms:{zipcode}"
     if key in _cache:
         return _cache[key]
@@ -230,11 +206,8 @@ def get_cms_data(zipcode):
     try:
         r = requests.get(
             "https://data.cms.gov/data-api/v1/dataset/9767cb68-8ea9-4f0b-8179-9431abc89f11/data",
-            params={
-                "filter[Rndrng_Prvdr_Zip5]": zipcode,
-                "filter[HCPCS_Cd]": "36475",
-                "size": 500,
-            },
+            params={"filter[Rndrng_Prvdr_Zip5]": zipcode,
+                    "filter[HCPCS_Cd]": "36475", "size": 500},
             timeout=15
         )
         data = r.json()
@@ -248,82 +221,101 @@ def get_cms_data(zipcode):
     return result
 
 
-def full_analyze(address):
-    """Full demographic analysis for one address."""
-    coords = geocode_address(address)
-    if not coords:
-        return {"error": f"Could not geocode: {address}"}
+# ── Background preloader ─────────────────────────────────────────
 
-    lat, lon = coords
-    zipcode = extract_zip(address)
-    state_fips, county_fips = get_county_fips(lat, lon)
+def _preload_worker():
+    """Geocode all clinics + fetch their isochrones in background threads."""
+    from concurrent.futures import ThreadPoolExecutor
+    def load_one(clinic):
+        try:
+            coords = geocode_address(clinic["address"])
+            if coords:
+                get_isochrone(coords[0], coords[1])
+        except:
+            pass
+        _preload_status["done"] += 1
 
-    acs = get_census_acs(state_fips, county_fips) if state_fips else {"population": None, "median_income": None}
-    sahie = get_sahie_insurance(state_fips, county_fips) if state_fips else {"insured_pct": None}
-    cms = get_cms_data(zipcode) if zipcode else {"cpt36475_volume": None}
-    isochrone = get_isochrone(lat, lon)
+    with ThreadPoolExecutor(max_workers=5) as ex:
+        ex.map(load_one, CLINICS)
 
-    density = None
-    if acs.get("population"):
-        density = round(acs["population"] / (math.pi * 10 ** 2), 1)
+    _preload_status["complete"] = True
+    print(f"Preload complete: {_preload_status['done']}/{_preload_status['total']} clinics cached")
 
-    errors = []
-    for src, d in [("ACS", acs), ("Insurance", sahie), ("CMS", cms)]:
-        if d.get("error"):
-            errors.append(f"{src}: {d['error']}")
-
-    return {
-        "address": address,
-        "lat": lat,
-        "lon": lon,
-        "zip": zipcode,
-        "population_density": density,
-        "median_income": acs.get("median_income"),
-        "insured_pct": sahie.get("insured_pct"),
-        "cpt36475_volume": cms.get("cpt36475_volume"),
-        "isochrone": isochrone,
-        "errors": errors,
-    }
+threading.Thread(target=_preload_worker, daemon=True).start()
 
 
-# ── Routes ──────────────────────────────────────────────
+# ── Routes ───────────────────────────────────────────────────────
 
 @app.route("/")
 def index():
-    return render_template("index.html", clinics=CLINICS, clinics_json=json.dumps(CLINICS))
+    return render_template("index.html",
+                           clinics=CLINICS,
+                           clinics_json=json.dumps(CLINICS))
 
+@app.route("/preload-status")
+def preload_status():
+    return jsonify(_preload_status)
 
-@app.route("/analyze", methods=["POST"])
-def analyze():
-    data = request.get_json()
-    address = (data.get("address") or "").strip()
-    if not address:
-        return jsonify({"error": "No address provided"}), 400
-    return jsonify(full_analyze(address))
-
+@app.route("/clinic-coords")
+def clinic_coords():
+    """Return geocoded coordinates + cached isochrones for all clinics.
+    Called once on page load so the map populates immediately."""
+    results = []
+    for clinic in CLINICS:
+        coords = geocode_address(clinic["address"])
+        if not coords:
+            continue
+        lat, lon = coords
+        iso_key = f"iso:{lat:.4f},{lon:.4f}"
+        results.append({
+            "name": clinic["name"],
+            "address": clinic["address"],
+            "lat": lat,
+            "lon": lon,
+            "isochrone": _cache.get(iso_key),  # None if not yet cached
+        })
+    return jsonify(results)
 
 @app.route("/isochrone", methods=["POST"])
-def isochrone_only():
-    """Lightweight endpoint: just geocode + isochrone, no census data."""
+def isochrone_endpoint():
+    """Fetch isochrone for a single address (used for custom locations)."""
     data = request.get_json()
     address = (data.get("address") or "").strip()
     name = data.get("name", address)
     if not address:
-        return jsonify({"error": "No address provided"}), 400
-
+        return jsonify({"error": "No address"}), 400
     coords = geocode_address(address)
     if not coords:
         return jsonify({"error": f"Could not geocode: {address}"})
-
     lat, lon = coords
     iso = get_isochrone(lat, lon)
+    return jsonify({"name": name, "address": address, "lat": lat, "lon": lon, "isochrone": iso})
 
+@app.route("/demographics", methods=["POST"])
+def demographics():
+    """Fetch census + CMS data for a single address (separate from isochrone)."""
+    data = request.get_json()
+    address = (data.get("address") or "").strip()
+    if not address:
+        return jsonify({"error": "No address"}), 400
+    coords = geocode_address(address)
+    if not coords:
+        return jsonify({"error": f"Could not geocode: {address}"})
+    lat, lon = coords
+    zipcode = extract_zip(address)
+    state_fips, county_fips = get_county_fips(lat, lon)
+    acs = get_census_acs(state_fips, county_fips) if state_fips else {}
+    sahie = get_sahie(state_fips, county_fips) if state_fips else {}
+    cms = get_cms(zipcode) if zipcode else {}
+    density = None
+    if acs.get("population"):
+        density = round(acs["population"] / (math.pi * 10 ** 2), 1)
     return jsonify({
-        "name": name,
-        "address": address,
-        "lat": lat,
-        "lon": lon,
-        "isochrone": iso,
+        "lat": lat, "lon": lon, "zip": zipcode,
+        "population_density": density,
+        "median_income": acs.get("median_income"),
+        "insured_pct": sahie.get("insured_pct"),
+        "cpt36475_volume": cms.get("cpt36475_volume"),
     })
 
 
