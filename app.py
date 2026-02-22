@@ -1,12 +1,32 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, flash
 import requests
 import math
 import os
 import re
 import json
 import threading
+from auth import login_required, APP_USERNAME, APP_PASSWORD
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("SECRET_KEY", "vtc-clinic-demo-secret-2024")
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "").strip()
+        if username == APP_USERNAME and password == APP_PASSWORD:
+            session["logged_in"] = True
+            return redirect(request.args.get("next", "/"))
+        flash("Invalid username or password.", "danger")
+    return render_template("login.html")
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
 
 CLINICS = [
     {"name": "Astoria, NY", "address": "23-25 31st St Suite 410, Astoria, NY 11105"},
@@ -247,16 +267,19 @@ threading.Thread(target=_preload_worker, daemon=True).start()
 # ── Routes ───────────────────────────────────────────────────────
 
 @app.route("/")
+@login_required
 def index():
     return render_template("index.html",
                            clinics=CLINICS,
                            clinics_json=json.dumps(CLINICS))
 
 @app.route("/preload-status")
+@login_required
 def preload_status():
     return jsonify(_preload_status)
 
 @app.route("/clinic-coords")
+@login_required
 def clinic_coords():
     """Return geocoded coordinates + cached isochrones for all clinics.
     Called once on page load so the map populates immediately."""
@@ -277,6 +300,7 @@ def clinic_coords():
     return jsonify(results)
 
 @app.route("/isochrone", methods=["POST"])
+@login_required
 def isochrone_endpoint():
     """Fetch isochrone for a single address (used for custom locations)."""
     data = request.get_json()
@@ -292,6 +316,7 @@ def isochrone_endpoint():
     return jsonify({"name": name, "address": address, "lat": lat, "lon": lon, "isochrone": iso})
 
 @app.route("/demographics", methods=["POST"])
+@login_required
 def demographics():
     """Fetch census + CMS data for a single address (separate from isochrone)."""
     data = request.get_json()
