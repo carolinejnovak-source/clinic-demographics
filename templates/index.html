@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Clinic Demographics Analyzer</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <link href="/static/style.css" rel="stylesheet"/>
+</head>
+<body>
+
+<nav class="navbar navbar-dark bg-primary px-4 py-3">
+  <span class="navbar-brand fw-bold fs-5">
+    <i class="fa fa-heartbeat me-2"></i>Vein Treatment Clinic — Demographics Analyzer
+  </span>
+</nav>
+
+<div class="container-fluid mt-4">
+  <div class="row g-4">
+
+    <!-- Sidebar -->
+    <div class="col-lg-3 col-md-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-primary text-white fw-semibold">
+          <i class="fa fa-map-marker-alt me-2"></i>Clinic Locations
+        </div>
+        <div class="card-body p-0">
+          <div class="p-3 border-bottom">
+            <div class="input-group input-group-sm">
+              <input id="searchInput" type="text" class="form-control" placeholder="Search clinics..."/>
+              <span class="input-group-text"><i class="fa fa-search"></i></span>
+            </div>
+          </div>
+          <div id="clinicList" style="max-height: 420px; overflow-y: auto;">
+            {% for clinic in clinics %}
+            <button class="clinic-item list-group-item list-group-item-action px-3 py-2 border-0 border-bottom"
+                    data-address="{{ clinic.address }}"
+                    data-name="{{ clinic.name }}"
+                    onclick="selectClinic(this)">
+              <div class="fw-semibold small">{{ clinic.name }}</div>
+              <div class="text-muted" style="font-size:0.75rem;">{{ clinic.address }}</div>
+            </button>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="card-footer p-3">
+          <div class="fw-semibold small text-muted mb-2"><i class="fa fa-plus-circle me-1 text-success"></i>Analyze New Location</div>
+          <input id="newAddress" type="text" class="form-control form-control-sm mb-2"
+                 placeholder="Enter address to analyze..."/>
+          <button class="btn btn-success btn-sm w-100" onclick="analyzeCustom()">
+            <i class="fa fa-search-location me-1"></i>Analyze Location
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Panel -->
+    <div class="col-lg-9 col-md-8">
+      <!-- Welcome State -->
+      <div id="welcomePanel" class="text-center py-5 text-muted">
+        <i class="fa fa-map-marked-alt fa-4x mb-3 text-primary opacity-50"></i>
+        <h5>Select a clinic or enter a new address to analyze demographics</h5>
+        <p class="small">Population density, income, insurance coverage, CPT 36475 volume, and Fair Health benchmarks</p>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loadingPanel" class="text-center py-5 d-none">
+        <div class="spinner-border text-primary mb-3" role="status"></div>
+        <div class="text-muted">Fetching demographic data...</div>
+        <div class="text-muted small mt-1">Pulling from Census ACS, CMS Medicare, and Fair Health sources</div>
+      </div>
+
+      <!-- Error State -->
+      <div id="errorPanel" class="d-none">
+        <div class="alert alert-danger">
+          <i class="fa fa-exclamation-circle me-2"></i>
+          <span id="errorMessage">An error occurred.</span>
+        </div>
+      </div>
+
+      <!-- Results Panel -->
+      <div id="resultsPanel" class="d-none">
+        <div class="d-flex align-items-center mb-4">
+          <div>
+            <h5 class="mb-0 fw-bold" id="resultTitle"></h5>
+            <small class="text-muted" id="resultAddress"></small>
+          </div>
+          <span class="badge bg-primary ms-auto" id="resultZip"></span>
+        </div>
+
+        <div class="row g-3">
+          <!-- Population Density -->
+          <div class="col-md-6 col-xl-4">
+            <div class="metric-card card shadow-sm h-100">
+              <div class="card-body">
+                <div class="metric-icon text-primary"><i class="fa fa-users"></i></div>
+                <div class="metric-label">Population Density</div>
+                <div class="metric-value" id="metricDensity">—</div>
+                <div class="metric-sub">people per sq mile (10-mi radius)</div>
+                <div class="metric-source">Source: Census ACS 2022</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Median Household Income -->
+          <div class="col-md-6 col-xl-4">
+            <div class="metric-card card shadow-sm h-100">
+              <div class="card-body">
+                <div class="metric-icon text-success"><i class="fa fa-dollar-sign"></i></div>
+                <div class="metric-label">Median Household Income</div>
+                <div class="metric-value" id="metricIncome">—</div>
+                <div class="metric-sub">annual, per household</div>
+                <div class="metric-source">Source: Census ACS 2022</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Health Insurance Coverage -->
+          <div class="col-md-6 col-xl-4">
+            <div class="metric-card card shadow-sm h-100">
+              <div class="card-body">
+                <div class="metric-icon text-info"><i class="fa fa-shield-alt"></i></div>
+                <div class="metric-label">Health Insurance Coverage</div>
+                <div class="metric-value" id="metricInsured">—</div>
+                <div class="metric-sub">% of population with coverage</div>
+                <div class="metric-source">Source: Census ACS 2022</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CPT 36475 Volume -->
+          <div class="col-md-6 col-xl-4">
+            <div class="metric-card card shadow-sm h-100">
+              <div class="card-body">
+                <div class="metric-icon text-warning"><i class="fa fa-syringe"></i></div>
+                <div class="metric-label">CPT 36475 Procedures</div>
+                <div class="metric-value" id="metricCPT">—</div>
+                <div class="metric-sub">Medicare services in this ZIP (annual)</div>
+                <div class="metric-source">Source: CMS Medicare Provider Data</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fair Health -->
+          <div class="col-md-6 col-xl-4">
+            <div class="metric-card card shadow-sm h-100">
+              <div class="card-body">
+                <div class="metric-icon text-danger"><i class="fa fa-chart-bar"></i></div>
+                <div class="metric-label">Fair Health — CPT 36475</div>
+                <div class="metric-value" style="font-size: 1.3rem;">$1,200–$1,800</div>
+                <div class="metric-sub">Typical 50th percentile benchmark (varies by region)</div>
+                <div id="fairHealthLink" class="mt-2"></div>
+                <div class="metric-source">Source: Fair Health Consumer</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Map Coordinates -->
+          <div class="col-md-6 col-xl-4">
+            <div class="metric-card card shadow-sm h-100">
+              <div class="card-body">
+                <div class="metric-icon text-secondary"><i class="fa fa-crosshairs"></i></div>
+                <div class="metric-label">Geocoded Location</div>
+                <div class="metric-value" id="metricCoords" style="font-size: 1rem;">—</div>
+                <div class="metric-sub">Latitude / Longitude</div>
+                <div id="mapLink" class="mt-2"></div>
+                <div class="metric-source">Source: Census Geocoder</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerts for data issues -->
+        <div id="dataAlerts" class="mt-3"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let currentName = '';
+
+function selectClinic(btn) {
+  document.querySelectorAll('.clinic-item').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentName = btn.dataset.name;
+  fetchAnalysis(btn.dataset.address, btn.dataset.name);
+}
+
+function analyzeCustom() {
+  const addr = document.getElementById('newAddress').value.trim();
+  if (!addr) { alert('Please enter an address.'); return; }
+  currentName = 'Custom Location';
+  fetchAnalysis(addr, 'Custom Location');
+}
+
+function fetchAnalysis(address, name) {
+  showState('loading');
+  fetch('/analyze', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({address})
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.error) { showError(data.error); return; }
+    renderResults(data, name);
+  })
+  .catch(e => showError('Network error: ' + e.message));
+}
+
+function renderResults(d, name) {
+  document.getElementById('resultTitle').textContent = name;
+  document.getElementById('resultAddress').textContent = d.address;
+  document.getElementById('resultZip').textContent = d.zip ? 'ZIP: ' + d.zip : '';
+
+  // Population density
+  document.getElementById('metricDensity').textContent =
+    d.population_density != null ? d.population_density.toLocaleString() : '—';
+
+  // Median income
+  document.getElementById('metricIncome').textContent =
+    d.median_income ? '$' + d.median_income.toLocaleString() : '—';
+
+  // Insurance
+  document.getElementById('metricInsured').textContent =
+    d.insured_pct != null ? d.insured_pct + '%' : '—';
+
+  // CPT 36475
+  document.getElementById('metricCPT').textContent =
+    d.cpt36475_volume != null ? d.cpt36475_volume.toLocaleString() : '—';
+
+  // Coords
+  document.getElementById('metricCoords').textContent =
+    d.lat && d.lon ? `${d.lat.toFixed(4)}, ${d.lon.toFixed(4)}` : '—';
+
+  // Map link
+  if (d.lat && d.lon) {
+    document.getElementById('mapLink').innerHTML =
+      `<a href="https://www.google.com/maps?q=${d.lat},${d.lon}" target="_blank" class="btn btn-outline-secondary btn-sm mt-1">
+        <i class="fa fa-map me-1"></i>View on Map
+      </a>`;
+  }
+
+  // Fair Health link
+  document.getElementById('fairHealthLink').innerHTML =
+    `<a href="${d.fair_health_url}" target="_blank" class="btn btn-outline-danger btn-sm mt-1">
+      <i class="fa fa-external-link-alt me-1"></i>Look up on Fair Health
+    </a>
+    <div class="text-muted mt-1" style="font-size:0.72rem;">${d.fair_health_note}</div>`;
+
+  // Alerts
+  let alerts = '';
+  if (d.census_error) {
+    alerts += `<div class="alert alert-warning py-2 small"><i class="fa fa-exclamation-triangle me-1"></i>Census data issue: ${d.census_error}</div>`;
+  }
+  if (d.cms_error) {
+    alerts += `<div class="alert alert-warning py-2 small"><i class="fa fa-exclamation-triangle me-1"></i>CMS data issue: ${d.cms_error}</div>`;
+  }
+  document.getElementById('dataAlerts').innerHTML = alerts;
+
+  showState('results');
+}
+
+function showError(msg) {
+  document.getElementById('errorMessage').textContent = msg;
+  showState('error');
+}
+
+function showState(state) {
+  document.getElementById('welcomePanel').classList.add('d-none');
+  document.getElementById('loadingPanel').classList.add('d-none');
+  document.getElementById('errorPanel').classList.add('d-none');
+  document.getElementById('resultsPanel').classList.add('d-none');
+  if (state === 'loading') document.getElementById('loadingPanel').classList.remove('d-none');
+  else if (state === 'error') document.getElementById('errorPanel').classList.remove('d-none');
+  else if (state === 'results') document.getElementById('resultsPanel').classList.remove('d-none');
+  else document.getElementById('welcomePanel').classList.remove('d-none');
+}
+
+// Search/filter clinics
+document.getElementById('searchInput').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('.clinic-item').forEach(btn => {
+    const match = btn.dataset.name.toLowerCase().includes(q) ||
+                  btn.dataset.address.toLowerCase().includes(q);
+    btn.style.display = match ? '' : 'none';
+  });
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

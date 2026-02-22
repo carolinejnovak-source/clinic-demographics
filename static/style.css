@@ -1,0 +1,95 @@
+body {
+  background-color: #f5f7fa;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.navbar {
+  background: linear-gradient(135deg, #0d6efd, #0a58ca) !important;
+}
+
+.card {
+  border: none;
+  border-radius: 12px;
+}
+
+.card-header {
+  border-radius: 12px 12px 0 0 !important;
+  font-size: 0.9rem;
+}
+
+.clinic-item {
+  cursor: pointer;
+  transition: background-color 0.15s;
+  border-bottom: 1px solid #f0f0f0 !important;
+}
+
+.clinic-item:hover {
+  background-color: #e8f0fe;
+}
+
+.clinic-item.active {
+  background-color: #dbeafe !important;
+  border-left: 3px solid #0d6efd;
+}
+
+.metric-card {
+  border-radius: 12px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1) !important;
+}
+
+.metric-icon {
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+}
+
+.metric-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6c757d;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.metric-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.metric-sub {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-bottom: 4px;
+}
+
+.metric-source {
+  font-size: 0.65rem;
+  color: #bbb;
+  margin-top: 8px;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 6px;
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+#clinicList::-webkit-scrollbar {
+  width: 4px;
+}
+#clinicList::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+#clinicList::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
