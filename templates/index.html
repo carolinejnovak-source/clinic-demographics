@@ -163,7 +163,7 @@
     </div>
     <div id="sidebar-legend">
       <span class="dot" style="background:#1a56db;"></span>10-min drive &nbsp;
-      <span class="dot" style="background:#93c5fd;"></span>20-min drive<br>
+      <span class="dot" style="background:#5ba3f5;"></span>20-min drive<br>
       <span style="color:#bbb;">Valhalla · OSM speed limits · avg conditions</span>
     </div>
   </div>
@@ -244,7 +244,7 @@
     <span style="color:#9ca3af;font-size:.8rem;">Drive-time zones · all 45 clinics</span>
     <div class="ms-auto d-flex gap-3 align-items-center">
       <span style="font-size:.78rem;"><span class="dot" style="background:#1a56db;"></span>10-min</span>
-      <span style="font-size:.78rem;"><span class="dot" style="background:#93c5fd;"></span>20-min</span>
+      <span style="font-size:.78rem;"><span class="dot" style="background:#5ba3f5;"></span>20-min</span>
       <span id="all-progress" style="font-size:.78rem;color:#9ca3af;"></span>
       <button class="btn btn-sm btn-primary" id="loadAllBtn" onclick="loadAllClinics()">
         <i class="fa fa-sync me-1"></i>Load All Isochrones
@@ -261,7 +261,7 @@
     <span style="color:#9ca3af;font-size:.8rem;">Existing (blue) + Potential sites (yellow)</span>
     <div class="ms-auto d-flex gap-3 align-items-center flex-wrap">
       <span style="font-size:.75rem;"><span class="dot" style="background:#1a56db;"></span>Existing 10-min</span>
-      <span style="font-size:.75rem;"><span class="dot" style="background:#93c5fd;"></span>20-min</span>
+      <span style="font-size:.75rem;"><span class="dot" style="background:#5ba3f5;"></span>20-min</span>
       <span style="font-size:.75rem;"><span class="dot" style="background:#d97706;"></span>Potential 10-min</span>
       <span style="font-size:.75rem;"><span class="dot" style="background:#fcd34d;"></span>20-min</span>
     </div>
@@ -328,7 +328,7 @@ function loadClinicCoords() {
 
         // If isochrone already cached by server, draw it lightly
         if (c.isochrone) {
-          drawIsochrones(map1, c.isochrone, c.name, {inner:'#1a56db', outer:'#93c5fd'}, 0.07, 0.04);
+          drawIsochrones(map1, c.isochrone, c.name, {inner:'#1a56db', outer:'#5ba3f5'}, 0.07, 0.04);
         }
       });
     })
@@ -359,12 +359,13 @@ function drawIsochrones(map, isoData, name, colors, innerOpacity, outerOpacity) 
     const mins = f.properties?.contour || 0;
     const isInner = mins <= 10;
     const color = isInner ? colors.inner : colors.outer;
+    const strokeColor = isInner ? color : (colors.outerStroke ?? '#1e40af');
     const layer = L.geoJSON(f, {
       style: {
-        color, fillColor: color,
-        fillOpacity: isInner ? (innerOpacity ?? 0.22) : (outerOpacity ?? 0.12),
-        weight: isInner ? 2 : 1.5,
-        dashArray: isInner ? null : '5,4'
+        color: strokeColor, fillColor: color,
+        fillOpacity: isInner ? (innerOpacity ?? 0.22) : (outerOpacity ?? 0.18),
+        weight: isInner ? 2 : 2.5,
+        dashArray: isInner ? null : '6,4'
       }
     }).bindPopup(`<b>${name}</b><br>${mins}-min drive`).addTo(map);
     layers.push(layer);
@@ -422,7 +423,7 @@ function showClinic(address, name) {
     if (cached.isochrone) {
       // Draw isochrones right away from cache
       map1IsoLayers = drawIsochrones(map1, cached.isochrone, name,
-        {inner:'#1a56db', outer:'#93c5fd'});
+        {inner:'#1a56db', outer:'#5ba3f5'});
       fitToIsochrone(cached.isochrone);
     } else {
       // Fetch isochrone in background
@@ -457,7 +458,7 @@ function fetchAndDrawIsochrone(address, name, knownLat, knownLon) {
 
     if (!knownLat) map1.setView([d.lat, d.lon], 12);
 
-    map1IsoLayers = drawIsochrones(map1, d.isochrone, name, {inner:'#1a56db', outer:'#93c5fd'});
+    map1IsoLayers = drawIsochrones(map1, d.isochrone, name, {inner:'#1a56db', outer:'#5ba3f5'});
     fitToIsochrone(d.isochrone);
   })
   .catch(e => console.warn('Isochrone error:', e));
@@ -567,7 +568,7 @@ async function loadAllClinics() {
         const r = await fetch('/isochrone',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:clinic.address,name:clinic.name})});
         const d = await r.json();
         if (!d.error && d.lat) {
-          drawIsochrones(map2, d.isochrone, clinic.name, {inner:'#1a56db',outer:'#93c5fd'});
+          drawIsochrones(map2, d.isochrone, clinic.name, {inner:'#1a56db',outer:'#5ba3f5'});
           addMarker(map2, d.lat, d.lon, clinic.name, '#1a56db');
         }
       } catch(e){}
@@ -592,7 +593,7 @@ async function loadExistingOnMarket() {
         const r = await fetch('/isochrone',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:clinic.address,name:clinic.name})});
         const d = await r.json();
         if (!d.error && d.lat) {
-          drawIsochrones(map3, d.isochrone, clinic.name, {inner:'#1a56db',outer:'#93c5fd'});
+          drawIsochrones(map3, d.isochrone, clinic.name, {inner:'#1a56db',outer:'#5ba3f5'});
           addMarker(map3, d.lat, d.lon, clinic.name, '#1a56db');
         }
       } catch(e){}
