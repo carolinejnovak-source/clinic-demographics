@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Site Comparison – VIP Site Analyzer</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<style>
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:'Inter',system-ui,sans-serif; background:#f1f5f9; display:flex; flex-direction:column; height:100vh; overflow:hidden; }
+  /* Navbar */
+  #navbar { display:flex; align-items:center; padding:0 16px; height:46px; background:#0f172a; color:#fff; gap:10px; flex-shrink:0; z-index:100; }
+  .brand { font-weight:800; font-size:.95rem; color:#fff; margin-right:10px; letter-spacing:-.01em; }
+  .tab-btn { background:transparent; border:none; color:rgba(255,255,255,.6); font-size:.78rem; font-weight:600; padding:6px 12px; border-radius:6px; cursor:pointer; }
+  .tab-btn:hover { background:rgba(255,255,255,.1); color:#fff; }
+  .tab-btn.active { background:#1a56db; color:#fff; }
+  /* Layout */
+  #app { display:flex; flex:1; overflow:hidden; }
+  /* Sidebar */
+  #sidebar { width:260px; flex-shrink:0; background:#fff; border-right:1px solid #e5e7eb; display:flex; flex-direction:column; overflow:hidden; }
+  #sidebar-header { padding:12px; border-bottom:1px solid #e5e7eb; flex-shrink:0; }
+  #sidebar-header .title { font-weight:800; font-size:.82rem; color:#1e293b; margin-bottom:6px; }
+  #searchInput { font-size:.75rem; }
+  #clinic-list { flex:1; overflow-y:auto; }
+  #clinic-list::-webkit-scrollbar { width:4px; }
+  #clinic-list::-webkit-scrollbar-thumb { background:#ddd; border-radius:4px; }
+  .territory-header { padding:6px 12px; font-size:.7rem; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:.06em; background:#f8fafc; cursor:pointer; display:flex; justify-content:space-between; border-bottom:1px solid #e5e7eb; user-select:none; }
+  .territory-body.collapsed { display:none; }
+  .clinic-row { display:flex; align-items:center; padding:8px 12px; border-bottom:1px solid #f1f5f9; cursor:pointer; gap:8px; transition:background .1s; }
+  .clinic-row:hover { background:#f0f9ff; }
+  .clinic-row.selected { background:#dbeafe; border-left:3px solid #1a56db; }
+  .cname { font-size:.78rem; font-weight:700; color:#1e293b; }
+  .caddr { font-size:.65rem; color:#94a3b8; }
+  .status-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:4px; }
+  #cmp-action-bar { padding:10px 12px; border-top:1px solid #e5e7eb; flex-shrink:0; background:#f8fafc; }
+  #run-cmp-btn { width:100%; font-weight:700; font-size:.8rem; }
+  #cmp-hint { font-size:.7rem; color:#94a3b8; text-align:center; margin-top:6px; }
+  /* Main */
+  #main { flex:1; overflow:hidden; display:flex; flex-direction:column; }
+  #compare-placeholder { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:#94a3b8; gap:12px; }
+  #compare-placeholder i { font-size:3rem; color:#dbeafe; }
+  #grid-wrap { flex:1; overflow:auto; display:none; }
+  /* Grid */
+  #compare-grid { width:100%; border-collapse:separate; border-spacing:0; font-size:.78rem; }
+  #compare-grid th { background:#1a56db; color:#fff; padding:10px 14px; text-align:center; font-weight:700; font-size:.74rem; position:sticky; top:0; z-index:5; white-space:nowrap; border-right:1px solid rgba(255,255,255,.15); }
+  #compare-grid th:first-child { text-align:left; min-width:180px; background:#1e40af; }
+  #compare-grid td { padding:8px 14px; border-bottom:1px solid #f0f0f0; text-align:center; font-weight:600; border-right:1px solid #f0f0f0; }
+  #compare-grid td:first-child { text-align:left; font-weight:700; color:#374151; background:#f8fafc; position:sticky; left:0; z-index:2; white-space:nowrap; border-right:2px solid #e5e7eb; }
+  #compare-grid tr:hover td { background:#f0f9ff !important; }
+  #compare-grid tr:hover td:first-child { background:#dbeafe !important; }
+  .cmp-section td { background:#e8ecf0 !important; font-size:.68rem; font-weight:800 !important; color:#6b7280 !important; text-transform:uppercase; letter-spacing:.06em; }
+  .cmp-best  { background:#86efac !important; color:#14532d !important; }
+  .cmp-mid   { background:#bbf7d0 !important; color:#166534 !important; }
+  .cmp-worst { background:#dcfce7 !important; color:#15803d !important; }
+  .cmp-blue  { background:#dbeafe !important; color:#1e40af !important; }
+  .cmp-na    { color:#d1d5db; font-weight:400; }
+  .cmp-pink-best  { background:#f9a8d4 !important; color:#831843 !important; }
+  .cmp-pink-mid   { background:#fbcfe8 !important; color:#9d174d !important; }
+  .cmp-pink-worst { background:#fce7f3 !important; color:#be185d !important; }
+  .cmp-orange-best  { background:#fed7aa !important; color:#7c2d12 !important; font-weight:700; }
+  .cmp-orange-mid   { background:#ffedd5 !important; color:#9a3412 !important; }
+  .cmp-orange-worst { background:#fff7ed !important; color:#c2410c !important; }
+  #loading-bar { display:none; padding:20px; text-align:center; color:#64748b; font-size:.85rem; }
+</style>
+</head>
+<body>
+
+<div id="navbar">
+  <div class="brand"><i class="fa fa-heartbeat me-2"></i>VIP Site Analyzer</div>
+  <div style="margin-left:auto;display:flex;gap:6px;">
+    <button class="tab-btn" onclick="location.href='/clinic-demographics/'"><i class="fa fa-search-location me-1"></i>Site Analysis</button>
+    <button class="tab-btn active"><i class="fa fa-columns me-1"></i>Site Comparison</button>
+    <button class="tab-btn" onclick="location.href='/clinic-demographics/'"><i class="fa fa-layer-group me-1"></i>Market Analysis</button>
+  </div>
+</div>
+
+<div id="app">
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <div id="sidebar-header">
+      <div class="title"><i class="fa fa-hand-pointer me-1"></i>Select Sites to Compare</div>
+      <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search sites..."/>
+    </div>
+    <div id="clinic-list">
+      {% for territory, sites in territories.items() %}
+      <div class="territory-header" onclick="toggleTerritory(this)">
+        <span>{{ territory }} <span style="color:#94a3b8;font-weight:400;">({{ sites|length }})</span></span>
+        <span>▼</span>
+      </div>
+      <div class="territory-body">
+        {% for clinic in sites %}
+        <div class="clinic-row" data-address="{{ clinic.address }}" data-name="{{ clinic.name }}" data-color="{{ clinic.color }}" onclick="toggleSelect(this)">
+          <div>
+            <div class="cname">
+              <span class="status-dot" style="background:{{ '#1a56db' if clinic.color=='blue' else ('#8b5cf6' if clinic.color=='purple' else '#f97316') }}"></span>
+              {{ clinic.name }}
+            </div>
+            <div class="caddr">{{ clinic.address }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+    <div id="cmp-action-bar">
+      <button id="run-cmp-btn" class="btn btn-primary btn-sm" onclick="runComparison()" disabled>
+        <i class="fa fa-columns me-1"></i>Compare Selected (<span id="sel-count">0</span>)
+      </button>
+      <div id="cmp-hint">Select 2 or more sites</div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div id="main">
+    <div id="compare-placeholder">
+      <i class="fa fa-columns"></i>
+      <div style="font-weight:700;font-size:1rem;">Select sites from the left to compare</div>
+      <div style="font-size:.8rem;">Click any clinic to select it, then hit Compare</div>
+    </div>
+    <div id="loading-bar"><i class="fa fa-spinner fa-spin me-2"></i>Loading data for selected sites...</div>
+    <div id="grid-wrap">
+      <table id="compare-grid">
+        <thead><tr id="cmp-header-row"></tr></thead>
+        <tbody id="cmp-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  const LOOKER = {{ looker_data_json | safe }};
+  window.clinicCoordsCache = {};
+  window._coordsReady = fetch('/clinic-demographics/clinic-coords')
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      data.forEach(function(c){
+        if (c.address && c.lat) {
+          window.clinicCoordsCache[c.address] = {lat: c.lat, lon: c.lon};
+        }
+      });
+    }).catch(function(){});
+const selected = new Set();
+
+function toggleTerritory(hdr) {
+  hdr.nextElementSibling.classList.toggle('collapsed');
+}
+
+document.getElementById('searchInput').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('.clinic-row').forEach(r => {
+    r.style.display = (r.dataset.name.toLowerCase().includes(q) || r.dataset.address.toLowerCase().includes(q)) ? '' : 'none';
+  });
+});
+
+function toggleSelect(row) {
+  const addr = row.dataset.address;
+  if (selected.has(addr)) {
+    selected.delete(addr);
+    row.classList.remove('selected');
+  } else {
+    selected.add(addr);
+    row.classList.add('selected');
+  }
+  const n = selected.size;
+  document.getElementById('sel-count').textContent = n;
+  document.getElementById('run-cmp-btn').disabled = n < 2;
+  document.getElementById('cmp-hint').textContent = n < 2 ? 'Select 2 or more sites' : n + ' sites selected';
+}
+
+async function runComparison() {
+  const addrs = [...selected];
+  document.getElementById('compare-placeholder').style.display = 'none';
+  document.getElementById('grid-wrap').style.display = 'none';
+  document.getElementById('loading-bar').style.display = 'block';
+
+  const results = [];
+  for (const addr of addrs) {
+    const row = document.querySelector(`.clinic-row[data-address="${CSS.escape(addr)}"]`);
+    const name = row ? (row.dataset.name || row.querySelector('.cname').textContent.replace(/\s+/g,' ').trim()) : addr;
+    try {
+      const r = await fetch('/clinic-demographics/demographics', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({address: addr})
+      });
+      const d = await r.json();
+      results.push({name, addr, ...d});
+    } catch(e) {
+      results.push({name, addr, error: true});
+    }
+  }
+
+  document.getElementById('loading-bar').style.display = 'none';
+  buildGrid(results);
+  document.getElementById('grid-wrap').style.display = 'block';
+}
+
+function buildGrid(clinics) {
+  const fmt  = (v,pre='') => v != null ? pre + Number(v).toLocaleString() : '<span class="cmp-na">—</span>';
+  const fmtP = v => v != null ? Number(v).toFixed(1) + '%' : '<span class="cmp-na">—</span>';
+
+  const METRICS = [
+    {section: '\u{1F465} Population (Drive-Time Rings)'},
+    {key:'pop_10min',           label:'Total Pop \u00B7 10 min',   fmt:v=>fmt(v),     dir:1, green:true},
+    {key:'pop_20min',           label:'Total Pop \u00B7 20 min',   fmt:v=>fmt(v),     dir:1, green:true},
+    {key:'female_35plus_10min', label:'Female 35+ \u00B7 10 min',  fmt:v=>fmt(v),     dir:1, green:true},
+    {key:'female_35plus_20min', label:'Female 35+ \u00B7 20 min',  fmt:v=>fmt(v),     dir:1, green:true},
+    {section: '\u{1F4C5} Monthly Initials (12-mo avg, Looker)'},
+    {key:'_created_monthly',  label:'Created Initials / mo',   fmt:v=>v!=null?v.toFixed(1):'<span class="cmp-na">—</span>', dir:1, pink:true},
+    {key:'_fulfilled_monthly',label:'Fulfilled Initials / mo',  fmt:v=>v!=null?v.toFixed(1):'<span class="cmp-na">—</span>', dir:1, pink:true},
+    {key:'_show_rate',        label:'Show Rate %',              fmt:v=>v!=null?v.toFixed(1)+'%':'<span class="cmp-na">—</span>', dir:1, pink:true},
+    {section: '\u{1F4E3} 1AC Ad Performance (30-min ring · 30d)'},
+    {key:'_ads_impressions', label:'Impressions',  fmt:v=>v!=null?v.toLocaleString():'<span class="cmp-na">—</span>', dir:1, orange:true},
+    {key:'_ads_clicks',      label:'Ad Clicks',    fmt:v=>v!=null?v.toLocaleString():'<span class="cmp-na">—</span>', dir:1, orange:true},
+    {key:'_ads_ctr',         label:'CTR %',        fmt:v=>v!=null?v.toFixed(2)+'%':'<span class="cmp-na">—</span>',   dir:1, orange:true},
+    {section: '\u{1F4B0} Income'},
+    {key:'median_income_zip',   label:'Median Income (ZIP)',        fmt:v=>fmt(v,'$'), dir:1, green:true},
+    {section: '\u{1F4A1} Insurance & Market Data'},
+    {key:'insured_pct',         label:'% Insured',                  fmt:fmtP,          dir:1, blue:true},
+    {section: '\u{1F489} CPT Volume (Medicare)'},
+    {key:'cpt36475_volume',     label:'CPT 36475 Volume',           fmt:v=>fmt(v),     dir:1, blue:true},
+    {key:'cpt36465_volume',     label:'CPT 36465 Volume',           fmt:v=>fmt(v),     dir:1, blue:true},
+    {key:'cpt36466_volume',     label:'CPT 36466 Volume',           fmt:v=>fmt(v),     dir:1, blue:true},
+    {key:'cpt_total_volume',    label:'Total CPT Volume',           fmt:v=>fmt(v),     dir:1, blue:true},
+    {section: '\u{1F4B5} Medicare Reimbursement'},
+    {key:'medicare_rate_36475', label:'Rate \u00B7 CPT 36475',     fmt:v=>fmt(v,'$'), dir:1, blue:true},
+    {key:'medicare_rate_36465', label:'Rate \u00B7 CPT 36465',     fmt:v=>fmt(v,'$'), dir:1, blue:true},
+    {key:'medicare_rate_36466', label:'Rate \u00B7 CPT 36466',     fmt:v=>fmt(v,'$'), dir:1, blue:true},
+    {section: '\u{1F3C1} Competition'},
+    {key:'_comp',               label:'Competitors in ZIP',         fmt:v=>fmt(v),     dir:-1, blue:true},
+  ];
+
+  const hdr = document.getElementById('cmp-header-row');
+  hdr.innerHTML = '<th>Metric</th>' + clinics.map(c => `<th>${c.name.replace(/,.*$/,'')}</th>`).join('');
+
+  const tbody = document.getElementById('cmp-body');
+  tbody.innerHTML = '';
+
+  // Fetch 1AC ring-ads — wait for clinic coords to be ready first
+  if (typeof window.RING_ADS_DATA === 'undefined') window.RING_ADS_DATA = {};
+  var _adsClinicsCopy = clinics.slice();
+  (window._coordsReady || Promise.resolve()).then(function() {
+    var today2 = new Date();
+    var start2 = new Date(today2); start2.setDate(today2.getDate()-30);
+    function _fmtD(d) { return d.toISOString().slice(0,10); }
+    var _adsPending = 0;
+    _adsClinicsCopy.forEach(function(clinic) {
+      if (window.RING_ADS_DATA[clinic.name] != null) return; // already cached
+      var coords = (window.clinicCoordsCache || {})[clinic.addr || clinic.address];
+      if (!coords || !coords.lat) return;
+      _adsPending++;
+      fetch('/clinic-demographics/api/ring-ads', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({lat: coords.lat, lon: coords.lon, startDate: _fmtD(start2), endDate: _fmtD(today2)})
+      }).then(function(r){ return r.json(); }).then(function(data){
+        window.RING_ADS_DATA[clinic.name] = data;
+        _adsPending--;
+        if (_adsPending === 0) buildGrid(_adsClinicsCopy);
+      }).catch(function(){ _adsPending--; });
+    });
+  });
+
+  for (const m of METRICS) {
+    if (m.section) {
+      const tr = document.createElement('tr');
+      tr.className = 'cmp-section';
+      tr.innerHTML = `<td colspan="${clinics.length+1}">${m.section}</td>`;
+      tbody.appendChild(tr); continue;
+    }
+    const vals = clinics.map(c => {
+      if (m.key === '_comp') return c.competitors ? c.competitors.length : null;
+      if (m.key === '_created_monthly') {
+        const ld = LOOKER[c.name];
+        return ld && ld.created_initials ? Math.round(ld.created_initials / 12 * 10) / 10 : null;
+      }
+      if (m.key === '_fulfilled_monthly') {
+        const ld = LOOKER[c.name];
+        return ld && ld.fulfilled_initials ? Math.round(ld.fulfilled_initials / 12 * 10) / 10 : null;
+      }
+      if (m.key === '_show_rate') {
+        const ld = LOOKER[c.name];
+        return (ld && ld.created_initials && ld.fulfilled_initials)
+          ? Math.round(ld.fulfilled_initials / ld.created_initials * 1000) / 10 : null;
+      }
+      if (m.key === '_ads_impressions') {
+        const ad = (window.RING_ADS_DATA || {})[c.name];
+        return ad != null ? ad.impressions : null;
+      }
+      if (m.key === '_ads_clicks') {
+        const ad = (window.RING_ADS_DATA || {})[c.name];
+        return ad != null ? ad.clicks : null;
+      }
+      if (m.key === '_ads_ctr') {
+        const ad = (window.RING_ADS_DATA || {})[c.name];
+        return (ad && ad.impressions > 0) ? Math.round(ad.clicks/ad.impressions*10000)/100 : null;
+      }
+      return c[m.key] ?? null;
+    });
+    const nums = vals.filter(v => v != null && !isNaN(v));
+    const best  = nums.length ? (m.dir===1 ? Math.max(...nums) : Math.min(...nums)) : null;
+    const worst = nums.length ? (m.dir===1 ? Math.min(...nums) : Math.max(...nums)) : null;
+    const tr = document.createElement('tr');
+    let cells = `<td>${m.label}</td>`;
+    vals.forEach(v => {
+      let cls = '';
+      if (m.blue) {
+        cls = v != null ? 'cmp-blue' : '';
+      } else if (m.pink && v != null && nums.length >= 2) {
+        if (v === best) cls = 'cmp-pink-best';
+        else if (v === worst) cls = 'cmp-pink-worst';
+        else cls = 'cmp-pink-mid';
+      } else if (m.orange && v != null && nums.length >= 2) {
+        if (v === best) cls = 'cmp-orange-best';
+        else if (v === worst) cls = 'cmp-orange-worst';
+        else cls = 'cmp-orange-mid';
+      } else if (m.green && v != null && nums.length >= 2) {
+        if (v === best) cls = 'cmp-best';
+        else if (v === worst) cls = 'cmp-worst';
+        else cls = 'cmp-mid';
+      }
+      cells += `<td class="${cls}">${m.fmt(v)}</td>`;
+    });
+    tr.innerHTML = cells;
+    tbody.appendChild(tr);
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+[
+  {
+    "name": "Amherst Beaver Creek Surgery Center",
+    "address": "915 North Lake Street",
+    "city": "Amherst",
+    "state": "OH",
+    "zip": "44001",
+    "lat": 41.408535322346,
+    "lng": -82.238943235452
+  },
+  {
+    "name": "Hackensack Musculoskeletal Surgery Center",
+    "address": "40 Prospect Ave",
+    "city": "Hackensack",
+    "state": "NJ",
+    "zip": "07601",
+    "lat": 40.884685955528,
+    "lng": -74.057528122961
+  },
+  {
+    "name": "Jefferson Surgery Center - Cherry Hill",
+    "address": "2211 Chapel Ave West",
+    "city": "Cherry Hill",
+    "state": "NJ",
+    "zip": "08002",
+    "lat": 39.92896059763,
+    "lng": -75.016802260913
+  },
+  {
+    "name": "Jefferson Surgery Center at the Navy Yard",
+    "address": "Three Crescent Drive",
+    "city": "Philadelphia",
+    "state": "PA",
+    "zip": "19112",
+    "lat": 39.896,
+    "lng": -75.174
+  },
+  {
+    "name": "Kendall Pointe Surgery Center",
+    "address": "100 5th Street ",
+    "city": "Oswego",
+    "state": "IL",
+    "zip": "60543",
+    "lat": 41.717932393494,
+    "lng": -88.313991671708
+  },
+  {
+    "name": "Minnesota Valley Surgery Center",
+    "address": "100 W 140th Street",
+    "city": "Burnsville",
+    "state": "MN",
+    "zip": "55337",
+    "lat": 44.7677,
+    "lng": -93.2777
+  },
+  {
+    "name": "Orthopedic Health of Kansas City Surgery Center",
+    "address": "8800 Ballentine St.",
+    "city": "Overland Park",
+    "state": "KS",
+    "zip": "66214",
+    "lat": 38.968784509381,
+    "lng": -94.710642832305
+  },
+  {
+    "name": "Orthopedic Surgery Center at Bryn Mawr Hospital",
+    "address": "135 S Bryn Mawr Ave",
+    "city": "Bryn Mawr",
+    "state": "PA",
+    "zip": "19010",
+    "lat": 40.018934632894,
+    "lng": -75.319907744439
+  },
+  {
+    "name": "Paoli Surgery Center",
+    "address": "1 Industrial Blvd",
+    "city": "Paoli ",
+    "state": "PA",
+    "zip": "19301",
+    "lat": 40.042272245291,
+    "lng": -75.498013577709
+  },
+  {
+    "name": "Physicians Care Surgical Hospital",
+    "address": "454 Enterprise Drive",
+    "city": "Royersford",
+    "state": "PA",
+    "zip": "19486",
+    "lat": 40.217016754108,
+    "lng": -75.554828056932
+  },
+  {
+    "name": "Riddle Surgical Center",
+    "address": "1118 West Baltimore Pike",
+    "city": "Media",
+    "state": "PA",
+    "zip": "19063",
+    "lat": 39.9122,
+    "lng": -75.4304
+  },
+  {
+    "name": "Rothman Specialty Hospital",
+    "address": "3300 Tillman Drive",
+    "city": "Bensalem",
+    "state": "PA",
+    "zip": "19020",
+    "lat": 40.116806895376,
+    "lng": -74.961279733171
+  },
+  {
+    "name": "Saint Luke's South Surgery Center",
+    "address": "12541 Foster Street",
+    "city": "Overland Park",
+    "state": "KS",
+    "zip": "66213",
+    "lat": 38.900724996648,
+    "lng": -94.672647686869
+  },
+  {
+    "name": "Saint Luke's Surgicenter - Lee's Summit",
+    "address": "120 NE Saint Lukes Blvd",
+    "city": "Lee's Summit",
+    "state": "MO",
+    "zip": "64086",
+    "lat": 38.9412,
+    "lng": -94.381
+  },
+  {
+    "name": "St. Joseph Center for Outpatient Surgery",
+    "address": "4510 Frederick Ave",
+    "city": "St. Joseph",
+    "state": "MO",
+    "zip": "64506",
+    "lat": 39.778028015905,
+    "lng": -94.787958737847
+  },
+  {
+    "name": "Surgery Center of the Northland",
+    "address": "1101 Kentucky Ave",
+    "city": "Platte City",
+    "state": "MO",
+    "zip": "64079",
+    "lat": 39.3514,
+    "lng": -94.7711
+  },
+  {
+    "name": "Surgical Center at Columbia Orthopaedic Group",
+    "address": "1 S Keene St",
+    "city": "Columbia",
+    "state": "MO",
+    "zip": "65201",
+    "lat": 38.948704617769,
+    "lng": -92.29070187379
+  }
+]

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clinic Performance — VIP Site Analyzer</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  body { margin:0; background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
+  #navbar { position:fixed; top:0; left:0; right:0; height:52px; background:linear-gradient(135deg,#1a3a8f,#1a56db); display:flex; align-items:center; padding:0 16px; gap:10px; z-index:100; }
+  #navbar .brand { color:#fff; font-weight:800; font-size:.95rem; margin-right:8px; white-space:nowrap; }
+  .tab-btn { background:rgba(255,255,255,.15); color:#fff; border:none; border-radius:6px; padding:5px 12px; font-size:.78rem; font-weight:600; cursor:pointer; transition:all .15s; white-space:nowrap; }
+  .tab-btn:hover { background:rgba(255,255,255,.28); }
+  .tab-btn.active { background:#fff; color:#1a56db; }
+  #main { margin-top:52px; padding:20px; }
+  .kpi-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:20px; }
+  .kpi-card { background:#fff; border-radius:10px; padding:14px 16px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+  .kpi-label { font-size:.72rem; color:#6b7280; font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
+  .kpi-value { font-size:1.6rem; font-weight:800; color:#1a3a8f; line-height:1.1; margin-top:4px; }
+  .kpi-card.highlight .kpi-value { color:#16a34a; }
+  .kpi-sub { font-size:.68rem; color:#9ca3af; margin-top:2px; }
+  .panel { background:#fff; border-radius:10px; padding:18px; box-shadow:0 1px 4px rgba(0,0,0,.08); margin-bottom:20px; }
+  .panel-title { font-size:.85rem; font-weight:700; color:#374151; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  .controls-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
+  .ctrl-label { font-size:.78rem; font-weight:600; color:#6b7280; }
+  select, input[type=date] { font-size:.8rem; padding:5px 9px; border:1px solid #d1d5db; border-radius:6px; background:#fff; }
+  .btn-load { background:#1a56db; color:#fff; border:none; border-radius:6px; padding:6px 16px; font-size:.8rem; font-weight:700; cursor:pointer; }
+  .btn-load:hover { background:#1a3a8f; }
+  .today-warn { background:#fef9c3; border:1px solid #fde047; border-radius:6px; padding:8px 12px; font-size:.78rem; color:#854d0e; display:none; }
+  table { width:100%; border-collapse:collapse; font-size:.8rem; }
+  th { background:#1a56db; color:#fff; padding:8px 10px; text-align:left; font-weight:700; font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; cursor:pointer; white-space:nowrap; user-select:none; }
+  th:hover { background:#1a3a8f; }
+  th .sort-icon { margin-left:4px; opacity:.6; font-size:.65rem; }
+  td { padding:7px 10px; border-bottom:1px solid #f3f4f6; }
+  tr:hover td { background:#f8fafc; }
+  .rate-great { background:#dcfce7; color:#166534; font-weight:700; border-radius:4px; padding:2px 6px; }
+  .rate-good  { background:#dcfce7; color:#166534; font-weight:700; border-radius:4px; padding:2px 6px; }
+  .rate-ok    { background:#fef9c3; color:#854d0e; font-weight:700; border-radius:4px; padding:2px 6px; }
+  .rate-bad   { background:#fee2e2; color:#991b1b; font-weight:700; border-radius:4px; padding:2px 6px; }
+  .rate-na    { color:#9ca3af; }
+  .insights-box { background:#f0f9ff; border:1px solid #bae6fd; border-radius:8px; padding:14px; font-size:.82rem; color:#0c4a6e; line-height:1.6; }
+  .insights-box strong { color:#1a3a8f; }
+  #loading-overlay { position:fixed; inset:0; background:rgba(255,255,255,.85); z-index:999; display:none; align-items:center; justify-content:center; flex-direction:column; gap:12px; }
+  #loading-overlay .spinner { width:42px; height:42px; border:4px solid #e5e7eb; border-top-color:#1a56db; border-radius:50%; animation:spin .8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .campaign-select { min-width:220px; max-width:340px; }
+  @media(max-width:768px) { .kpi-grid { grid-template-columns:repeat(2,1fr); } }
+</style>
+</head>
+<body>
+
+<div id="navbar">
+  <span class="brand">🏥 VIP Site Analyzer</span>
+  <button class="tab-btn" onclick="location.href='/clinic-demographics/'">Site Analysis</button>
+  <button class="tab-btn" onclick="location.href='/clinic-demographics/compare'">Site Comparison</button>
+  <button class="tab-btn active">Clinic Performance</button>
+</div>
+
+<div id="loading-overlay" id="loading-overlay">
+  <div class="spinner"></div>
+  <div style="font-size:.9rem;font-weight:600;color:#374151;">Loading performance data…</div>
+</div>
+
+<div id="main">
+
+  <!-- Controls -->
+  <div class="controls-row">
+    <span class="ctrl-label">Date Range:</span>
+    <select id="preset-range" onchange="applyPreset()">
+      <option value="7">Last 7 Days</option>
+      <option value="14">Last 14 Days</option>
+      <option value="30" selected>Last 30 Days</option>
+      <option value="custom">Custom</option>
+    </select>
+    <input type="date" id="start-date" style="display:none">
+    <input type="date" id="end-date" style="display:none">
+    <span class="ctrl-label" style="margin-left:8px;">Campaigns:</span>
+    <select id="campaign-filter" class="campaign-select" multiple size="1" onchange="loadData()">
+      <option value="" selected>All Campaigns</option>
+    </select>
+    <button class="btn-load" onclick="loadData()"><i class="fa fa-sync me-1"></i>Load</button>
+  </div>
+
+  <div id="today-warn" class="today-warn">
+    ⏳ Today's data may be delayed for Google Ads
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid" id="kpi-grid">
+    <div class="kpi-card"><div class="kpi-label">Clinics</div><div class="kpi-value" id="kpi-clinics">—</div></div>
+    <div class="kpi-card"><div class="kpi-label">Ad Clicks</div><div class="kpi-value" id="kpi-clicks">—</div><div class="kpi-sub">Google Ads</div></div>
+    <div class="kpi-card"><div class="kpi-label">Booked</div><div class="kpi-value" id="kpi-booked">—</div><div class="kpi-sub">LookerML</div></div>
+    <div class="kpi-card highlight"><div class="kpi-label">Avg Booked / 100 Clicks</div><div class="kpi-value" id="kpi-rate">—</div><div class="kpi-sub">Key metric</div></div>
+    <div class="kpi-card"><div class="kpi-label">Correlation</div><div class="kpi-value" id="kpi-corr">—</div><div class="kpi-sub">Clicks vs Booked</div></div>
+  </div>
+
+  <!-- Bar Chart -->
+  <div class="panel">
+    <div class="panel-title"><i class="fa fa-chart-bar"></i> Booked per 100 Ad Clicks — by Clinic (Top 25)</div>
+    <div id="chart-wrap" style="position:relative;">
+      <canvas id="bar-chart"></canvas>
+    </div>
+    <div id="chart-empty" style="color:#9ca3af;font-size:.82rem;text-align:center;padding:30px;display:none;">
+      No data with ≥5 clicks to display. Try a wider date range.
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="panel">
+    <div class="panel-title"><i class="fa fa-table"></i> Clinic Conversion Ranking</div>
+    <div style="overflow-x:auto;">
+      <table id="clinic-table">
+        <thead>
+          <tr>
+            <th onclick="sortTable('clinic')">Clinic <span class="sort-icon">↕</span></th>
+            <th onclick="sortTable('adImpressions')">Impressions <span class="sort-icon">↕</span></th>
+            <th onclick="sortTable('adClicks')">Ad Clicks <span class="sort-icon">↕</span></th>
+            <th onclick="sortTable('leads')">l_f_s <span class="sort-icon">↕</span></th>
+            <th onclick="sortTable('booked')">Booked <span class="sort-icon">↕</span></th>
+            <th onclick="sortTable('bookedPer100Clicks')" id="th-rate">Booked/100 Clicks ⭐ <span class="sort-icon">↓</span></th>
+            <th onclick="sortTable('bookedPer100Leads')">Booked/100 Leads <span class="sort-icon">↕</span></th>
+          </tr>
+        </thead>
+        <tbody id="clinic-tbody">
+          <tr><td colspan="7" style="text-align:center;color:#9ca3af;padding:30px;">Select a date range and click Load</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Insights -->
+  <div class="panel">
+    <div class="panel-title"><i class="fa fa-lightbulb"></i> Insights</div>
+    <div class="insights-box" id="insights-box">
+      Load data to see auto-generated insights.
+    </div>
+  </div>
+
+</div>
+
+<script>
+let _data = null;
+let _sortCol = 'bookedPer100Clicks';
+let _sortAsc = false;
+let _chartObj = null;
+
+function fmt(n) { return n == null ? '—' : Number(n).toLocaleString(); }
+function fmtR(n) { return n == null ? '-' : Number(n).toFixed(2); }
+
+function applyPreset() {
+  const val = document.getElementById('preset-range').value;
+  const sd = document.getElementById('start-date');
+  const ed = document.getElementById('end-date');
+  if (val === 'custom') {
+    sd.style.display = 'inline'; ed.style.display = 'inline';
+  } else {
+    sd.style.display = 'none'; ed.style.display = 'none';
+    const today = new Date();
+    const start = new Date(today); start.setDate(today.getDate() - parseInt(val));
+    sd.value = start.toISOString().slice(0,10);
+    ed.value = today.toISOString().slice(0,10);
+  }
+}
+
+function getDateRange() {
+  return {
+    start: document.getElementById('start-date').value,
+    end:   document.getElementById('end-date').value,
+  };
+}
+
+function showLoading(on) {
+  document.getElementById('loading-overlay').style.display = on ? 'flex' : 'none';
+}
+
+async function loadCampaigns(start, end) {
+  try {
+    const r = await fetch(`/clinic-demographics/api/campaigns-list?startDate=${start}&endDate=${end}`);
+    const d = await r.json();
+    const sel = document.getElementById('campaign-filter');
+    sel.innerHTML = '<option value="">All Campaigns</option>';
+    (d.campaigns || []).forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id; opt.textContent = c.name;
+      sel.appendChild(opt);
+    });
+  } catch(e) { console.error('campaigns load error', e); }
+}
+
+async function loadData() {
+  applyPreset();
+  const { start, end } = getDateRange();
+  if (!start || !end) { alert('Please select a date range.'); return; }
+
+  // Today warning
+  const today = new Date().toISOString().slice(0,10);
+  document.getElementById('today-warn').style.display = (end >= today) ? 'block' : 'none';
+
+  showLoading(true);
+  try {
+    // Load campaigns (for filter) and performance in parallel
+    const sel = document.getElementById('campaign-filter');
+    const selected = Array.from(sel.selectedOptions).map(o=>o.value).filter(v=>v);
+    const campParam = selected.length ? `&campaignIds=${selected.join(',')}` : '';
+    const [perfResp] = await Promise.all([
+      fetch(`/clinic-demographics/api/clinic-performance?startDate=${start}&endDate=${end}${campParam}`),
+      loadCampaigns(start, end)
+    ]);
+    const data = await perfResp.json();
+    if (!data.success) throw new Error(data.error || 'Unknown error');
+    _data = data;
+    renderAll(data);
+  } catch(e) {
+    alert('Error loading data: ' + e.message);
+    console.error(e);
+  } finally {
+    showLoading(false);
+  }
+}
+
+function renderAll(data) {
+  const s = data.summary;
+  document.getElementById('kpi-clinics').textContent = fmt(s.clinicsWithData);
+  document.getElementById('kpi-clicks').textContent = fmt(s.totalClicks);
+  document.getElementById('kpi-booked').textContent = fmt(s.totalBooked);
+  document.getElementById('kpi-rate').textContent = s.avgBookedPer100Clicks ? s.avgBookedPer100Clicks : '—';
+  document.getElementById('kpi-corr').textContent = data.correlation.clicks_vs_booked || '—';
+  renderChart(data.clinics);
+  renderTable(data.clinics);
+  renderInsights(data);
+}
+
+function renderChart(clinics) {
+  const qualified = clinics
+    .filter(c => c.adClicks >= 5 && c.bookedPer100Clicks != null)
+    .sort((a,b) => b.bookedPer100Clicks - a.bookedPer100Clicks)
+    .slice(0, 25);
+
+  const wrap = document.getElementById('chart-wrap');
+  const empty = document.getElementById('chart-empty');
+  if (!qualified.length) { wrap.style.display='none'; empty.style.display='block'; return; }
+  wrap.style.display='block'; empty.style.display='none';
+
+  const labels = qualified.map(c => c.clinic);
+  const values = qualified.map(c => c.bookedPer100Clicks);
+  const colors = values.map(v => v>=10 ? '#16a34a' : v>=5 ? '#4ade80' : v>=2 ? '#fbbf24' : '#ef4444');
+
+  const h = Math.max(300, qualified.length * 35);
+  wrap.style.height = h + 'px';
+
+  if (_chartObj) { _chartObj.destroy(); _chartObj = null; }
+  const canvas = document.getElementById('bar-chart');
+  canvas.height = h;
+  _chartObj = new Chart(canvas, {
+    type: 'bar',
+    data: { labels, datasets: [{ data: values, backgroundColor: colors, borderRadius: 4, barThickness: 22 }] },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => {
+              const c = qualified[ctx.dataIndex];
+              return ` ${ctx.raw} booked per 100 clicks (${c.booked} booked / ${c.adClicks} clicks)`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: { beginAtZero: true, grid: { color: '#f3f4f6' }, ticks: { font: { size: 11 } } },
+        y: { ticks: { font: { size: 11 } } }
+      }
+    }
+  });
+}
+
+function rateCell(v) {
+  if (v == null) return '<span class="rate-na">—</span>';
+  if (v >= 10) return `<span class="rate-great">🌟 ${v}</span>`;
+  if (v >= 5)  return `<span class="rate-good">⭐ ${v}</span>`;
+  if (v >= 2)  return `<span class="rate-ok">${v}</span>`;
+  return `<span class="rate-bad">⚠️ ${v}</span>`;
+}
+
+function renderTable(clinics) {
+  const sorted = [...clinics].sort((a,b) => {
+    let va = a[_sortCol], vb = b[_sortCol];
+    if (va == null) va = _sortAsc ? Infinity : -Infinity;
+    if (vb == null) vb = _sortAsc ? Infinity : -Infinity;
+    if (typeof va === 'string') return _sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+    return _sortAsc ? va - vb : vb - va;
+  });
+  const tbody = document.getElementById('clinic-tbody');
+  tbody.innerHTML = sorted.map(c => `
+    <tr>
+      <td><strong>${c.clinic}</strong></td>
+      <td>${fmt(c.adImpressions)}</td>
+      <td>${fmt(c.adClicks)}</td>
+      <td>${c.leads > 0 ? fmt(c.leads) : '<span style="color:#9ca3af">—</span>'}</td>
+      <td>${c.booked > 0 ? fmt(c.booked) : '<span style="color:#9ca3af">—</span>'}</td>
+      <td>${rateCell(c.bookedPer100Clicks)}</td>
+      <td>${c.bookedPer100Leads != null ? fmtR(c.bookedPer100Leads)+'%' : '<span style="color:#9ca3af">—</span>'}</td>
+    </tr>
+  `).join('');
+}
+
+function sortTable(col) {
+  if (_sortCol === col) _sortAsc = !_sortAsc;
+  else { _sortCol = col; _sortAsc = false; }
+  if (_data) renderTable(_data.clinics);
+}
+
+function renderInsights(data) {
+  const clinics = data.clinics;
+  const s = data.summary;
+  const r = parseFloat(data.correlation.clicks_vs_booked);
+  const good = clinics.filter(c => c.bookedPer100Clicks >= 5).slice(0,5);
+  let html = '';
+  if (good.length) {
+    html += `<strong>🌟 Best converters (≥5 booked/100 clicks):</strong> `;
+    html += good.map(c => `${c.clinic} (${c.bookedPer100Clicks})`).join(', ') + '.<br>';
+  }
+  if (s.avgBookedPer100Clicks) {
+    html += `<strong>📊 Benchmark:</strong> Across all clinics, the average is <strong>${s.avgBookedPer100Clicks} bookings per 100 ad clicks</strong>.<br>`;
+  }
+  if (!isNaN(r)) {
+    const strength = Math.abs(r) >= 0.7 ? 'strong' : Math.abs(r) >= 0.4 ? 'moderate' : 'weak';
+    html += `<strong>🔗 Correlation:</strong> r = ${r} — <strong>${strength}</strong> ${r>0?'positive':'negative'} relationship between ad clicks and bookings.`;
+    if (strength === 'weak') html += ' Ad spend alone may not be driving bookings — other factors at play.';
+  }
+  if (!html) html = 'No insights available for this date range.';
+  document.getElementById('insights-box').innerHTML = html;
+}
+
+// Init
+applyPreset();
+</script>
+</body>
+</html>
