@@ -16,3 +16,7 @@ def login_required(f):
             return redirect(url_for("login", next=request.path))
         return f(*args, **kwargs)
     return decorated
+
+
+def check_credentials(username, password):
+    return username == APP_USERNAME and password == APP_PASSWORD
