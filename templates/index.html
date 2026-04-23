@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Clinic Demographics Analyzer</title>
+  <title>VIP Site Analyzer</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -51,13 +51,35 @@
     }
     #sidebar-header .title { color: #fff; font-weight: 700; font-size: .83rem; margin-bottom: 6px; }
     #searchInput { font-size: .8rem; }
-    #clinic-list { flex: 1; overflow-y: auto; }
+    #sidebar-panels { display:flex; flex-direction:column; flex:1; overflow:hidden; min-height:0; }
+    #clinic-panel { flex:1; overflow-y:auto; min-height:80px; border-bottom:2px solid #cbd5e1; }
+    #clinic-panel::-webkit-scrollbar { width:4px; }
+    #clinic-panel::-webkit-scrollbar-thumb { background:#ddd; border-radius:4px; }
+    #partner-panel { flex:1; overflow-y:auto; min-height:80px; background:#f8fdf9; }
+    #partner-panel::-webkit-scrollbar { width:4px; }
+    #partner-panel::-webkit-scrollbar-thumb { background:#bbf7d0; border-radius:4px; }
+    #clinic-list { }
     #clinic-list::-webkit-scrollbar { width: 4px; }
     #clinic-list::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+    .partner-panel-header { padding:6px 14px; background:#14532d; color:#fff; font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+    .partner-state-header { padding:5px 14px 3px; font-size:.67rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:#166534; background:#dcfce7; border-top:1px solid #bbf7d0; cursor:pointer; display:flex; align-items:center; justify-content:space-between; user-select:none; }
+    .partner-state-header:hover { background:#bbf7d0; }
+    .partner-state-body { }
+    .partner-row { padding:4px 14px 4px 18px; border-bottom:1px solid #f0fdf4; cursor:pointer; display:flex; align-items:center; gap:6px; }
+    .partner-row:hover { background:#f0fdf4; }
+    .partner-badge { font-size:.58rem; font-weight:700; padding:1px 4px; border-radius:3px; flex-shrink:0; }
+    .badge-uspi { background:#dbeafe; color:#1d4ed8; }
+    .badge-sca  { background:#fef9c3; color:#854d0e; }
+    .badge-nue  { background:#dcfce7; color:#14532d; }
+    .partner-name { font-size:.72rem; color:#1e293b; line-height:1.2; }
+    .partner-city { font-size:.64rem; color:#94a3b8; }
+    .clinic-row { display: flex; flex-direction: row; align-items: stretch; border-bottom: 1.5px solid #e5e7eb; }
+    .clinic-row .clinic-btn { flex: 1 1 auto; min-width: 0; border: none !important; border-bottom: none !important; }
+    .clinic-row .clinic-ring-toggles { flex: 0 0 auto; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 3px; padding: 6px 8px; border-left: 1px solid #e5e7eb; background: #f8fafc; }
     .clinic-btn {
       display: block; width: 100%; text-align: left;
-      background: none; border: none; border-bottom: 1px solid #f0f0f0;
-      padding: 9px 14px; cursor: pointer; transition: background .12s;
+      background: none; border: none; border-bottom: none;
+      padding: 8px 10px 8px 14px; cursor: pointer; transition: background .12s;
     }
     .clinic-btn:hover { background: #eef3ff; }
     .clinic-btn.active { background: #dbeafe; border-left: 3px solid #1a56db; }
@@ -65,6 +87,34 @@
     .clinic-btn .caddr { font-size: .7rem; color: #9ca3af; }
     #sidebar-footer { padding: 12px 14px; border-top: 1px solid #e5e7eb; background: #f8fafc; flex-shrink: 0; }
     #sidebar-legend { padding: 8px 14px; border-top: 1px solid #f0f0f0; font-size: .7rem; flex-shrink: 0; }
+    .territory-header { padding: 6px 14px 3px; font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: #64748b; background: #f1f5f9; border-top: 1px solid #e2e8f0; cursor: pointer; display: flex; align-items: center; justify-content: space-between; user-select: none; }
+    .territory-header:hover { background: #e8eef6; }
+    .territory-chevron { transition: transform .2s; font-size: .6rem; }
+    .territory-collapsed .territory-chevron { transform: rotate(-90deg); }
+    .clinic-ring-toggles { display: flex; gap: 4px; margin-left: auto; flex-shrink: 0; }
+    .ring-toggle.heat-btn { background: #fff7ed; color: #c2410c; border-color: #fdba74; font-size: .6rem; }
+    .ring-toggle.heat-btn.active { background: #c2410c; color: #fff; border-color: #c2410c; }
+    .ring-toggle { font-size: .6rem; padding: 1px 5px; border-radius: 10px; border: 1.5px solid; cursor: pointer; font-weight: 700; line-height: 1.4; background: transparent; transition: all .15s; }
+    .ring-toggle.t10 { border-color: #1a56db; color: #1a56db; }
+    .ring-toggle.t10.on { background: #1a56db; color: #fff; }
+    .ring-toggle.t20 { border-color: #93c5fd; color: #3b82f6; }
+    .ring-toggle.t20.on { background: #93c5fd; color: #1e40af; }
+    .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+    .upload-btn { background: #f0f9ff; border: 1.5px dashed #7dd3fc; color: #0369a1; font-size: .75rem; font-weight: 700; padding: 6px 10px; border-radius: 8px; cursor: pointer; width: 100%; text-align: center; transition: all .2s; display: block; }
+    .upload-btn:hover { background: #e0f2fe; }
+    #info-btn { position: fixed; bottom: 18px; right: 18px; width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 2px solid #cbd5e1; color: #64748b; font-size: .85rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,.12); z-index: 9999; transition: all .15s; }
+    #info-btn:hover { background: #f1f5f9; border-color: #94a3b8; color: #1e293b; }
+    #info-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 9998; }
+    #info-modal { display: none; position: fixed; bottom: 58px; right: 18px; width: 320px; background: #fff; border-radius: 14px; box-shadow: 0 8px 32px rgba(0,0,0,.15); z-index: 9999; padding: 20px; }
+    #info-modal h6 { font-size: .8rem; font-weight: 800; color: #1e293b; margin-bottom: 12px; letter-spacing: .03em; }
+    .info-row { display: flex; gap: 10px; margin-bottom: 10px; font-size: .75rem; }
+    .info-row .info-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+    .info-row .info-label { font-weight: 700; color: #1e293b; margin-bottom: 1px; }
+    .info-row .info-source { color: #64748b; }
+    .info-row a { color: #1a56db; text-decoration: none; }
+    .info-row a:hover { text-decoration: underline; }
+    #info-modal .info-footer { margin-top: 12px; padding-top: 10px; border-top: 1px solid #f1f5f9; font-size: .68rem; color: #94a3b8; }
+    #upload-status { font-size: .72rem; color: #16a34a; margin-top: 4px; min-height: 16px; }
 
     /* ─ Main content (map + strip) ─ */
     #main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
@@ -96,22 +146,48 @@
     #strip-zip { font-size: .72rem; background: #1a56db; color: #fff; padding: 2px 8px; border-radius: 5px; }
     #strip-spinner { font-size: .75rem; color: #9ca3af; }
     #metrics-row {
-      display: flex; gap: 10px; padding: 10px 14px;
-      overflow-x: auto;
+      display: flex; gap: 8px; padding: 8px 14px;
+      overflow-x: auto; align-items: stretch;
+      max-height: 110px;
     }
     #metrics-row::-webkit-scrollbar { height: 4px; }
     #metrics-row::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+    .m-section-label { display: flex; align-items: center; writing-mode: vertical-rl; text-orientation: mixed; font-size: .58rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: .08em; min-width: 18px; padding: 4px 2px; background: #f1f5f9; border-radius: 6px; flex-shrink: 0; }
     .m-card {
-      min-width: 120px; max-width: 140px;
-      background: #f8fafc; border: 1px solid #e8ecf0; border-radius: 10px;
-      padding: 8px 10px; flex-shrink: 0; display: flex; flex-direction: column;
+      min-width: 112px; max-width: 130px;
+      background: #f8fafc; border: 1px solid #e8ecf0; border-radius: 8px;
+      padding: 6px 8px; flex-shrink: 0; display: flex; flex-direction: column;
     }
-    .m-icon { font-size: 1rem; margin-bottom: 3px; }
-    .m-val { font-size: 1.05rem; font-weight: 800; color: #111827; line-height: 1.2; }
-    .m-lbl { font-size: .68rem; font-weight: 600; color: #6b7280; margin-top: 2px; }
-    .m-sub { font-size: .65rem; color: #9ca3af; }
-    .m-src { font-size: .58rem; color: #c0c7d0; margin-top: auto; padding-top: 5px; border-top: 1px solid #f0f0f0; }
+    .m-icon { font-size: .8rem; margin-bottom: 2px; }
+    .m-val { font-size: .95rem; font-weight: 800; color: #111827; line-height: 1.15; }
+    .m-lbl { font-size: .63rem; font-weight: 600; color: #6b7280; margin-top: 1px; }
+    .m-sub { font-size: .6rem; color: #9ca3af; }
+    .m-src { font-size: .55rem; color: #c0c7d0; margin-top: auto; padding-top: 3px; border-top: 1px solid #f0f0f0; }
+
+    /* ── Site Comparison Modal ── */
+    .cmp-check { display:none; }
+    #cmp-float-bar { display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); z-index:1000; background:#1a56db; color:#fff; border-radius:30px; padding:10px 20px; box-shadow:0 4px 20px rgba(0,0,0,.25); align-items:center; gap:12px; font-size:.83rem; font-weight:600; }
+    #cmp-modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:2000; align-items:center; justify-content:center; }
+    #cmp-modal { background:#fff; border-radius:14px; width:90vw; max-width:1100px; max-height:85vh; display:flex; flex-direction:column; box-shadow:0 8px 40px rgba(0,0,0,.3); overflow:hidden; }
+    #cmp-modal-header { display:flex; align-items:center; padding:14px 20px; border-bottom:1px solid #e5e7eb; gap:10px; flex-shrink:0; }
+    #cmp-modal-header h5 { margin:0; font-size:1rem; font-weight:800; color:#1a56db; }
+    #cmp-modal-body { overflow:auto; flex:1; padding:0; }
+    #compare-grid { width:100%; border-collapse:separate; border-spacing:0; font-size:.78rem; }
+    #compare-grid th { background:#1a56db; color:#fff; padding:9px 14px; text-align:center; font-weight:700; font-size:.75rem; position:sticky; top:0; z-index:5; white-space:nowrap; }
+    #compare-grid th:first-child { text-align:left; min-width:170px; background:#1e40af; }
+    #compare-grid td { padding:7px 14px; border-bottom:1px solid #f0f0f0; text-align:center; font-weight:600; }
+    #compare-grid td:first-child { text-align:left; font-weight:700; color:#374151; background:#f8fafc; position:sticky; left:0; z-index:2; white-space:nowrap; }
+    #compare-grid tr:hover td { background:#f0f9ff !important; }
+    .cmp-section td { background:#e8ecf0 !important; font-size:.68rem; font-weight:800 !important; color:#6b7280 !important; text-transform:uppercase; letter-spacing:.06em; padding:5px 14px; }
+    .cmp-best  { background:#dcfce7 !important; color:#15803d !important; }
+    .cmp-mid   { background:#fef9c3 !important; color:#92400e !important; }
+    .cmp-worst { background:#fee2e2 !important; color:#dc2626 !important; }
+    .cmp-na    { color:#d1d5db; font-weight:400; }
+    .clinic-row.cmp-selected { background:#dbeafe !important; border-left:3px solid #1a56db !important; cursor:pointer; }
+
     .btn-xs { font-size: .68rem; padding: 2px 8px; border-radius: 5px; }
+    
+
     .dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:4px; vertical-align:middle; }
 
     /* ─ Full-map tabs (All Clinics, Market) ─ */
@@ -120,51 +196,140 @@
     .full-tab-bar { flex-shrink:0; background:#fff; border-bottom:1px solid #e5e7eb; padding:8px 16px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
     .full-tab-map { flex:1; position:relative; }
     .full-tab-map > div[id^="map"] { position:absolute; top:0;left:0;right:0;bottom:0; }
+
+    /* ─── MOBILE RESPONSIVE ─── */
+    #sidebar-overlay {
+      display:none; position:fixed; inset:0; background:rgba(0,0,0,.5);
+      z-index:500; touch-action:none;
+    }
+    #mobile-menu-btn {
+      display:none; background:none; border:none; color:#fff;
+      font-size:1.3rem; padding:6px 12px; cursor:pointer;
+      flex-shrink:0; line-height:1; align-items:center;
+    }
+    @media (max-width: 768px) {
+      #mobile-menu-btn { display:flex; }
+      #navbar { padding:0 8px; height:48px; overflow:hidden; }
+      #navbar .brand { font-size:.8rem; white-space:nowrap; flex-shrink:1; min-width:0; margin-right:4px; }
+      #navbar > div { flex-shrink:1; min-width:0; overflow:hidden; }
+      .tab-btn { font-size:.65rem; padding:4px 6px; white-space:nowrap; }
+      .tab-btn-label { display:none; }
+      #app { top:48px; }
+      .full-tab { top:48px; }
+      #map-wrap { min-height:40vh; }
+      .m-card { min-width:100px; padding:5px 7px; }
+      .m-val { font-size:.88rem; }
+      .m-lbl { font-size:.6rem; }
+    }
   </style>
 </head>
 <body>
 
 <!-- Navbar -->
 <div id="navbar">
-  <div class="brand"><i class="fa fa-heartbeat me-2"></i>Vein Treatment Clinic — Demographics Analyzer</div>
+  <button id="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu"><i class="fa fa-bars"></i></button>
+  <div class="brand"><i class="fa fa-heartbeat me-2"></i>VIP Site Analyzer</div>
   <div style="display:flex;gap:6px;">
-    <button class="tab-btn active" id="btn-clinic" onclick="switchTab('clinic')"><i class="fa fa-search-location me-1"></i>Clinic Analysis</button>
-    <button class="tab-btn" id="btn-allclinics" onclick="switchTab('allclinics')"><i class="fa fa-map me-1"></i>All Clinics Map</button>
-    <button class="tab-btn" id="btn-market" onclick="switchTab('market')"><i class="fa fa-layer-group me-1"></i>Market Analysis</button>
+    <div id="navbar-tabs">
+      <button class="tab-btn active" id="btn-clinic" onclick="exitCompareMode();switchTab('clinic')"><i class="fa fa-search-location me-1"></i><span class="tab-btn-label">Site Analysis</span></button>
+      <button class="tab-btn" id="btn-compare" onclick="location.href='/clinic-demographics/compare'"><i class="fa fa-columns me-1"></i><span class="tab-btn-label">Site Comparison</span></button>
+      <button class="tab-btn" id="btn-allclinics" onclick="switchTab('allclinics')"><i class="fa fa-map me-1"></i><span class="tab-btn-label">All Clinics Map</span></button>
+      <button class="tab-btn" id="btn-market" onclick="switchTab('market')"><i class="fa fa-layer-group me-1"></i><span class="tab-btn-label">Market Analysis</span></button>
+    <button class="tab-btn" id="btn-perf" onclick="location.href='/clinic-demographics/clinic-performance'"><i class="fa fa-chart-line me-1"></i><span class="tab-btn-label">Clinic Performance</span></button>
+    </div>
   </div>
 </div>
 
 <!-- ═══ TAB 1: Clinic Analysis ═══ -->
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
 <div id="app">
 
   <!-- Sidebar -->
   <div id="sidebar">
     <div id="sidebar-header">
-      <div class="title"><i class="fa fa-map-marker-alt me-1"></i>Select a Clinic</div>
-      <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search clinics..."/>
-    </div>
-    <div id="clinic-list">
-      {% for clinic in clinics %}
-      <button class="clinic-btn"
-              data-address="{{ clinic.address }}"
-              data-name="{{ clinic.name }}"
-              onclick="selectClinic(this)">
-        <div class="cname">{{ clinic.name }}</div>
-        <div class="caddr">{{ clinic.address }}</div>
+      <div id="cmp-sidebar-bar" style="display:none;background:#1a56db;color:#fff;padding:8px 12px;margin:-12px -12px 10px -12px;border-radius:8px 8px 0 0;display:none;">
+        <div style="font-size:.72rem;font-weight:700;margin-bottom:6px;"><i class="fa fa-columns me-1"></i>Site Comparison Mode</div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <button id="run-cmp-btn" onclick="runComparison()" disabled style="flex:1;background:#fff;color:#1a56db;border:none;border-radius:6px;padding:5px 10px;font-weight:700;font-size:.76rem;cursor:pointer;">Compare Selected (<span id="cmp-count-label">0</span>)</button>
+          <button onclick="exitCompareMode()" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:6px;padding:5px 8px;font-size:.72rem;cursor:pointer;">✕ Exit</button>
+        </div>
+      </div>
+      <div class="title"><i class="fa fa-map-marker-alt me-1"></i>Select a Site</div>
+      <input type="text" id="searchInput" class="form-control form-control-sm mb-2" placeholder="Search sites..."/>
+      <button class="upload-btn" onclick="syncFromSheets()" id="syncBtn">
+        <i class="fa fa-sync me-1"></i> Sync from Google Sheets
       </button>
-      {% endfor %}
+      <div id="upload-status"></div>
     </div>
-    <div id="sidebar-footer">
-      <div style="font-size:.78rem;font-weight:600;color:#16a34a;margin-bottom:6px;"><i class="fa fa-plus-circle me-1"></i>Analyze New Location</div>
-      <input type="text" id="newAddress" class="form-control form-control-sm mb-2" placeholder="Enter any address..."/>
-      <button class="btn btn-success btn-sm w-100 fw-semibold" onclick="analyzeCustom()">
-        <i class="fa fa-search-location me-1"></i>Run Analysis
-      </button>
+    <div style="padding:8px 12px;border-bottom:1px solid #e5e7eb;display:flex;gap:6px;background:#fafafa;">
+      <button class="ring-toggle t10" id="selectAll10" style="flex:1;text-align:center;" onclick="selectAllRings('10', this)">All 10-min</button>
+      <button class="ring-toggle t20" id="selectAll20" style="flex:1;text-align:center;" onclick="selectAllRings('20', this)">All 20-min</button>
+      <button onclick="clearAllRings()" style="flex:1;font-size:.65rem;font-weight:700;padding:2px 6px;border-radius:10px;border:1.5px solid #d1d5db;color:#6b7280;background:transparent;cursor:pointer;">Clear All</button>
     </div>
+    <div id="cmp-sidebar-hint" style="display:none;padding:6px 12px;background:#dbeafe;font-size:.72rem;font-weight:600;color:#1e40af;border-bottom:1px solid #bfdbfe;"><i class="fa fa-hand-pointer me-1"></i>Click clinics to select, then Compare</div>
+    <div id="sidebar-panels">
+    <div id="clinic-panel">
+    <div id="clinic-list" id="clinic-list-inner">
+      {% if territories %}
+        {% for territory, sites in territories.items() %}
+        <div class="territory-header" onclick="toggleTerritory(this)">
+          <span>{{ territory }} <span style="color:#94a3b8;font-weight:400;">({{ sites|length }})</span></span>
+          <span class="territory-chevron">▼</span>
+        </div>
+        <div class="territory-body">
+        {% for clinic in sites %}
+        <div class="clinic-row" data-address="{{ clinic.address }}" data-name="{{ clinic.name }}" data-color="{{ clinic.color }}">
+
+          <button class="clinic-btn" onclick="cmpMode ? toggleCmpRow(this.closest('.clinic-row')) : selectClinic(this.closest('.clinic-row'))">
+            <div class="cname">
+              <span class="status-dot" style="background:{{ '#1a56db' if clinic.color == 'blue' else ('#8b5cf6' if clinic.color == 'purple' else '#f97316') }}"></span>
+              {{ clinic.name }}
+            </div>
+            <div class="caddr">{{ clinic.address }}</div>
+          </button>
+          <div class="clinic-ring-toggles">
+            <button class="ring-toggle t10" title="10-min ring" onclick="toggleRing(event, this, '10')">10</button>
+            <button class="ring-toggle t20" title="20-min ring" onclick="toggleRing(event, this, '20')">20</button>
+            <button class="ring-toggle heat-btn" title="Patient origin heatmap" onclick="toggleHeatmap(event, this)">&#x1F525;</button>
+          </div>
+        </div>
+        {% endfor %}
+        </div>
+        {% endfor %}
+      {% else %}
+        {% for clinic in clinics %}
+        <div class="clinic-row" data-address="{{ clinic.address }}" data-name="{{ clinic.name }}" data-color="{{ clinic.color or 'blue' }}">
+          <button class="clinic-btn" onclick="cmpMode ? toggleCmpRow(this.closest('.clinic-row')) : selectClinic(this.closest('.clinic-row'))">
+            <div class="cname">{{ clinic.name }}</div>
+            <div class="caddr">{{ clinic.address }}</div>
+          </button>
+          <div class="clinic-ring-toggles">
+            <button class="ring-toggle t10" title="10-min ring" onclick="toggleRing(event, this, '10')">10</button>
+            <button class="ring-toggle t20" title="20-min ring" onclick="toggleRing(event, this, '20')">20</button>
+            <button class="ring-toggle heat-btn" title="Patient origin heatmap" onclick="toggleHeatmap(event, this)">&#x1F525;</button>
+          </div>
+        </div>
+        {% endfor %}
+      {% endif %}
+    </div><!-- end clinic-list -->
+    </div><!-- end clinic-panel -->
+    <div id="partner-panel">
+      <div class="partner-panel-header">
+        <span><i class="fa fa-hospital me-1"></i>Partner Facilities</span>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span id="partner-panel-count" style="font-weight:400;font-size:.65rem;opacity:.8"></span>
+          <button id="partner-map-btn" onclick="togglePartnerFacilities()" style="font-size:.62rem;padding:2px 7px;border-radius:8px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:#fff;cursor:pointer;white-space:nowrap;">Show on Map</button>
+        </div>
+      </div>
+      <div id="partner-list-body">
+        <!-- populated by JS after _partnerData loads -->
+        <div style="padding:12px 14px;color:#94a3b8;font-size:.75rem;"><i class="fa fa-spinner fa-spin me-1"></i>Loading...</div>
+      </div>
+    </div><!-- end partner-panel -->
+    </div><!-- end sidebar-panels -->
     <div id="sidebar-legend">
-      <span class="dot" style="background:#1a56db;"></span>10-min drive &nbsp;
-      <span class="dot" style="background:#5ba3f5;"></span>20-min drive<br>
-      <span style="color:#bbb;">Valhalla · OSM speed limits · avg conditions</span>
+      <span class="status-dot" style="background:#1a56db"></span>Open &nbsp;<span class="status-dot" style="background:#7c3aed"></span>Upcoming &nbsp;<span class="status-dot" style="background:#ea580c"></span>Potential<br>
+      <span style="color:#bbb;"><span class="dot" style="background:#1a56db;"></span>10-min &nbsp;<span class="dot" style="background:#5ba3f5;"></span>20-min drive</span>
     </div>
   </div>
 
@@ -174,7 +339,55 @@
       <div id="map1"></div>
       <div id="map-hint">
         <div style="color:#1a56db;font-size:1.3rem;margin-bottom:6px;"><i class="fa fa-mouse-pointer"></i></div>
-        <div style="font-weight:600;font-size:.9rem;">Click a clinic on the left</div>
+        <div style="font-weight:600;font-size:.9rem;" id="placeholder-main-text">Click a clinic on the left</div>
+        <script>if(window.innerWidth<=768 && document.getElementById("placeholder-main-text")){document.getElementById("placeholder-main-text").textContent="Tap ☰ to select a clinic";}
+// ── VIP Site Score ───────────────────────────────────────────────
+function fetchSiteScore(lat, lng, address, demoData, ringPopData) {
+  document.getElementById('site-score-spinner').style.display = 'inline';
+  document.getElementById('site-score-badge').style.display = 'none';
+  document.getElementById('site-score-subs').style.display = 'none';
+
+  const payload = {lat: lat, lng: lng, address: address || ''};
+  if (demoData) payload.demo = demoData;
+  if (ringPopData) payload.ring_pop = ringPopData;
+
+  fetch('/clinic-demographics/api/site-score', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(payload)
+  })
+  .then(r => r.json())
+  .then(d => {
+    document.getElementById('site-score-spinner').style.display = 'none';
+    if (d.error) return;
+    const total = d.total_score;
+    const grade = d.grade;
+    const gradeColors = {
+      'Excellent': '#16a34a',
+      'Good': '#1d4ed8',
+      'Average': '#ca8a04',
+      'Below Average': '#ea580c',
+      'Poor': '#dc2626',
+    };
+    const color = gradeColors[grade] || '#1d4ed8';
+    document.getElementById('site-score-total').textContent = total;
+    document.getElementById('site-score-total').style.color = color;
+    document.getElementById('site-score-dash').textContent = ' — ';
+    document.getElementById('site-score-grade').textContent = grade;
+    document.getElementById('site-score-grade').style.color = color;
+    document.getElementById('site-score-badge').style.display = 'inline-flex';
+    document.getElementById('site-score-badge').style.alignItems = 'center';
+    document.getElementById('ss-area').textContent = d.area_draw_score;
+    document.getElementById('ss-pv').textContent = d.patient_value_score;
+    document.getElementById('ss-comp').textContent = d.competition_score;
+    document.getElementById('site-score-subs').style.display = 'flex';
+  })
+  .catch(() => {
+    document.getElementById('site-score-spinner').style.display = 'none';
+  });
+}
+
+</script>
         <div style="font-size:.75rem;color:#9ca3af;margin-top:3px;">Drive-time zones will appear on the map</div>
         <div id="preload-msg" style="font-size:.7rem;color:#aaa;margin-top:6px;"></div>
       </div>
@@ -188,18 +401,72 @@
         <span id="strip-spinner" style="display:none;"><i class="fa fa-spinner fa-spin me-1"></i>Loading demographics...</span>
       </div>
       <div id="metrics-row">
+
+
+        <!-- ─── 1AC RING ADS (30-min drive time) ─── -->
+        <div class="m-section-label" style="background:#fef3c7;color:#92400e;">📣 1AC Ad Performance · 30-min Ring</div>
+        <div class="m-card" style="background:#fffbeb;border:1px solid #fcd34d;">
+          <div class="m-icon" style="color:#d97706;"><i class="fa fa-bullhorn"></i></div>
+          <div class="m-val" id="m-ads-impressions" style="color:#d97706;">—</div>
+          <div class="m-lbl">Impressions</div>
+          <div class="m-sub" id="m-ads-sub">30-min drive time · 1AC</div>
+          <div class="m-src">Google Ads · 30d</div>
+        </div>
+        <div class="m-card" style="background:#fffbeb;border:1px solid #fcd34d;">
+          <div class="m-icon" style="color:#d97706;"><i class="fa fa-mouse-pointer"></i></div>
+          <div class="m-val" id="m-ads-clicks" style="color:#d97706;">—</div>
+          <div class="m-lbl">Ad Clicks</div>
+          <div class="m-sub">area-weighted by ZIP</div>
+          <div class="m-src">Google Ads · 30d</div>
+        </div>
+        <div class="m-card" style="background:#fffbeb;border:1px solid #fcd34d;">
+          <div class="m-icon" style="color:#d97706;"><i class="fa fa-percent"></i></div>
+          <div class="m-val" id="m-ads-ctr" style="color:#d97706;">—</div>
+          <div class="m-lbl">CTR</div>
+          <div class="m-sub" id="m-ads-zips">— ZIPs</div>
+          <div class="m-src">Google Ads · 30d</div>
+        </div>
+
+        <!-- ─── POPULATION WITHIN RINGS ─── -->
+        <div class="m-section-label">👥 Population Within Drive Time</div>
+
         <div class="m-card">
           <div class="m-icon text-primary"><i class="fa fa-users"></i></div>
-          <div class="m-val" id="m-density">—</div>
-          <div class="m-lbl">Pop. Density</div>
-          <div class="m-sub">people/sq mi</div>
+          <div class="m-val" id="m-pop10">—</div>
+          <div class="m-lbl">Total Pop · 10 min</div>
+          <div class="m-sub">within drive-time ring</div>
+          <div class="m-src">Census Block Group</div>
+        </div>
+        <div class="m-card">
+          <div class="m-icon text-primary"><i class="fa fa-users"></i></div>
+          <div class="m-val" id="m-pop20">—</div>
+          <div class="m-lbl">Total Pop · 20 min</div>
+          <div class="m-sub">within drive-time ring</div>
+          <div class="m-src">Census Block Group</div>
+        </div>
+        <div class="m-card">
+          <div class="m-icon" style="color:#ec4899;"><i class="fa fa-female"></i></div>
+          <div class="m-val" id="m-f35-10">—</div>
+          <div class="m-lbl">Female 35+ · 10 min</div>
+          <div class="m-sub">within drive-time ring</div>
           <div class="m-src">Census ACS 2022</div>
         </div>
         <div class="m-card">
+          <div class="m-icon" style="color:#ec4899;"><i class="fa fa-female"></i></div>
+          <div class="m-val" id="m-f35-20">—</div>
+          <div class="m-lbl">Female 35+ · 20 min</div>
+          <div class="m-sub">within drive-time ring</div>
+          <div class="m-src">Census ACS 2022</div>
+        </div>
+
+        <!-- ─── INCOME & INSURANCE ─── -->
+        <div class="m-section-label">💰 Income &amp; Insurance</div>
+
+        <div class="m-card">
           <div class="m-icon text-success"><i class="fa fa-dollar-sign"></i></div>
-          <div class="m-val" id="m-income">—</div>
-          <div class="m-lbl">Median Income</div>
-          <div class="m-sub">per household</div>
+          <div class="m-val" id="m-income20">—</div>
+          <div class="m-lbl">Median Income (ZIP)</div>
+          <div class="m-sub">ZIP code level</div>
           <div class="m-src">Census ACS 2022</div>
         </div>
         <div class="m-card">
@@ -209,13 +476,67 @@
           <div class="m-sub">county population</div>
           <div class="m-src">SAHIE 2022</div>
         </div>
+
+        <!-- ─── CPT PROCEDURE VOLUME ─── -->
+        <div class="m-section-label">💉 CPT Procedure Volume (Medicare · ZIP)</div>
+
         <div class="m-card">
           <div class="m-icon text-warning"><i class="fa fa-syringe"></i></div>
-          <div class="m-val" id="m-cpt">—</div>
-          <div class="m-lbl">CPT 36475 Vol.</div>
-          <div class="m-sub">Medicare · ZIP</div>
+          <div class="m-val" id="m-cpt36475">—</div>
+          <div class="m-lbl">CPT 36475</div>
+          <div class="m-sub">RF Ablation · Medicare</div>
           <div class="m-src">CMS Medicare</div>
         </div>
+        <div class="m-card">
+          <div class="m-icon text-warning"><i class="fa fa-syringe"></i></div>
+          <div class="m-val" id="m-cpt36465">—</div>
+          <div class="m-lbl">CPT 36465</div>
+          <div class="m-sub">Foam Sclerotherapy · Medicare</div>
+          <div class="m-src">CMS Medicare</div>
+        </div>
+        <div class="m-card">
+          <div class="m-icon text-warning"><i class="fa fa-syringe"></i></div>
+          <div class="m-val" id="m-cpt36466">—</div>
+          <div class="m-lbl">CPT 36466</div>
+          <div class="m-sub">Foam Sclerotherapy · Medicare</div>
+          <div class="m-src">CMS Medicare</div>
+        </div>
+        <div class="m-card" style="border: 1.5px solid #fbbf24;">
+          <div class="m-icon text-warning"><i class="fa fa-layer-group"></i></div>
+          <div class="m-val" id="m-cpt-total">—</div>
+          <div class="m-lbl">Total Vein Volume</div>
+          <div class="m-sub">all 3 CPT codes · ZIP</div>
+          <div class="m-src">CMS Medicare</div>
+        </div>
+
+        <!-- ─── MEDICARE REIMBURSEMENT ─── -->
+        <div class="m-section-label">🏥 Medicare Avg Reimbursement (per procedure · ZIP)</div>
+
+        <div class="m-card">
+          <div class="m-icon text-success"><i class="fa fa-dollar-sign"></i></div>
+          <div class="m-val" id="m-rate36475">—</div>
+          <div class="m-lbl">CPT 36475 Rate</div>
+          <div class="m-sub">avg Medicare payment</div>
+          <div class="m-src">CMS Medicare</div>
+        </div>
+        <div class="m-card">
+          <div class="m-icon text-success"><i class="fa fa-dollar-sign"></i></div>
+          <div class="m-val" id="m-rate36465">—</div>
+          <div class="m-lbl">CPT 36465 Rate</div>
+          <div class="m-sub">avg Medicare payment</div>
+          <div class="m-src">CMS Medicare</div>
+        </div>
+        <div class="m-card">
+          <div class="m-icon text-success"><i class="fa fa-dollar-sign"></i></div>
+          <div class="m-val" id="m-rate36466">—</div>
+          <div class="m-lbl">CPT 36466 Rate</div>
+          <div class="m-sub">avg Medicare payment</div>
+          <div class="m-src">CMS Medicare</div>
+        </div>
+
+        <!-- ─── OON / UCR LOOKUPS ─── -->
+        <div class="m-section-label">📊 Out-of-Network Benchmarks</div>
+
         <div class="m-card">
           <div class="m-icon text-danger"><i class="fa fa-chart-bar"></i></div>
           <div class="m-val" style="font-size:.8rem;">OON Lookup</div>
@@ -232,6 +553,35 @@
           <div id="ucr-link" class="mt-1"></div>
           <div class="m-src">Fair Health · 95th Pct</div>
         </div>
+
+        <!-- ─── COMPETITORS ─── -->
+        <div class="m-section-label">🏁 Competitors in ZIP (CPT 36475 · Medicare)</div>
+        <div id="m-competitors" style="width:100%; padding: 6px 0;">
+          <span style="color:#9ca3af;font-size:.78rem;">Select a clinic to load competitor data</span>
+        </div>
+
+
+
+        <!-- ─── VIP SITE SCORE ─── -->
+        <div class="m-section-label" style="background:#eff6ff;color:#1d4ed8;">🏆 VIP Site Score (Buxton Methodology)</div>
+        <div id="site-score-card" style="width:100%;padding:8px 0;">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <div id="site-score-spinner" style="color:#94a3b8;font-size:.78rem;display:none;">
+              <i class="fa fa-spinner fa-spin me-1"></i>Scoring...
+            </div>
+            <div id="site-score-badge" style="display:none;">
+              <span id="site-score-total" style="font-size:1.6rem;font-weight:700;color:#1d4ed8;">—</span>
+              <span id="site-score-dash" style="margin:0 4px;color:#6b7280;">—</span>
+              <span id="site-score-grade" style="font-size:1rem;font-weight:600;">—</span>
+            </div>
+            <div id="site-score-subs" style="display:none;font-size:.72rem;color:#6b7280;display:flex;gap:10px;flex-wrap:wrap;">
+              <span>Area Draw: <strong id="ss-area">—</strong></span>
+              <span>Patient Value: <strong id="ss-pv">—</strong></span>
+              <span>Competition: <strong id="ss-comp">—</strong></span>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -288,13 +638,87 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+<link rel="stylesheet" href="/clinic-demographics/static/vendor/MarkerCluster.css"/>
+<link rel="stylesheet" href="/clinic-demographics/static/vendor/MarkerCluster.Default.css"/>
+<script src="/clinic-demographics/static/vendor/markercluster.js"></script>
 <script>
 const CLINICS = {{ clinics_json|safe }};
+const TERRITORIES = {{ territories_json|safe }};
+
+const RING_COLORS = {
+  "blue":   { inner: "#1a56db", outer: "#93c5fd" },
+  "purple": { inner: "#7c3aed", outer: "#c4b5fd" },
+  "orange": { inner: "#ea580c", outer: "#fdba74" },
+};
+function getRingColors(colorKey) {
+  return RING_COLORS[colorKey] || RING_COLORS["blue"];
+}
+
+
+// ── Upload XLSX ───────────────────────────────────────
+function syncFromSheets() {
+  const btn = document.getElementById('syncBtn');
+  const status = document.getElementById('upload-status');
+  btn.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i> Syncing...';
+  btn.disabled = true;
+  status.style.color = '#0369a1';
+  status.textContent = 'Fetching from Google Sheets...';
+  fetch('/clinic-demographics/sync', { method: 'POST' })
+    .then(r => r.json())
+    .then(data => {
+      btn.innerHTML = '<i class="fa fa-sync me-1"></i> Sync from Google Sheets';
+      btn.disabled = false;
+      if (data.error) {
+        status.style.color = '#dc2626';
+        status.textContent = 'Error: ' + data.error;
+        return;
+      }
+      status.style.color = '#16a34a';
+      status.textContent = '✓ Synced ' + data.count + ' sites across ' + data.territories.length + ' territories';
+      setTimeout(() => location.reload(), 800);
+    })
+    .catch(e => {
+      btn.innerHTML = '<i class="fa fa-sync me-1"></i> Sync from Google Sheets';
+      btn.disabled = false;
+      status.style.color = '#dc2626';
+      status.textContent = 'Sync failed';
+    });
+}
+
+function uploadXLSX(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const status = document.getElementById('upload-status');
+  status.style.color = '#0369a1';
+  status.textContent = 'Uploading...';
+  const fd = new FormData();
+  fd.append('file', file);
+  fetch('/clinic-demographics/upload', { method: 'POST', body: fd })
+    .then(r => r.json())
+    .then(data => {
+      if (data.error) {
+        status.style.color = '#dc2626';
+        status.textContent = 'Error: ' + data.error;
+        return;
+      }
+      status.style.color = '#16a34a';
+      status.textContent = '✓ Loaded ' + data.count + ' sites across ' + data.territories.length + ' territories';
+      // Reload page to reflect new data
+      setTimeout(() => location.reload(), 800);
+    })
+    .catch(e => {
+      status.style.color = '#dc2626';
+      status.textContent = 'Upload failed';
+    });
+  input.value = '';
+}
 
 // ── Map instances ─────────────────────────────────────
 let map1 = null, map2 = null, map3 = null;
-let map1IsoLayers = [];   // current isochrone layers on map1
-let clinicCache = {};     // address → {lat, lon, isochrone}
+let map1IsoLayers = [];   // selected clinic highlight layers (demographics panel)
+let clinicLayers = {};    // address → { "10": layer|null, "20": layer|null }
+let clinicCache = {};     // address → {lat, lon, isochrone, colorKey}
 let potentialSites = [];
 
 // ── Boot: init map1 + load all clinic coords ──────────
@@ -310,33 +734,64 @@ document.addEventListener('DOMContentLoaded', () => {
   pollPreload();
 });
 
+const DOT_HEX = { blue: "#1a56db", purple: "#8b5cf6", orange: "#f97316" };
+
 function loadClinicCoords() {
-  fetch('/clinic-coords')
+  fetch('/clinic-demographics/clinic-coords')
     .then(r => r.json())
     .then(data => {
       data.forEach(c => {
+        c.colorKey = c.color || "blue";
         clinicCache[c.address] = c;
-        // Add a small dot marker for every clinic
+        // Dot marker
+        const dotColor = DOT_HEX[c.colorKey] || "#1a56db";
         const icon = L.divIcon({
           className: '',
-          html: `<div style="background:#1a56db;width:8px;height:8px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3);"></div>`,
+          html: `<div style="background:${dotColor};width:8px;height:8px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3);"></div>`,
           iconSize: [8,8], iconAnchor: [4,4]
         });
         L.marker([c.lat, c.lon], {icon})
           .bindPopup(`<b>${c.name}</b><br><span style="font-size:.78rem;color:#666;">${c.address}</span>`)
           .addTo(map1);
-
-        // If isochrone already cached by server, draw it lightly
-        if (c.isochrone) {
-          drawIsochrones(map1, c.isochrone, c.name, {inner:'#1a56db', outer:'#5ba3f5'}, 0.07, 0.04);
-        }
+        // Rings are off by default — user turns them on per clinic or via Select All
       });
     })
     .catch(e => console.warn('Could not load clinic coords:', e));
 }
 
+function drawClinicRings(c) {
+  // Draw (or redraw) rings for a clinic based on its current toggle state
+  const state = getRingState(c.address);
+  // Use DOM data-color as source of truth (always correctly rendered from template)
+  const domRow = document.querySelector(`.clinic-row[data-address="${c.address}"]`);
+  const colorKey = (domRow && domRow.dataset.color) || c.colorKey || c.color || "blue";
+  const colors = getRingColors(colorKey);
+  if (!clinicLayers[c.address]) clinicLayers[c.address] = { "10": null, "20": null };
+  const layers = clinicLayers[c.address];
+  // Remove existing
+  if (layers["10"]) { map1.removeLayer(layers["10"]); layers["10"] = null; }
+  if (layers["20"]) { map1.removeLayer(layers["20"]); layers["20"] = null; }
+  if (!c.isochrone?.features) return;
+  c.isochrone.features.forEach(f => {
+    const mins = f.properties?.contour || 0;
+    const isInner = mins <= 10;
+    const ring = isInner ? "10" : "20";
+    if (!state[ring]) return;
+    const color = isInner ? colors.inner : colors.outer;
+    const layer = L.geoJSON(f, {
+      style: {
+        color: color, fillColor: color,
+        fillOpacity: isInner ? 0.22 : 0.28,
+        weight: isInner ? 2 : 2,
+        dashArray: isInner ? null : "6,4"
+      }
+    }).bindPopup(`<b>${c.name}</b><br>${mins}-min drive`).addTo(map1);
+    layers[ring] = layer;
+  });
+}
+
 function pollPreload() {
-  fetch('/preload-status')
+  fetch('/clinic-demographics/preload-status')
     .then(r => r.json())
     .then(s => {
       const el = document.getElementById('preload-msg');
@@ -351,20 +806,23 @@ function pollPreload() {
 }
 
 // ── Isochrone drawing ─────────────────────────────────
-function drawIsochrones(map, isoData, name, colors, innerOpacity, outerOpacity) {
+function drawIsochrones(map, isoData, name, colors, innerOpacity, outerOpacity, ringVisibility) {
   if (!isoData || !isoData.features) return [];
+  const show = ringVisibility || { "10": true, "20": true };
   const layers = [];
   const sorted = [...isoData.features].sort((a,b) => (b.properties?.contour||0) - (a.properties?.contour||0));
   sorted.forEach(f => {
     const mins = f.properties?.contour || 0;
     const isInner = mins <= 10;
+    if (isInner && !show["10"]) return;
+    if (!isInner && !show["20"]) return;
     const color = isInner ? colors.inner : colors.outer;
-    const strokeColor = isInner ? color : (colors.outerStroke ?? '#1e40af');
+    const strokeColor = isInner ? color : '#3b82f6';
     const layer = L.geoJSON(f, {
       style: {
         color: strokeColor, fillColor: color,
-        fillOpacity: isInner ? (innerOpacity ?? 0.22) : (outerOpacity ?? 0.18),
-        weight: isInner ? 2 : 2.5,
+        fillOpacity: isInner ? (innerOpacity ?? 0.22) : (outerOpacity ?? 0.28),
+        weight: isInner ? 2 : 2,
         dashArray: isInner ? null : '6,4'
       }
     }).bindPopup(`<b>${name}</b><br>${mins}-min drive`).addTo(map);
@@ -383,12 +841,75 @@ function addMarker(map, lat, lon, name, color) {
 }
 
 // ── Select clinic ─────────────────────────────────────
-function selectClinic(btn) {
+
+
+// ── 1AC Ring Ads ─────────────────────────────────────────────────────────────
+var _ringAdsCache = {};  // address -> result
+
+function loadRingAds(address, lat, lon) {
+  var ei = document.getElementById('m-ads-impressions');
+  var ec = document.getElementById('m-ads-clicks');
+  var et = document.getElementById('m-ads-ctr');
+  var ez = document.getElementById('m-ads-zips');
+  var es = document.getElementById('m-ads-sub');
+  if (!ei) return;
+
+  // Show loading state
+  ei.innerHTML = '<i class="fa fa-spinner fa-spin" style="color:#d97706;font-size:.7rem;"></i>';
+  ec.innerHTML = '<i class="fa fa-spinner fa-spin" style="color:#d97706;font-size:.7rem;"></i>';
+  et.textContent = '—';
+  if (ez) ez.textContent = 'Loading…';
+
+  if (_ringAdsCache[address]) {
+    _fillRingAds(_ringAdsCache[address]);
+    return;
+  }
+
+  var today = new Date();
+  var start = new Date(today); start.setDate(today.getDate()-30);
+  function fmtDate(d) { return d.toISOString().slice(0,10); }
+
+  fetch('/clinic-demographics/api/ring-ads', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({lat: lat, lon: lon, startDate: fmtDate(start), endDate: fmtDate(today)})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    if (data.error) {
+      ei.textContent = '—'; ec.textContent = '—'; et.textContent = '—';
+      if (ez) ez.textContent = data.error;
+      return;
+    }
+    _ringAdsCache[address] = data;
+    _fillRingAds(data);
+  })
+  .catch(function(){
+    ei.textContent = '—'; ec.textContent = '—'; et.textContent = '—';
+  });
+}
+
+function _fillRingAds(data) {
+  var ei = document.getElementById('m-ads-impressions');
+  var ec = document.getElementById('m-ads-clicks');
+  var et = document.getElementById('m-ads-ctr');
+  var ez = document.getElementById('m-ads-zips');
+  if (!ei) return;
+  ei.textContent = data.impressions != null ? data.impressions.toLocaleString() : '—';
+  ec.textContent = data.clicks != null ? data.clicks.toLocaleString() : '—';
+  var ctr = (data.impressions > 0) ? (data.clicks/data.impressions*100).toFixed(2)+'%' : '—';
+  et.textContent = ctr;
+  if (ez) ez.textContent = data.coverage_note || '—';
+}
+
+function selectClinic(row) {
   document.querySelectorAll('.clinic-btn').forEach(b => b.classList.remove('active'));
+  const btn = row.querySelector('.clinic-btn') || row;
   btn.classList.add('active');
-  const address = btn.dataset.address;
-  const name = btn.dataset.name;
-  showClinic(address, name);
+  const address = row.dataset.address;
+  const name = row.dataset.name;
+  const color = row.dataset.color || 'blue';
+  showClinic(address, name, color);
 }
 
 function analyzeCustom() {
@@ -397,7 +918,11 @@ function analyzeCustom() {
   showClinic(addr, 'Custom Location');
 }
 
-function showClinic(address, name) {
+var currentAddress = "";
+function showClinic(address, name, colorKey) {
+  if (window.innerWidth <= 768) closeSidebar();
+  currentAddress = address;
+  colorKey = colorKey || clinicCache[address]?.colorKey || clinicCache[address]?.color || "blue";
   // Hide the hint
   document.getElementById('map-hint').classList.add('hidden');
 
@@ -410,36 +935,59 @@ function showClinic(address, name) {
   document.getElementById('strip-zip').style.display = 'none';
   resetMetrics();
 
+  // 1AC ring ads — load immediately if coords cached, else wait for geocode
+  (function() {
+    var c = clinicCache[address];
+    if (c && c.lat) {
+      loadRingAds(address, c.lat, c.lon);
+    } else {
+      setTimeout(function() {
+        var c2 = clinicCache[address];
+        if (c2 && c2.lat) loadRingAds(address, c2.lat, c2.lon);
+      }, 3000);
+    }
+  })();
+
   // Check if we have cached coords
   const cached = clinicCache[address];
   if (cached && cached.lat) {
     // Immediately zoom map to clinic
     map1.setView([cached.lat, cached.lon], 12);
 
-    // Clear old isochrone highlight layers
-    map1IsoLayers.forEach(l => map1.removeLayer(l));
-    map1IsoLayers = [];
-
+    // Zoom to clinic; rings are always on — managed by per-clinic toggles
     if (cached.isochrone) {
-      // Draw isochrones right away from cache
-      map1IsoLayers = drawIsochrones(map1, cached.isochrone, name,
-        {inner:'#1a56db', outer:'#5ba3f5'});
       fitToIsochrone(cached.isochrone);
     } else {
-      // Fetch isochrone in background
-      fetchAndDrawIsochrone(address, name, cached.lat, cached.lon);
+      // Fetch isochrone so rings can be drawn
+      fetchClinicIsochrone(cached, () => {
+        drawClinicRings(cached);
+        fitToIsochrone(cached.isochrone);
+      });
     }
   } else {
     // Need to geocode + fetch isochrone
-    fetchAndDrawIsochrone(address, name, null, null);
+    fetchAndDrawIsochrone(address, name, null, null, colorKey);
   }
 
   // Load demographics separately (slower)
   loadDemographics(address, name);
+  // Load site score async
+  (function() {
+    var c = clinicCache[address];
+    if (c && c.lat) {
+      fetchSiteScore(c.lat, c.lon, address);
+    } else {
+      setTimeout(function() {
+        var c2 = clinicCache[address];
+        if (c2 && c2.lat) fetchSiteScore(c2.lat, c2.lon, address);
+      }, 4000);
+    }
+  })();
 }
 
-function fetchAndDrawIsochrone(address, name, knownLat, knownLon) {
-  fetch('/isochrone', {
+function fetchAndDrawIsochrone(address, name, knownLat, knownLon, colorKey) {
+  colorKey = colorKey || 'blue';
+  fetch('/clinic-demographics/isochrone', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({address, name})
@@ -452,13 +1000,15 @@ function fetchAndDrawIsochrone(address, name, knownLat, knownLon) {
     clinicCache[address].lat = d.lat;
     clinicCache[address].lon = d.lon;
     clinicCache[address].isochrone = d.isochrone;
+    clinicCache[address].colorKey = colorKey || "blue";
+    clinicCache[address].color = colorKey || "blue";
 
     map1IsoLayers.forEach(l => map1.removeLayer(l));
     map1IsoLayers = [];
 
     if (!knownLat) map1.setView([d.lat, d.lon], 12);
 
-    map1IsoLayers = drawIsochrones(map1, d.isochrone, name, {inner:'#1a56db', outer:'#5ba3f5'});
+    map1IsoLayers = drawIsochrones(map1, d.isochrone, name, getRingColors(colorKey), null, null, getRingState(address));
     fitToIsochrone(d.isochrone);
   })
   .catch(e => console.warn('Isochrone error:', e));
@@ -474,7 +1024,7 @@ function fitToIsochrone(isoData) {
 }
 
 function loadDemographics(address, name) {
-  fetch('/demographics', {
+  fetch('/clinic-demographics/demographics', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({address})
@@ -487,10 +1037,55 @@ function loadDemographics(address, name) {
       zEl.textContent = 'ZIP ' + d.zip;
       zEl.style.display = 'inline';
     }
-    document.getElementById('m-density').textContent = d.population_density != null ? d.population_density.toLocaleString() : '—';
-    document.getElementById('m-income').textContent = d.median_income ? '$' + d.median_income.toLocaleString() : '—';
+    // Population within rings
+    // Ring population - show immediately if cached, else load async
+    function fillRingData(d) {
+      document.getElementById('m-pop10').textContent = d.pop_10min != null ? d.pop_10min.toLocaleString() : '—';
+      document.getElementById('m-pop20').textContent = d.pop_20min != null ? d.pop_20min.toLocaleString() : '—';
+      document.getElementById('m-f35-10').textContent = d.female_35plus_10min != null ? d.female_35plus_10min.toLocaleString() : '—';
+      document.getElementById('m-f35-20').textContent = d.female_35plus_20min != null ? d.female_35plus_20min.toLocaleString() : '—';
+      document.getElementById('m-income20').textContent = d.median_income_zip ? "$" + d.median_income_zip.toLocaleString() : "—";
+    }
+    fillRingData(d);
+    if (!d.rings_ready) {
+      // Show loading spinners for ring fields
+      ['m-pop10','m-pop20','m-f35-10','m-f35-20','m-income20'].forEach(id => {
+        document.getElementById(id).innerHTML = '<i class="fa fa-spinner fa-spin" style="color:#94a3b8;font-size:.7rem;"></i>';
+      });
+      // Fetch ring population async
+      fetch('/clinic-demographics/ring-pop', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({address: currentAddress})
+      }).then(r => r.json()).then(rd => fillRingData(rd)).catch(() => {});
+    }
+    // Insurance
     document.getElementById('m-insured').textContent = d.insured_pct != null ? d.insured_pct + '%' : '—';
-    document.getElementById('m-cpt').textContent = d.cpt36475_volume != null ? d.cpt36475_volume.toLocaleString() : '—';
+    // CPT volumes
+    document.getElementById('m-cpt36475').textContent = d.cpt36475_volume != null ? d.cpt36475_volume.toLocaleString() : '—';
+    document.getElementById('m-cpt36465').textContent = d.cpt36465_volume != null ? d.cpt36465_volume.toLocaleString() : '—';
+    document.getElementById('m-cpt36466').textContent = d.cpt36466_volume != null ? d.cpt36466_volume.toLocaleString() : '—';
+    document.getElementById('m-cpt-total').textContent = d.cpt_total_volume != null ? d.cpt_total_volume.toLocaleString() : '—';
+    // Medicare rates
+    document.getElementById('m-rate36475').textContent = d.medicare_rate_36475 != null ? '$' + d.medicare_rate_36475.toLocaleString() : '—';
+    document.getElementById('m-rate36465').textContent = d.medicare_rate_36465 != null ? '$' + d.medicare_rate_36465.toLocaleString() : '—';
+    document.getElementById('m-rate36466').textContent = d.medicare_rate_36466 != null ? '$' + d.medicare_rate_36466.toLocaleString() : '—';
+    // Competitors
+    const compEl = document.getElementById('m-competitors');
+    const comps = d.competitors || [];
+    if (comps.length === 0) {
+      compEl.innerHTML = '<span style="color:#16a34a;font-size:.78rem;font-weight:600;">✓ No Medicare-billing vein providers found in this ZIP</span>';
+    } else {
+      let html = `<div style="font-size:.7rem;color:#64748b;margin-bottom:4px;">${comps.length} provider(s) billing CPT 36475 in this ZIP:</div>`;
+      comps.forEach(c => {
+        html += `<div class="comp-row">
+          <span class="comp-vol">${c.volume}</span>
+          <span class="comp-name">${c.name}</span>
+          <span class="comp-type">${c.type}</span>
+          <span class="comp-par ${c.medicare_participating ? 'yes' : 'no'}">${c.medicare_participating ? 'Par' : 'Non-Par'}</span>
+        </div>`;
+      });
+      compEl.innerHTML = html;
+    }
     const zip = d.zip || '';
     const fhUrl = `https://fairhealthconsumer.org/hcp/procedure-detail?code=36475&zipcode=${zip}&network=2`;
     document.getElementById('fh-link').innerHTML = `<a href="${fhUrl}" target="_blank" class="btn btn-xs btn-outline-danger">Look up</a>`;
@@ -503,11 +1098,163 @@ function loadDemographics(address, name) {
 }
 
 function resetMetrics() {
-  ['m-density','m-income','m-insured','m-cpt'].forEach(id => {
-    document.getElementById(id).textContent = '…';
+  ['m-pop10','m-pop20','m-f35-10','m-f35-20','m-income20',
+   'm-insured','m-cpt36475','m-cpt36465','m-cpt36466','m-cpt-total',
+   'm-rate36475','m-rate36465','m-rate36466',
+   'm-ads-impressions','m-ads-clicks','m-ads-ctr'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = '…';
   });
-  document.getElementById('fh-link').innerHTML = '';
-  document.getElementById('ucr-link').innerHTML = '';
+  // Reset site score
+  document.getElementById('site-score-spinner').style.display = 'none';
+  document.getElementById('site-score-badge').style.display = 'none';
+  document.getElementById('site-score-subs').style.display = 'none';
+  document.getElementById('site-score-total').textContent = '—';
+  document.getElementById('site-score-grade').textContent = '—';
+  const fh = document.getElementById('fh-link'); if (fh) fh.innerHTML = '';
+  const ucr = document.getElementById('ucr-link'); if (ucr) ucr.innerHTML = '';
+  const comp = document.getElementById('m-competitors');
+  if (comp) comp.innerHTML = '<span style="color:#9ca3af;font-size:.78rem;">Select a clinic to load competitor data</span>';
+}
+
+// ── Territory collapse ───────────────────────────────
+function toggleTerritory(header) {
+  const body = header.nextElementSibling;
+  if (!body) return;
+  const collapsed = header.classList.toggle('territory-collapsed');
+  body.style.display = collapsed ? 'none' : '';
+}
+
+// ── Ring toggles ─────────────────────────────────────
+// Track per-address ring visibility: { address: { "10": bool, "20": bool } }
+const ringState = {};
+
+function getRingState(address) {
+  if (!ringState[address]) ringState[address] = { "10": false, "20": false };
+  return ringState[address];
+}
+
+function selectAllRings(ring, masterBtn) {
+  const turningOn = !masterBtn.classList.contains("on");
+  masterBtn.classList.toggle("on", turningOn);
+  // Update all clinic toggles
+  document.querySelectorAll(`.ring-toggle.t${ring}`).forEach(btn => {
+    if (btn === masterBtn) return;
+    btn.classList.toggle("on", turningOn);
+  });
+  // Update ring state + draw/remove for all cached clinics
+  Object.values(clinicCache).forEach(c => {
+    if (!c.lat) return;
+    getRingState(c.address)[ring] = turningOn;
+    if (c.isochrone) {
+      drawClinicRings(c);
+    } else if (turningOn) {
+      fetchClinicIsochrone(c, () => drawClinicRings(c));
+    }
+  });
+}
+
+function clearAllRings() {
+  // Turn off all toggles
+  document.querySelectorAll(".ring-toggle").forEach(b => b.classList.remove("on"));
+  // Clear all ring layers from map
+  Object.values(clinicLayers).forEach(layers => {
+    if (layers["10"]) { map1.removeLayer(layers["10"]); layers["10"] = null; }
+    if (layers["20"]) { map1.removeLayer(layers["20"]); layers["20"] = null; }
+  });
+  // Reset all ring states
+  Object.keys(ringState).forEach(addr => { ringState[addr] = { "10": false, "20": false }; });
+}
+
+
+// ── Patient Heatmap ──
+var _heatLayer = null;
+var _activeHeatBtn = null;
+function toggleHeatmap(event, btn) {
+  event.stopPropagation();
+  var row = btn.closest('.clinic-row');
+  var clinicName = row ? row.getAttribute('data-name') : null;
+  if (!clinicName) return;
+  if (_activeHeatBtn === btn && btn.classList.contains('active')) { _clearHeatmap(); return; }
+  _clearHeatmap();
+  btn.classList.add('active');
+  btn.textContent = String.fromCodePoint(0x23F3);
+  _activeHeatBtn = btn;
+  fetch('/clinic-demographics/api/patient-heatmap?clinic=' + encodeURIComponent(clinicName))
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (data.error) { btn.innerHTML = '&#x1F525;'; btn.classList.remove('active'); _activeHeatBtn=null; alert('No patient data for '+clinicName); return; }
+      _heatLayer = L.heatLayer(data.points, { radius:28, blur:20, maxZoom:13, max:1.0,
+        gradient:{'0.2':'#3b82f6','0.5':'#f59e0b','0.8':'#ef4444','1.0':'#7c3aed'} }).addTo(map1);
+      btn.innerHTML = '&#x1F525;';
+      btn.title = data.total.toLocaleString() + ' patients, ' + data.points.length + ' ZIPs';
+      if (data.points.length > 0) {
+        var lats=data.points.map(function(p){return p[0];}), lons=data.points.map(function(p){return p[1];});
+        map1.fitBounds([[Math.min.apply(null,lats),Math.min.apply(null,lons)],[Math.max.apply(null,lats),Math.max.apply(null,lons)]],{padding:[40,40],maxZoom:11});
+      }
+      _showHeatmapInfo(clinicName, data.total, data.points.length);
+    }).catch(function(e){ console.error(e); btn.innerHTML='&#x1F525;'; btn.classList.remove('active'); _activeHeatBtn=null; });
+}
+function _clearHeatmap() {
+  if (_heatLayer) { map1.removeLayer(_heatLayer); _heatLayer=null; }
+  if (_activeHeatBtn) { _activeHeatBtn.innerHTML='&#x1F525;'; _activeHeatBtn.classList.remove('active'); _activeHeatBtn.title='Patient origin heatmap'; _activeHeatBtn=null; }
+  var b=document.getElementById('heatmap-info-badge'); if(b) b.remove();
+}
+function _showHeatmapInfo(clinic, total, zips) {
+  var b=document.getElementById('heatmap-info-badge'); if(b) b.remove();
+  b=document.createElement('div'); b.id='heatmap-info-badge';
+  b.style.cssText='position:absolute;bottom:24px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(0,0,0,.75);color:#fff;padding:7px 16px;border-radius:20px;font-size:.75rem;font-weight:700;pointer-events:none;white-space:nowrap;';
+  b.innerHTML='&#x1F525; '+clinic+' &mdash; '+total.toLocaleString()+' patients across '+zips+' ZIP codes';
+  document.getElementById('map-wrap').appendChild(b);
+}
+// ── End Patient Heatmap ──
+
+function toggleRing(event, btn, ring) {
+  event.stopPropagation();
+  const row = btn.closest('.clinic-row');
+  const address = row.dataset.address;
+  const state = getRingState(address);
+  state[ring] = !state[ring];
+  btn.classList.toggle('on', state[ring]);
+  // Redraw rings for this clinic
+  const c = clinicCache[address];
+  if (c) {
+    if (c.isochrone) {
+      drawClinicRings(c);
+    } else {
+      // Fetch isochrone first, then draw
+      fetchClinicIsochrone(c, () => drawClinicRings(c));
+    }
+  }
+}
+
+function fetchClinicIsochrone(c, callback) {
+  fetch('/clinic-demographics/isochrone', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({address: c.address, name: c.name})
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.isochrone) {
+      c.isochrone = d.isochrone;
+      c.lat = d.lat; c.lon = d.lon;
+      clinicCache[c.address] = c;
+      if (callback) callback();
+    }
+  })
+  .catch(e => console.warn('isochrone fetch error', e));
+}
+
+function redrawCurrentIsochrones(address, name) {
+  const cached = clinicCache[address];
+  if (!cached || !cached.isochrone) return;
+  const state = getRingState(address);
+  const colorKey = cached.colorKey || "blue";
+  map1IsoLayers.forEach(l => map1.removeLayer(l));
+  map1IsoLayers = [];
+  map1IsoLayers = drawIsochrones(map1, cached.isochrone, name,
+    getRingColors(colorKey), null, null, state);
 }
 
 // ── Search filter ─────────────────────────────────────
@@ -521,6 +1268,7 @@ document.getElementById('searchInput').addEventListener('input', function() {
 
 // ── Tab switching ─────────────────────────────────────
 function switchTab(tab) {
+    if (cmpMode) exitCompareMode();
   ['clinic','allclinics','market'].forEach(t => {
     document.getElementById('btn-'+t).classList.remove('active');
   });
@@ -559,28 +1307,53 @@ async function loadAllClinics() {
   const prog = document.getElementById('all-progress');
   btn.disabled = true;
   btn.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>Loading...';
-  let done = 0;
-  const chunks = [];
-  for (let i=0; i<CLINICS.length; i+=5) chunks.push(CLINICS.slice(i,i+5));
-  for (const chunk of chunks) {
-    await Promise.allSettled(chunk.map(async clinic => {
-      try {
-        const r = await fetch('/isochrone',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:clinic.address,name:clinic.name})});
-        const d = await r.json();
-        if (!d.error && d.lat) {
-          drawIsochrones(map2, d.isochrone, clinic.name, {inner:'#1a56db',outer:'#5ba3f5'});
-          addMarker(map2, d.lat, d.lon, clinic.name, '#1a56db');
-        }
-      } catch(e){}
+  let done = 0, drawn = 0;
+  const DOT = {'blue':'#1a56db','purple':'#8b5cf6','orange':'#f97316'};
+
+  // First pass: use client-side clinicCache (already populated by loadClinicCoords)
+  const needsFetch = [];
+  CLINICS.forEach(clinic => {
+    const cached = clinicCache[clinic.address];
+    if (cached && cached.lat) {
+      const color = clinic.color || 'blue';
+      if (cached.isochrone) {
+        drawIsochrones(map2, cached.isochrone, clinic.name, getRingColors(color));
+        drawn++;
+      }
+      addMarker(map2, cached.lat, cached.lon, clinic.name, DOT[color] || '#1a56db');
       done++;
-      prog.textContent = `${done}/${CLINICS.length}`;
-    }));
+      prog.textContent = done + '/' + CLINICS.length;
+    } else {
+      needsFetch.push(clinic);
+    }
+  });
+
+  // Second pass: fetch remaining one at a time (single sync worker)
+  for (const clinic of needsFetch) {
+    try {
+      const r = await fetch('/clinic-demographics/isochrone', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({address: clinic.address, name: clinic.name})
+      });
+      const d = await r.json();
+      if (!d.error && d.lat) {
+        if (!clinicCache[clinic.address]) clinicCache[clinic.address] = {};
+        clinicCache[clinic.address].lat = d.lat;
+        clinicCache[clinic.address].lon = d.lon;
+        clinicCache[clinic.address].isochrone = d.isochrone;
+        clinicCache[clinic.address].colorKey = clinic.color || 'blue';
+        const color = clinic.color || 'blue';
+        if (d.isochrone) { drawIsochrones(map2, d.isochrone, clinic.name, getRingColors(color)); drawn++; }
+        addMarker(map2, d.lat, d.lon, clinic.name, DOT[color] || '#1a56db');
+      }
+    } catch(e) {}
+    done++;
+    prog.textContent = done + '/' + CLINICS.length;
   }
-  prog.textContent = `✓ All ${CLINICS.length} loaded`;
+  prog.textContent = '✓ ' + drawn + '/' + CLINICS.length + ' rings loaded';
   btn.innerHTML = '<i class="fa fa-check me-1"></i>Loaded';
 }
 
-// ── Tab 3: Market Analysis ────────────────────────────
 async function loadExistingOnMarket() {
   if (!map3) return;
   const prog = document.getElementById('market-progress');
@@ -590,7 +1363,7 @@ async function loadExistingOnMarket() {
   for (const chunk of chunks) {
     await Promise.allSettled(chunk.map(async clinic => {
       try {
-        const r = await fetch('/isochrone',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:clinic.address,name:clinic.name})});
+        const r = await fetch('/clinic-demographics/isochrone',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:clinic.address,name:clinic.name})});
         const d = await r.json();
         if (!d.error && d.lat) {
           drawIsochrones(map3, d.isochrone, clinic.name, {inner:'#1a56db',outer:'#5ba3f5'});
@@ -611,7 +1384,7 @@ async function addPotential() {
   status.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>Loading...';
   if (!map3) return;
   try {
-    const r = await fetch('/isochrone',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr,name:addr})});
+    const r = await fetch('/clinic-demographics/isochrone',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr,name:addr})});
     const d = await r.json();
     if (d.error || !d.lat) { status.textContent = '⚠ Could not geocode'; return; }
     potentialSites.push({address:addr, lat:d.lat, lon:d.lon});
@@ -642,6 +1415,499 @@ function clearPotentials() {
   switchTab('market');
   renderPotentialList();
 }
+
+  // ── Site Comparison ─────────────────────────────────────────────────────────
+  let cmpSelected = new Set();
+  let cmpMode = false;
+
+  function enterCompareMode() {
+    cmpMode = true;
+    document.getElementById('btn-compare').classList.add('active');
+    document.getElementById('btn-clinic').classList.remove('active');
+    document.getElementById('cmp-sidebar-hint').style.display = 'block';
+    document.getElementById('cmp-sidebar-bar').style.display = 'block';
+    updateCmpBar();
+  }
+
+  function exitCompareMode() {
+    cmpMode = false;
+    cmpSelected.clear();
+    document.querySelectorAll('.clinic-row').forEach(r => r.classList.remove('cmp-selected'));
+    document.getElementById('cmp-sidebar-bar').style.display = 'none';
+    document.getElementById('cmp-sidebar-hint').style.display = 'none';
+    document.getElementById('btn-compare').classList.remove('active');
+    document.getElementById('btn-clinic').classList.add('active');
+  }
+
+  function toggleCmpRow(row) {
+    const addr = row.dataset.address;
+    if (cmpSelected.has(addr)) {
+      cmpSelected.delete(addr);
+      row.classList.remove('cmp-selected');
+    } else {
+      cmpSelected.add(addr);
+      row.classList.add('cmp-selected');
+    }
+    updateCmpBar();
+  }
+
+  function updateCmpBar() {
+    const n = cmpSelected.size;
+    document.getElementById('cmp-count-label').textContent = n;
+    document.getElementById('run-cmp-btn').disabled = n < 2;
+  }
+
+  function closeCmpModal(e) {
+    if (e && e.target !== document.getElementById('cmp-modal-overlay')) return;
+    document.getElementById('cmp-modal-overlay').style.display = 'none';
+  }
+
+  async function runComparison() {
+    const addrs = [...cmpSelected];
+    if (addrs.length < 2) return;
+    const btn = document.getElementById('run-cmp-btn');
+    btn.disabled = true; btn.textContent = '⏳ Loading...';
+    document.getElementById('cmp-modal-overlay').style.display = 'flex';
+    document.getElementById('cmp-body').innerHTML = '<tr><td colspan="99" style="text-align:center;padding:30px;color:#9ca3af;"><i class="fa fa-spinner fa-spin me-2"></i>Fetching data...</td></tr>';
+    document.getElementById('cmp-header-row').innerHTML = '';
+
+    const rows = [];
+    for (const addr of addrs) {
+      const nameEl = document.querySelector(`.clinic-row[data-address="${CSS.escape(addr)}"] .cname`);
+      const name = nameEl ? nameEl.textContent.trim() : addr;
+      try {
+        const r = await fetch('/clinic-demographics/demographics', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({address: addr})
+        });
+        const d = await r.json();
+        rows.push({name, addr, ...d});
+      } catch(e) { rows.push({name, addr, error:true}); }
+    }
+
+    buildCompareGrid(rows);
+    document.getElementById('cmp-modal-subtitle').textContent = rows.map(r=>r.name).join(' · ');
+    btn.disabled = false; btn.textContent = 'Compare Selected';
+  }
+
+  function buildCompareGrid(clinics) {
+    const fmt  = (v,pre='',suf='') => v != null ? pre + Number(v).toLocaleString() + suf : '<span class="cmp-na">—</span>';
+    const fmtD = (v) => v != null ? '$' + Number(v).toLocaleString() : '<span class="cmp-na">—</span>';
+    const fmtP = (v) => v != null ? Number(v).toFixed(1) + '%' : '<span class="cmp-na">—</span>';
+
+    const METRICS = [
+      {section: '👥 Population (Drive-Time Rings)'},
+      {key:'pop_10min',           label:'Total Pop · 10 min',     fmt:v=>fmt(v),  dir:1},
+      {key:'pop_20min',           label:'Total Pop · 20 min',     fmt:v=>fmt(v),  dir:1},
+      {key:'female_35plus_10min', label:'Female 35+ · 10 min',    fmt:v=>fmt(v),  dir:1},
+      {key:'female_35plus_20min', label:'Female 35+ · 20 min',    fmt:v=>fmt(v),  dir:1},
+      {section: '💰 Income & Insurance'},
+      {key:'median_income_zip',   label:'Median Income (ZIP)',     fmt:fmtD,       dir:1},
+      {key:'insured_pct',         label:'Insured %',               fmt:fmtP,       dir:1},
+      {section: '💉 CPT Volume (Medicare)'},
+      {key:'cpt36475_volume',     label:'CPT 36475 Volume',        fmt:v=>fmt(v),  dir:1},
+      {key:'cpt36465_volume',     label:'CPT 36465 Volume',        fmt:v=>fmt(v),  dir:1},
+      {key:'cpt36466_volume',     label:'CPT 36466 Volume',        fmt:v=>fmt(v),  dir:1},
+      {key:'cpt_total_volume',    label:'Total CPT Volume',        fmt:v=>fmt(v),  dir:1},
+      {section: '💵 Medicare Reimbursement'},
+      {key:'medicare_rate_36475', label:'Rate CPT 36475',          fmt:fmtD,       dir:1},
+      {key:'medicare_rate_36465', label:'Rate CPT 36465',          fmt:fmtD,       dir:1},
+      {key:'medicare_rate_36466', label:'Rate CPT 36466',          fmt:fmtD,       dir:1},
+      {section: '🏁 Competition'},
+      {key:'_competitors',        label:'Competitors in ZIP',      fmt:v=>fmt(v),  dir:-1},
+    ];
+
+    const hdr = document.getElementById('cmp-header-row');
+    hdr.innerHTML = '<th>Metric</th>' + clinics.map(c=>`<th title="${c.addr}">${c.name}</th>`).join('');
+
+    const tbody = document.getElementById('cmp-body');
+    tbody.innerHTML = '';
+
+    for (const m of METRICS) {
+      if (m.section) {
+        const tr = document.createElement('tr');
+        tr.className = 'cmp-section';
+        tr.innerHTML = `<td colspan="${clinics.length+1}">${m.section}</td>`;
+        tbody.appendChild(tr); continue;
+      }
+      const vals = clinics.map(c => m.key === '_competitors' ? (c.competitors ? c.competitors.length : null) : (c[m.key] ?? null));
+      const nums = vals.filter(v => v != null && !isNaN(v));
+      const best  = nums.length ? (m.dir===1 ? Math.max(...nums) : Math.min(...nums)) : null;
+      const worst = nums.length ? (m.dir===1 ? Math.min(...nums) : Math.max(...nums)) : null;
+      const tr = document.createElement('tr');
+      let cells = `<td>${m.label}</td>`;
+      vals.forEach(v => {
+        let cls = '';
+        if (v != null && nums.length >= 2) {
+          if (v === best) cls = 'cmp-best';
+          else if (v === worst) cls = 'cmp-worst';
+          else cls = 'cmp-mid';
+        }
+        cells += `<td class="${cls}">${m.fmt(v)}</td>`;
+      });
+      tr.innerHTML = cells;
+      tbody.appendChild(tr);
+    }
+  }
+
+// ── Partner Facilities Layer ──
+let _partnerData = null;
+let _partnerLayerGroup = null;
+let _partnerVisible = false;
+
+const USPI_ICON = L.divIcon({
+  className: '',
+  html: '<div style="width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:13px solid #166534;opacity:0.85"></div>',
+  iconSize: [14, 13],
+  iconAnchor: [7, 13]
+});
+
+const SCA_ICON = L.divIcon({
+  className: '',
+  html: '<div style="font-size:16px;line-height:1;color:#166534;opacity:0.85">&#x271A;</div>',
+  iconSize: [16, 16],
+  iconAnchor: [8, 8]
+});
+
+  const NUEHEALTH_ICON = L.divIcon({
+    className: '',
+    html: '<div style="width:12px;height:12px;background:#16a34a;opacity:0.9;transform:rotate(45deg);border:1.5px solid #fff"></div>',
+    iconSize: [12, 12],
+    iconAnchor: [6, 6]
+  });
+
+async function togglePartnerFacilities() {
+  const btn = document.getElementById('partner-map-btn');
+  if (_partnerVisible) {
+    if (_partnerLayerGroup) map1.removeLayer(_partnerLayerGroup);
+    _partnerVisible = false;
+    if (btn) { btn.textContent = 'Show on Map'; btn.style.background = 'rgba(255,255,255,.15)'; }
+    btn.style.outline = '';
+    return;
+  }
+  btn.textContent = '⏳ Loading...';
+  if (!_partnerData) {
+    try {
+      const res = await fetch('/clinic-demographics/api/partner-facilities');
+      _partnerData = await res.json();
+    } catch(e) {
+      btn.innerHTML = '<i class="fa fa-hospital me-1"></i>Partner Facilities';
+      alert('Failed to load partner data');
+      return;
+    }
+  }
+  _partnerLayerGroup = L.markerClusterGroup({
+    maxClusterRadius: 40,
+    iconCreateFunction: function(cluster) {
+      return L.divIcon({
+        html: '<div style="background:#166534;color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.3);">' + cluster.getChildCount() + '</div>',
+        className: '', iconSize: [28,28], iconAnchor: [14,14]
+      });
+    }
+  });
+  const uspiMarkers = (_partnerData.uspi || []).map(f => {
+    const m = L.marker([f.lat, f.lng], {icon: USPI_ICON});
+    m.on('mouseover', function() {
+      if (!this._tooltip) this.bindTooltip('<b>' + f.name + '</b><br>' + (f.city||'') + ', ' + (f.state||'') + '<br><span style="color:#666">USPI</span>', {sticky:true}).openTooltip();
+    });
+    return m;
+  });
+  const scaMarkers = (_partnerData.sca || []).map(f => {
+    const m = L.marker([f.lat, f.lng], {icon: SCA_ICON});
+    m.on('mouseover', function() {
+      if (!this._tooltip) this.bindTooltip('<b>' + f.name + '</b><br>' + (f.city||'') + ', ' + (f.state||'') + '<br><span style="color:#666">SCA</span>', {sticky:true}).openTooltip();
+    });
+    return m;
+  });
+  const nueMarkers = (_partnerData.nuehealth || []).map(f => {
+    const m = L.marker([f.lat, f.lng], {icon: NUEHEALTH_ICON});
+    m.on('mouseover', function() {
+      if (!this._tooltip) this.bindTooltip('<b>' + f.name + '</b><br>' + (f.city||'') + ', ' + (f.state||'') + '<br><span style="color:#666">NueHealth</span>', {sticky:true}).openTooltip();
+    });
+    return m;
+  });
+  buildPartnerSidebar(_partnerData);
+  _partnerLayerGroup.addLayers(uspiMarkers.concat(scaMarkers).concat(nueMarkers));
+  _partnerLayerGroup.addTo(map1);
+  _partnerVisible = true;
+  if (btn) { btn.textContent = 'Hide from Map'; btn.style.background = 'rgba(255,255,255,.3)'; }
+  btn.style.outline = '2px solid #4ade80';
+}
+
+</script>
+
+<!-- ── Info Button ── -->
+<button id="info-btn" onclick="toggleInfo()" title="Data sources">i</button>
+
+<div id="info-overlay" onclick="toggleInfo()"></div>
+<div id="info-modal">
+  <h6>📊 Data Sources</h6>
+
+  <div class="info-row">
+    <div class="info-icon">📍</div>
+    <div>
+      <div class="info-label">Clinic Locations &amp; Status</div>
+      <div class="info-source">VIP Medical Group — Expansions &amp; New Clinic Evaluation spreadsheet. Synced on demand via Refresh button.</div>
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-icon">🚗</div>
+    <div>
+      <div class="info-label">Drive Time Rings</div>
+      <div class="info-source"><a href="https://developer.here.com" target="_blank">HERE Isoline API</a> — historical traffic patterns, Tuesday 10am conditions. 10-min and 20-min isochrones.</div>
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-icon">👥</div>
+    <div>
+      <div class="info-label">Population &amp; Income</div>
+      <div class="info-source"><a href="https://www.census.gov/programs-surveys/acs" target="_blank">U.S. Census Bureau — ACS 5-Year Estimates</a>. County-level population density and median household income.</div>
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-icon">🏥</div>
+    <div>
+      <div class="info-label">Insurance Coverage</div>
+      <div class="info-source"><a href="https://www.census.gov/data/datasets/time-series/demo/sahie/estimates-aq.html" target="_blank">Census SAHIE</a> — Small Area Health Insurance Estimates. County-level insured population %.</div>
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-icon">💉</div>
+    <div>
+      <div class="info-label">CPT 36475 Procedure Volume</div>
+      <div class="info-source"><a href="https://data.cms.gov" target="_blank">CMS Medicare Utilization Data</a>. ZIP-level procedure volume for vein ablation (CPT 36475).</div>
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-icon">🗺️</div>
+    <div>
+      <div class="info-label">Base Map</div>
+      <div class="info-source"><a href="https://www.openstreetmap.org" target="_blank">OpenStreetMap</a> via Leaflet.js.</div>
+    </div>
+  </div>
+
+  <div class="info-footer">Last synced from Google Sheets on demand · Built by Mikala 🌙</div>
+</div>
+
+<script>
+function toggleInfo() {
+  const modal = document.getElementById('info-modal');
+  const overlay = document.getElementById('info-overlay');
+  const open = modal.style.display === 'block';
+  modal.style.display = open ? 'none' : 'block';
+  overlay.style.display = open ? 'none' : 'block';
+}
+
+function _isMobile() { return window.innerWidth <= 768; }
+
+function _initMobileSidebar() {
+  if (!_isMobile()) return;
+  var sb = document.getElementById('sidebar');
+  if (!sb) return;
+  sb.style.position = 'fixed';
+  sb.style.top = '48px';
+  sb.style.left = '0';
+  sb.style.bottom = '0';
+  sb.style.zIndex = '600';
+  sb.style.width = '85vw';
+  sb.style.maxWidth = '320px';
+  sb.style.transform = 'translateX(-100%)';
+  sb.style.transition = 'transform 0.25s ease';
+  sb.style.boxShadow = '4px 0 24px rgba(0,0,0,.35)';
+}
+
+function toggleSidebar() {
+  var sb = document.getElementById('sidebar');
+  var ov = document.getElementById('sidebar-overlay');
+  if (!sb) return;
+  var isOpen = sb.getAttribute('data-sb-open') === '1';
+  if (isOpen) {
+    sb.style.transform = 'translateX(-100%)';
+    sb.setAttribute('data-sb-open', '0');
+    if (ov) ov.style.display = 'none';
+    setTimeout(function(){ if(typeof map1!=='undefined') map1.invalidateSize(); }, 300);
+  } else {
+    _initMobileSidebar();
+    sb.style.transform = 'translateX(0)';
+    sb.setAttribute('data-sb-open', '1');
+    if (ov) { ov.style.display = 'block'; ov.style.zIndex = '500'; }
+  }
+}
+
+function closeSidebar() {
+  var sb = document.getElementById('sidebar');
+  var ov = document.getElementById('sidebar-overlay');
+  if (sb) { sb.style.transform = 'translateX(-100%)'; sb.setAttribute('data-sb-open','0'); }
+  if (ov) ov.style.display = 'none';
+  setTimeout(function(){ if (typeof map1 !== 'undefined' && map1) map1.invalidateSize(); }, 300);
+}
+
+
+// -- Partner Facility Sidebar --
+function buildPartnerSidebar(data) {
+  const all = [
+    ...((data.uspi||[]).map(f=>({...f,ptype:'USPI'}))),
+    ...((data.sca||[]).map(f=>({...f,ptype:'SCA'}))),
+    ...((data.nuehealth||[]).map(f=>({...f,ptype:'NueHealth'}))),
+  ].filter(f=>f.lat&&f.lng);
+  const byState = {};
+  all.forEach(f => {
+    const s = (f.state||'??').toUpperCase();
+    if (!byState[s]) byState[s] = [];
+    byState[s].push(f);
+  });
+  const states = Object.keys(byState).sort();
+  states.forEach(s => byState[s].sort((a,b)=>a.name.localeCompare(b.name)));
+  const SF = {AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming'};
+  let html = '';
+  states.forEach(state => {
+    const facilities = byState[state];
+    const stateName = SF[state] || state;
+    html += '<div class="partner-state-header" onclick="togglePartnerState(this)">'
+          + '<span>' + stateName + ' <span style="color:#4ade80;font-weight:400;">(' + facilities.length + ')</span></span>'
+          + '<span class="pstate-chevron" style="font-size:.6rem;transition:transform .2s">&#9660;</span></div>'
+          + '<div class="partner-state-body" style="display:none;">';
+    facilities.forEach(f => {
+      const badge = f.ptype==='USPI'?'badge-uspi':f.ptype==='SCA'?'badge-sca':'badge-nue';
+      html += '<div class="partner-row" onclick="selectPartnerFacility(' + f.lat + ',' + f.lng + ',this)"'
+            + ' data-pname="' + (f.name||'').replace(/"/g,'&quot;') + '"'
+            + ' data-paddr="' + (f.address||'').replace(/"/g,'&quot;') + '"'
+            + ' data-ptype="' + f.ptype + '"'
+            + ' data-pcity="' + (f.city||'') + '">'
+            + '<span class="partner-badge ' + badge + '">' + f.ptype + '</span>'
+            + '<div><div class="partner-name">' + f.name + '</div>'
+            + '<div class="partner-city">' + (f.city||'') + '</div></div></div>';
+    });
+    html += '</div>';
+  });
+  document.getElementById('partner-list-body').innerHTML = html;
+  document.getElementById('partner-panel-count').textContent = all.length + ' facilities';
+}
+
+function togglePartnerState(header) {
+  const body = header.nextElementSibling;
+  const chev = header.querySelector('.pstate-chevron');
+  const collapsed = body.style.display === 'none';
+  body.style.display = collapsed ? '' : 'none';
+  if (chev) chev.style.transform = collapsed ? '' : 'rotate(-90deg)';
+}
+
+function selectPartnerFacility(lat, lng, el) {
+  const row = el.closest ? el.closest('.partner-row') : el;
+  const name = row.dataset.pname || '';
+  const addr = row.dataset.paddr || '';
+  const partnerType = row.dataset.ptype || '';
+  if (window.innerWidth <= 768) closeSidebar();
+  document.querySelectorAll('.clinic-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.partner-row').forEach(r => r.style.background = '');
+  row.style.background = '#bbf7d0';
+  document.getElementById('map-hint').classList.add('hidden');
+  const strip = document.getElementById('data-strip');
+  strip.style.display = 'block';
+  document.getElementById('strip-title').textContent = name + ' (' + partnerType + ')';
+  document.getElementById('strip-addr').textContent = addr || (lat.toFixed(4) + ', ' + lng.toFixed(4));
+  document.getElementById('strip-spinner').style.display = 'inline';
+  document.getElementById('strip-zip').style.display = 'none';
+  resetMetrics();
+  map1.setView([lat, lng], 13);
+  if (addr) loadRingAds(addr, lat, lng);
+  drawPartnerRings(lat, lng, null);
+  fetchSiteScore(lat, lng, addr);
+  fetch('/clinic-demographics/isochrone', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr,lat:lat,lon:lng,name:name})})
+  .then(r=>r.json()).then(d=>{
+    document.getElementById('strip-spinner').style.display = 'none';
+    if (d.isochrone) {
+      drawPartnerRings(lat, lng, d.isochrone);
+      fetch('/clinic-demographics/ring-pop', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr,lat:lat,lon:lng})})
+      .then(r=>r.json()).then(pop=>{
+        if (pop.population_10min) document.getElementById('pop10').textContent = pop.population_10min.toLocaleString();
+        if (pop.population_20min) document.getElementById('pop20').textContent = pop.population_20min.toLocaleString();
+        if (pop.female_35plus_10min) document.getElementById('fem10').textContent = pop.female_35plus_10min.toLocaleString();
+        if (pop.female_35plus_20min) document.getElementById('fem20').textContent = pop.female_35plus_20min.toLocaleString();
+      }).catch(()=>{});
+    }
+    fetch('/clinic-demographics/demographics', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr,lat:lat,lon:lng})})
+    .then(r=>r.json()).then(dem=>{
+      if (dem.median_income) document.getElementById('income').textContent = '$' + parseInt(dem.median_income).toLocaleString();
+      if (dem.zip_code) { document.getElementById('strip-zip').textContent = 'ZIP '+dem.zip_code; document.getElementById('strip-zip').style.display='inline'; }
+      if (dem.insured_pct) document.getElementById('insured').textContent = dem.insured_pct + '%';
+      if (dem.competitors !== undefined) document.getElementById('competitors').textContent = dem.competitors;
+    }).catch(()=>{});
+  }).catch(()=>{ document.getElementById('strip-spinner').style.display='none'; });
+}
+
+let _partnerRingLayers = [];
+function drawPartnerRings(lat, lng, isochrone) {
+  _partnerRingLayers.forEach(l=>{ try{map1.removeLayer(l);}catch(e){} });
+  _partnerRingLayers = [];
+  if (!isochrone || !isochrone.features) return;
+  isochrone.features.forEach(f => {
+    const min = f.properties && f.properties.contour;
+    const color = min===10 ? '#1a56db' : '#93c5fd';
+    const layer = L.geoJSON(f,{style:{color,weight:2,fillOpacity:.08,fillColor:color}}).addTo(map1);
+    _partnerRingLayers.push(layer);
+  });
+}
+
+// Init on load
+window.addEventListener('DOMContentLoaded', function() {
+  _initMobileSidebar();
+  // Auto-populate partner sidebar (no map layer until Show on Map clicked)
+  fetch('/clinic-demographics/api/partner-facilities')
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      _partnerData = data;
+      buildPartnerSidebar(data);
+    })
+    .catch(function(){
+      var el = document.getElementById('partner-list-body');
+      if (el) el.innerHTML = '<div style="padding:10px 14px;color:#dc2626;font-size:.72rem;">Failed to load partner facilities.</div>';
+    });
+  // After sidebar moves to fixed, Leaflet needs to recalculate map size
+  if (window.innerWidth <= 768) {
+    setTimeout(function(){
+      if (typeof map1 !== 'undefined' && map1) map1.invalidateSize();
+    }, 400);
+  }
+});
+window.addEventListener('resize', function() {
+  if (!_isMobile()) {
+    var sb = document.getElementById('sidebar');
+    if (sb) { sb.style.cssText = ''; }
+  } else {
+    _initMobileSidebar();
+  }
+});
+</script>
+
+
+<div id="js-error-box" style="display:none;position:fixed;bottom:10px;left:10px;right:10px;max-height:200px;overflow-y:auto;background:#fee2e2;border:2px solid #dc2626;border-radius:8px;padding:10px;font-family:monospace;font-size:12px;z-index:99999;">
+  <b style="color:#dc2626">⚠️ JS Error Log (send this to Mikala):</b>
+  <div id="js-error-list"></div>
+</div>
+<script>
+window.onerror = function(msg, src, line, col, err) {
+  var box = document.getElementById('js-error-box');
+  var list = document.getElementById('js-error-list');
+  if (box && list) {
+    box.style.display = 'block';
+    list.innerHTML += '<div style="margin-top:4px;color:#991b1b">❌ ' + msg + '<br><small>' + src + ' line ' + line + '</small></div>';
+  }
+  return false;
+};
+window.addEventListener('unhandledrejection', function(e) {
+  var box = document.getElementById('js-error-box');
+  var list = document.getElementById('js-error-list');
+  if (box && list) {
+    box.style.display = 'block';
+    list.innerHTML += '<div style="margin-top:4px;color:#991b1b">❌ Promise: ' + (e.reason && e.reason.message ? e.reason.message : e.reason) + '</div>';
+  }
+});
 </script>
 </body>
 </html>

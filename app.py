@@ -1,11 +1,17 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, flash
+import openpyxl
+import io
+import flexpolyline
 import requests
 import math
 import os
 import re
 import json
 import threading
-from auth import login_required, APP_USERNAME, APP_PASSWORD
+from auth import login_required, check_credentials
+from ring_ads import compute_ring_ads
+from patient_heatmap import get_heatmap_points
+from clinic_performance import get_clinic_performance, get_campaigns_list
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "vtc-clinic-demo-secret-2024")
@@ -16,9 +22,12 @@ def login():
     if request.method == "POST":
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "").strip()
-        if username.lower() == APP_USERNAME.lower() and password.lower() == APP_PASSWORD.lower():
+        if check_credentials(username, password):
             session["logged_in"] = True
-            return redirect(request.args.get("next", "/"))
+            next_url = request.args.get("next", "/")
+        if not next_url.startswith("/clinic-demographics"):
+            next_url = "/clinic-demographics" + next_url
+        return redirect(next_url)
         flash("Invalid username or password.", "danger")
     return render_template("login.html")
 
@@ -28,53 +37,25 @@ def logout():
     session.clear()
     return redirect(url_for("login"))
 
-CLINICS = [
-    {"name": "Astoria, NY", "address": "23-25 31st St Suite 410, Astoria, NY 11105"},
-    {"name": "Brighton Beach, NY", "address": "23 Brighton 11th St 7th Floor, Brooklyn, NY 11235"},
-    {"name": "Bronx, NY", "address": "2100 Bartow Ave Suite 400, Bronx, NY 10475"},
-    {"name": "Downtown Brooklyn, NY", "address": "188 Montague St 10th floor, Brooklyn, NY 11201"},
-    {"name": "Financial District, NY", "address": "156 William St Suite 302, New York, NY 10038"},
-    {"name": "Forest Hills, NY", "address": "107-30 71st Rd Suite 204, Forest Hills, NY 11375"},
-    {"name": "Hartsdale, NY", "address": "280 N Central Ave Suite 450, Hartsdale, NY 10530"},
-    {"name": "Jericho, NY", "address": "350 Jericho Tpke Suite 310, Jericho, NY 11753"},
-    {"name": "Midtown Manhattan, NY", "address": "290 Madison Ave Floor 2, New York, NY 10017"},
-    {"name": "Port Jefferson, NY", "address": "70 N Country Rd #201, Port Jefferson, NY 11777"},
-    {"name": "Staten Island, NY", "address": "4236 Hylan Blvd, Staten Island, NY 10312"},
-    {"name": "Upper East Side, NY", "address": "1111 Park Ave # 1b, New York, NY 10128"},
-    {"name": "West Islip, NY", "address": "500 Montauk Hwy Suite G, West Islip, NY 11795"},
-    {"name": "Yonkers, NY", "address": "124 New Main St, Yonkers, NY 10701"},
-    {"name": "Clifton, NJ", "address": "1117 US-46 Ste 205, Clifton, NJ 07013"},
-    {"name": "Edgewater, NJ", "address": "968 River Rd # 200, Edgewater, NJ 07020"},
-    {"name": "Harrison, NJ", "address": "620 Essex St #202, Harrison, NJ 07029"},
-    {"name": "Hoboken, NJ", "address": "70 Hudson St Lower Level, Hoboken, NJ 07030"},
-    {"name": "Morris County, NJ", "address": "3695 Hill Rd, Parsippany, NJ 07054"},
-    {"name": "Morristown, NJ", "address": "310 Madison Ave 3rd floor, Morristown, NJ 07960"},
-    {"name": "Paramus, NJ", "address": "140 NJ-17 #269, Paramus, NJ 07652"},
-    {"name": "Princeton, NJ", "address": "8 Forrestal Rd S suite 203, Princeton, NJ 08540"},
-    {"name": "Scotch Plains, NJ", "address": "2253 South Ave #2, Scotch Plains, NJ 07076"},
-    {"name": "West Orange, NJ", "address": "405 Northfield Ave #204, West Orange, NJ 07052"},
-    {"name": "Woodbridge, NJ", "address": "517 U.S. Rte 1 #1100, Iselin, NJ 08830"},
-    {"name": "Woodland Park, NJ", "address": "1167 McBride Ave Suite 2, Woodland Park, NJ 07424"},
-    {"name": "Huntington Beach, CA", "address": "7677 Center Ave #310, Huntington Beach, CA 92647"},
-    {"name": "Irvine, CA", "address": "4482 Barranca Pkwy #252, Irvine, CA 92604"},
-    {"name": "National City, CA", "address": "22 W 35th St suite 202, National City, CA 91950"},
-    {"name": "Newport Beach, CA", "address": "1525 Superior Ave suite 202, Newport Beach, CA 92663"},
-    {"name": "Palo Alto, CA", "address": "2248 Park Blvd, Palo Alto, CA 94306"},
-    {"name": "Poway, CA", "address": "15708 Pomerado Rd suite n202, Poway, CA 92064"},
-    {"name": "San Diego, CA", "address": "5330 Carroll Canyon Rd #140, San Diego, CA 92121"},
-    {"name": "San Jose, CA", "address": "1270 S Winchester Blvd # 102, San Jose, CA 95128"},
-    {"name": "Temecula, CA", "address": "27290 Madison Ave Suite 102, Temecula, CA 92590"},
-    {"name": "Bethesda, MD", "address": "6903 Rockledge Dr Suite 470, Bethesda, MD 20817"},
-    {"name": "Bowie, MD", "address": "4201 Northview Dr Suite 104, Bowie, MD 20716"},
-    {"name": "Maple Lawn, MD", "address": "11810 W Market Pl Suite 300, Fulton, MD 20759"},
-    {"name": "Farmington, CT", "address": "399 Farmington Ave LL2, Farmington, CT 06032"},
-    {"name": "Hamden, CT", "address": "2080 Whitney Ave #250, Hamden, CT 06518"},
-    {"name": "Stamford, CT", "address": "1266 E Main St Suite 465, Stamford, CT 06902"},
-    {"name": "Arlington, TX", "address": "3050 S Center St #110, Arlington, TX 76014"},
-    {"name": "Cedar Park, TX", "address": "351 Cypress Creek Road STE 200, Cedar Park, TX 78613"},
-    {"name": "Fort Worth, TX", "address": "3455 Locke Ave Suite 300, Fort Worth, TX 76107"},
-    {"name": "Kyle, TX", "address": "135 Bunton Creek Rd #300, Kyle, TX 78640"},
-]
+SITES_FILE = '/tmp/vip_sites.json'
+STATUS_COLORS = {
+    'open': 'blue',
+    'pending opening day': 'purple',
+    'possible new sites': 'orange',
+}
+
+def load_sites():
+    try:
+        with open(SITES_FILE) as f:
+            return json.load(f)
+    except:
+        return {"territories": {}, "clinics": []}
+
+def get_clinics():
+    return load_sites().get("clinics", [])
+
+# Keep backward compat
+CLINICS = get_clinics()
 
 STATE_FIPS = {
     "AL":"01","AK":"02","AZ":"04","AR":"05","CA":"06","CO":"08","CT":"09",
@@ -88,6 +69,33 @@ STATE_FIPS = {
 }
 
 _cache = {}
+
+def _evict_clinic_cache(address):
+    """Remove all cache entries related to a specific clinic address."""
+    # Geocode key
+    geo_key = f"geo:{address}"
+    coords = _cache.pop(geo_key, None)
+    if coords:
+        lat, lon = coords
+        iso_key = f"iso:{lat:.4f},{lon:.4f}"
+        iso = _cache.pop(iso_key, None)
+        # Pop ring population keys
+        for ring_key in list(_cache.keys()):
+            if ring_key.startswith("pop_ring:"):
+                _cache.pop(ring_key, None)
+    # County/zip based keys - harder to target, leave them (they're shared across clinics)
+
+def _smart_cache_refresh(old_clinics, new_clinics):
+    """Only evict cache for clinics that are new or have changed addresses/status."""
+    old_addresses = {c["address"]: c for c in old_clinics}
+    new_addresses = {c["address"]: c for c in new_clinics}
+    # Evict removed or changed clinics
+    for addr, clinic in old_addresses.items():
+        if addr not in new_addresses:
+            _evict_clinic_cache(addr)
+    # Evict new clinics (they have no cache yet, but preloader needs to know to load them)
+    new_only = [c for c in new_clinics if c["address"] not in old_addresses]
+    return new_only  # return list of new clinics to preload
 _preload_status = {"done": 0, "total": len(CLINICS), "complete": False}
 
 
@@ -121,30 +129,88 @@ def geocode_address(address):
         print(f"Geocode error for {address}: {e}")
     return None
 
+HERE_API_KEY = "WYqJdDCGYmTRFQT5zxM_aUNTb8XH0_MwezLgqvRkCbE"
+CENSUS_API_KEY = "39d91e3ea57b794ee42f0e60b4548835eb21293b"
+
+def _census_get(url, params, timeout=15, retries=3):
+    """Census API call with key injection, retry on 429."""
+    import time
+    if CENSUS_API_KEY:
+        params = dict(params, key=CENSUS_API_KEY)
+    for attempt in range(retries):
+        try:
+            r = requests.get(url, params=params, timeout=timeout)
+            if r.status_code == 429:
+                time.sleep(2 ** attempt)
+                continue
+            return r
+        except Exception as e:
+            if attempt == retries - 1:
+                raise
+            time.sleep(1)
+    return None
+HERE_DEPARTURE = "2026-03-10T10:00:00"  # Tuesday 10am — matches Buxton methodology
+
+def _here_polygon_to_geojson(encoded, minutes):
+    """Decode HERE flexible polyline and return a GeoJSON feature."""
+    coords = flexpolyline.decode(encoded)
+    # coords are (lat, lon) tuples — GeoJSON needs [lon, lat]
+    ring = [[lon, lat] for lat, lon in coords]
+    if ring[0] != ring[-1]:
+        ring.append(ring[0])
+    return {
+        "type": "Feature",
+        "geometry": {"type": "Polygon", "coordinates": [ring]},
+        "properties": {"contour": minutes, "metric": "time"}
+    }
+
 def get_isochrone(lat, lon):
     key = f"iso:{lat:.4f},{lon:.4f}"
     if key in _cache:
         return _cache[key]
     try:
-        r = requests.post(
-            "https://valhalla1.openstreetmap.de/isochrone",
-            json={
-                "locations": [{"lat": lat, "lon": lon}],
-                "costing": "auto",
-                "contours": [{"time": 10}, {"time": 20}],
-                "polygons": True,
-                "denoise": 0.5,
-                "generalize": 150,
-            },
-            timeout=30
+        url = (
+            f"https://isoline.router.hereapi.com/v8/isolines"
+            f"?transportMode=car"
+            f"&origin={lat},{lon}"
+            f"&range%5Btype%5D=time"
+            f"&range%5Bvalues%5D=600,1200"
+            f"&departureTime={HERE_DEPARTURE}"
+            f"&apikey={HERE_API_KEY}"
         )
+        r = requests.get(url, timeout=30)
         if r.status_code == 200:
             data = r.json()
-            _cache[key] = data
-            return data
+            features = []
+            for isoline in data.get("isolines", []):
+                minutes = isoline["range"]["value"] // 60
+                for poly in isoline.get("polygons", []):
+                    features.append(_here_polygon_to_geojson(poly["outer"], minutes))
+            geojson = {"type": "FeatureCollection", "features": features}
+            _cache[key] = geojson
+            return geojson
     except Exception as e:
-        print(f"Isochrone error for ({lat},{lon}): {e}")
+        print(f"HERE isochrone error for ({lat},{lon}): {e}")
     return None
+
+def geocode_state(lat, lon):
+    """Return 2-letter state abbreviation for a lat/lon using Census geocoder."""
+    key = f"state:{lat:.3f},{lon:.3f}"
+    if key in _cache:
+        return _cache[key]
+    try:
+        r = requests.get(
+            "https://geocoding.geo.census.gov/geocoder/geographies/coordinates",
+            params={"x": lon, "y": lat, "benchmark": "Public_AR_Current",
+                    "vintage": "Current_Current", "layers": "States", "format": "json"},
+            timeout=10)
+        result = r.json()
+        states = result["result"]["geographies"].get("States", [])
+        abbr = states[0].get("STUSAB", "") if states else ""
+        _cache[key] = abbr
+        return abbr
+    except:
+        return ""
 
 def get_county_fips(lat, lon):
     key = f"county:{lat:.4f},{lon:.4f}"
@@ -175,22 +241,48 @@ def get_census_acs(state_fips, county_fips):
         return _cache[key]
     result = {"population": None, "median_income": None, "error": None}
     try:
-        r = requests.get(
+        female_vars = ",".join(f"B01001_{n:03d}E" for n in range(37, 50))
+        all_vars = f"B01003_001E,B19013_001E,{female_vars}"
+        r = _census_get(
             "https://api.census.gov/data/2022/acs/acs5",
-            params={"get": "B01003_001E,B19013_001E",
+            params={"get": all_vars,
                     "for": f"county:{county_fips}",
-                    "in": f"state:{state_fips}"},
-            timeout=12
+                    "in": f"state:{state_fips}"}
         )
         data = r.json()
         if len(data) >= 2:
             d = dict(zip(data[0], data[1]))
             pop = int(d.get("B01003_001E", 0) or 0)
             inc = int(d.get("B19013_001E", 0) or 0)
+            f35 = sum(int(d.get(f"B01001_{n:03d}E", 0) or 0) for n in range(37, 50))
             result["population"] = pop if pop > 0 else None
             result["median_income"] = inc if inc > 0 else None
+            result["female_35plus"] = f35 if f35 > 0 else None
     except Exception as e:
         result["error"] = str(e)
+    _cache[key] = result
+    return result
+
+
+def get_zip_income(zipcode):
+    """Median household income for a ZIP code (Census ACS 5-year, ZCTA level)."""
+    key = f"zip_income:{zipcode}"
+    if key in _cache:
+        return _cache[key]
+    result = None
+    try:
+        r = _census_get(
+            "https://api.census.gov/data/2022/acs/acs5",
+            params={"get": "B19013_001E",
+                    "for": f"zip code tabulation area:{zipcode}"}
+        )
+        if r and r.ok:
+            data = r.json()
+            if len(data) >= 2:
+                val = int(data[1][0] or 0)
+                result = val if val > 0 else None
+    except Exception as e:
+        print(f"ZIP income error {zipcode}: {e}")
     _cache[key] = result
     return result
 
@@ -205,8 +297,9 @@ def get_sahie(state_fips, county_fips):
             params={"get": "PCTIC_PT",
                     "for": f"county:{county_fips}",
                     "in": f"state:{state_fips}",
-                    "time": "2022"},
-            timeout=12
+                    "time": "2022",
+                    "key": CENSUS_API_KEY},
+            timeout=8
         )
         data = r.json()
         if len(data) >= 2:
@@ -218,44 +311,312 @@ def get_sahie(state_fips, county_fips):
     _cache[key] = result
     return result
 
-def get_cms(zipcode):
-    key = f"cms:{zipcode}"
+# CMS Medicare Physician & Other Practitioners - by Provider and Service
+CMS_DATASET = "https://data.cms.gov/data-api/v1/dataset/92396110-2aed-4d63-a6a2-5d6207d46a29/data"
+CMS_GEO_DATASET = "https://data.cms.gov/data-api/v1/dataset/6fea9d79-0129-4e4c-b1b8-23cd86a4f435/data"
+VTC_CPT_CODES = ["36475", "36465", "36466"]
+
+def get_cms(zipcode, state_fips=None):
+    """Fetch CPT volume + reimbursement rates. Uses state-level for volume/rates, ZIP for competitors."""
+    key = f"cms2:{state_fips or zipcode}"
     if key in _cache:
         return _cache[key]
-    result = {"cpt36475_volume": None, "error": None}
+    result = {
+        "cpt36475_volume": 0, "cpt36465_volume": 0, "cpt36466_volume": 0,
+        "cpt_total_volume": 0,
+        "medicare_rate_36475": None, "medicare_rate_36465": None, "medicare_rate_36466": None,
+        "competitors": [],
+        "error": None
+    }
+    def _fetch_cpt_state(cpt):
+        """State-level volume + rates."""
+        try:
+            r = requests.get(CMS_GEO_DATASET,
+                params={"filter[HCPCS_Cd]": cpt,
+                        "filter[Rndrng_Prvdr_Geo_Cd]": state_fips or "",
+                        "filter[Rndrng_Prvdr_Geo_Lvl]": "State", "size": 10},
+                timeout=15)
+            if r.ok and isinstance(r.json(), list):
+                return cpt, r.json()
+        except:
+            pass
+        return cpt, []
+
+    def _fetch_cpt_zip(cpt):
+        """ZIP-level for competitor detection (36475 only)."""
+        try:
+            r = requests.get(CMS_DATASET,
+                params={"filter[Rndrng_Prvdr_Zip5]": zipcode,
+                        "filter[HCPCS_Cd]": cpt, "size": 500},
+                timeout=15)
+            if r.ok and isinstance(r.json(), list):
+                return cpt, r.json()
+        except:
+            pass
+        return cpt, []
+
     try:
-        r = requests.get(
-            "https://data.cms.gov/data-api/v1/dataset/9767cb68-8ea9-4f0b-8179-9431abc89f11/data",
-            params={"filter[Rndrng_Prvdr_Zip5]": zipcode,
-                    "filter[HCPCS_Cd]": "36475", "size": 500},
-            timeout=15
-        )
-        data = r.json()
-        if isinstance(data, list):
-            result["cpt36475_volume"] = sum(int(row.get("Tot_Srvcs", 0) or 0) for row in data)
-        else:
-            result["cpt36475_volume"] = 0
+        from concurrent.futures import ThreadPoolExecutor as _TPE
+        with _TPE(max_workers=4) as ex:
+            state_results = dict(ex.map(lambda c: _fetch_cpt_state(c), VTC_CPT_CODES))
+            f_zip = ex.submit(lambda: _fetch_cpt_zip("36475"))
+        _, zip_rows = f_zip.result()
+
+        for cpt, rows in state_results.items():
+            # Sum across office + facility place of service
+            vol = sum(int(row.get("Tot_Srvcs", 0) or 0) for row in rows)
+            result[f"cpt{cpt}_volume"] = vol
+            result["cpt_total_volume"] += vol
+            total_pay = sum(
+                float(row.get("Avg_Mdcr_Pymt_Amt", 0) or 0) * int(row.get("Tot_Srvcs", 0) or 0)
+                for row in rows)
+            if vol > 0:
+                result[f"medicare_rate_{cpt}"] = round(total_pay / vol, 2)
+
+        # Competitors from ZIP-level data
+        for row in zip_rows:
+            name = f"{row.get('Rndrng_Prvdr_First_Name','')} {row.get('Rndrng_Prvdr_Last_Org_Name','')}".strip()
+            result["competitors"].append({
+                "name": name,
+                "type": row.get("Rndrng_Prvdr_Type",""),
+                "city": row.get("Rndrng_Prvdr_City",""),
+                "state": row.get("Rndrng_Prvdr_State_Abrvtn",""),
+                "zip": row.get("Rndrng_Prvdr_Zip5",""),
+                "npi": row.get("Rndrng_NPI",""),
+                "volume": int(row.get("Tot_Srvcs", 0) or 0),
+                "medicare_participating": row.get("Rndrng_Prvdr_Mdcr_Prtcptg_Ind","") == "Y",
+            })
     except Exception as e:
         result["error"] = str(e)
     _cache[key] = result
     return result
 
 
+def get_cms_state(state_abbr):
+    """Fetch all CPT 36475 providers in a state for competitor radius search."""
+    key = f"cms_state:{state_abbr}"
+    if key in _cache:
+        return _cache[key]
+    try:
+        r = requests.get(CMS_DATASET,
+            params={"filter[Rndrng_Prvdr_State_Abrvtn]": state_abbr,
+                    "filter[HCPCS_Cd]": "36475", "size": 2000},
+            timeout=30)
+        if r.ok and isinstance(r.json(), list):
+            result = r.json()
+            _cache[key] = result
+            return result
+    except Exception as e:
+        print(f"CMS state fetch error: {e}")
+    return []
+
+
+def get_competitors_near(lat, lon, state_abbr, radius_km=40):
+    """Find providers billing CPT 36475 within radius_km of lat/lon."""
+    import math
+    providers = get_cms_state(state_abbr)
+    nearby = []
+    for p in providers:
+        pzip = p.get("Rndrng_Prvdr_Zip5","")
+        # Quick filter: use ZIP centroid from geocoder cache if available
+        pkey = f"zip:{pzip}"
+        if pkey not in _cache:
+            continue
+        plat, plon = _cache[pkey]
+        # Haversine distance
+        R = 6371
+        dlat = math.radians(plat - lat)
+        dlon = math.radians(plon - lon)
+        a = math.sin(dlat/2)**2 + math.cos(math.radians(lat)) * math.cos(math.radians(plat)) * math.sin(dlon/2)**2
+        dist = R * 2 * math.asin(math.sqrt(a))
+        if dist <= radius_km:
+            name = f"{p.get('Rndrng_Prvdr_First_Name','')} {p.get('Rndrng_Prvdr_Last_Org_Name','')}".strip()
+            nearby.append({
+                "name": name,
+                "type": p.get("Rndrng_Prvdr_Type",""),
+                "city": p.get("Rndrng_Prvdr_City",""),
+                "state": p.get("Rndrng_Prvdr_State_Abrvtn",""),
+                "zip": pzip,
+                "npi": p.get("Rndrng_NPI",""),
+                "volume": int(p.get("Tot_Srvcs", 0) or 0),
+                "medicare_participating": p.get("Rndrng_Prvdr_Mdcr_Prtcptg_Ind","") == "Y",
+                "distance_km": round(dist, 1),
+            })
+    nearby.sort(key=lambda x: x["distance_km"])
+    return nearby
+
+
+def get_population_in_ring(isochrone_geojson, ring_minutes):
+    """
+    Returns population statistics for the area within an isochrone ring.
+    Uses Census block-group data with Shapely polygon intersection.
+    """
+    from collections import defaultdict
+    try:
+        from shapely.geometry import shape, Point
+    except ImportError:
+        return {"total_pop": None, "female_35plus": None, "median_income": None}
+
+    if not isochrone_geojson:
+        return {"total_pop": None, "female_35plus": None, "median_income": None}
+
+    cache_key = f"pop_ring:{ring_minutes}:{hash(str(isochrone_geojson))}"
+    if cache_key in _cache:
+        return _cache[cache_key]
+
+    result = {"total_pop": None, "female_35plus": None, "median_income": None}
+
+    try:
+        features = isochrone_geojson.get("features", [])
+        # Find the polygon for this ring (contour == ring_minutes)
+        poly_geom = None
+        for f in features:
+            if f.get("properties", {}).get("contour") == ring_minutes:
+                poly_geom = f["geometry"]
+                break
+        if not poly_geom:
+            _cache[cache_key] = result
+            return result
+
+        ring_shape = shape(poly_geom)
+        coords_list = poly_geom["coordinates"][0]
+        lons = [c[0] for c in coords_list]
+        lats = [c[1] for c in coords_list]
+        bbox = f"{min(lons)},{min(lats)},{max(lons)},{max(lats)}"
+
+        # Get block groups from TIGERweb that intersect the bounding box
+        r = requests.get(
+            "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_ACS2022/MapServer/8/query",
+            params={"geometry": bbox, "geometryType": "esriGeometryEnvelope",
+                    "inSR": "4326", "spatialRel": "esriSpatialRelIntersects",
+                    "outFields": "GEOID,STATE,COUNTY,TRACT,BLKGRP,CENTLAT,CENTLON",
+                    "returnGeometry": "false", "f": "json"},
+            timeout=20)
+        if not r.ok:
+            _cache[cache_key] = result
+            return result
+
+        features_bg = r.json().get("features", [])
+        if not features_bg:
+            _cache[cache_key] = result
+            return result
+
+        # Filter block groups whose centroid is within the ring polygon
+        by_state_county = defaultdict(list)
+        for feat in features_bg:
+            attr = feat.get("attributes", {})
+            clat = attr.get("CENTLAT")
+            clon = attr.get("CENTLON")
+            if clat is None or clon is None:
+                # No centroid — include it anyway (conservative)
+                pass
+            else:
+                try:
+                    pt = Point(float(clon), float(clat))
+                    if not ring_shape.contains(pt):
+                        continue
+                except:
+                    pass
+            sc = (str(attr.get("STATE", "")).zfill(2), str(attr.get("COUNTY", "")).zfill(3))
+            by_state_county[sc].append((str(attr.get("TRACT", "")).zfill(6), str(attr.get("BLKGRP", ""))))
+
+        if not by_state_county:
+            _cache[cache_key] = result
+            return result
+
+        total_pop = 0
+        female_35plus = 0
+        income_vals = []
+        female_vars = ",".join(f"B01001_{n:03d}E" for n in range(37, 50))
+        vars_needed = f"B01003_001E,{female_vars},B19013_001E"
+
+        for (state, county), tracts in by_state_county.items():
+            params = {"get": vars_needed, "for": "block group:*",
+                      "in": f"state:{state} county:{county}"}
+            rc = _census_get("https://api.census.gov/data/2022/acs/acs5", params)
+            if not rc or not rc.ok:
+                continue
+            try:
+                rows = rc.json()
+                if not isinstance(rows, list) or len(rows) < 2:
+                    continue
+                headers = rows[0]
+                idx = {h: i for i, h in enumerate(headers)}
+                tract_idx = idx.get("tract")
+                bg_idx = idx.get("block group")
+                wanted = {(t, b) for t, b in tracts}
+                for row in rows[1:]:
+                    if tract_idx is None or bg_idx is None:
+                        continue
+                    tract = str(row[tract_idx]).zfill(6)
+                    bg = str(row[bg_idx])
+                    if (tract, bg) not in wanted:
+                        continue
+                    def si(v):
+                        try: return max(0, int(v or 0))
+                        except: return 0
+                    pop = si(row[idx.get("B01003_001E", -1)])
+                    f35 = sum(si(row[idx.get(f"B01001_{n:03d}E", -1)]) for n in range(37, 50))
+                    inc_raw = row[idx.get("B19013_001E", -1)]
+                    total_pop += pop
+                    female_35plus += f35
+                    try:
+                        iv = int(inc_raw)
+                        if iv > 0 and pop > 0:
+                            income_vals.append((iv, pop))
+                    except:
+                        pass
+            except Exception as e:
+                print(f"ACS BG parse error {state}/{county}: {e}")
+                continue
+
+        result["total_pop"] = total_pop if total_pop > 0 else None
+        result["female_35plus"] = female_35plus if female_35plus > 0 else None
+        if income_vals:
+            tw = sum(w for _, w in income_vals)
+            result["median_income"] = round(sum(v * w for v, w in income_vals) / tw) if tw > 0 else None
+
+    except Exception as e:
+        print(f"Population ring error: {e}")
+
+    _cache[cache_key] = result
+    return result
+
+
+
 # ── Background preloader ─────────────────────────────────────────
 
 def _preload_worker():
-    """Geocode all clinics + fetch their isochrones in background threads."""
+    """Geocode all clinics, fetch isochrones, and preload all demographics so clicks are instant."""
     from concurrent.futures import ThreadPoolExecutor
     def load_one(clinic):
         try:
-            coords = geocode_address(clinic["address"])
-            if coords:
-                get_isochrone(coords[0], coords[1])
-        except:
-            pass
-        _preload_status["done"] += 1
+            address = clinic["address"]
+            coords = geocode_address(address)
+            if not coords:
+                return
+            lat, lon = coords
+            # Isochrone
+            iso = get_isochrone(lat, lon)
+            # Demographics
+            zipcode = extract_zip(address)
+            state_fips, county_fips = get_county_fips(lat, lon)
+            if state_fips:
+                get_census_acs(state_fips, county_fips)
+                get_sahie(state_fips, county_fips)
+            if zipcode:
+                get_cms(zipcode)
+                get_zip_income(zipcode)
+            # Population within rings (slowest — do last)
+            if iso:
+                get_population_in_ring(iso, 10)
+                get_population_in_ring(iso, 20)
+        except Exception as e:
+            print(f"Preload error for {clinic.get('address','?')}: {e}")
+        finally:
+            _preload_status["done"] += 1
 
-    with ThreadPoolExecutor(max_workers=5) as ex:
+    with ThreadPoolExecutor(max_workers=3) as ex:
         ex.map(load_one, CLINICS)
 
     _preload_status["complete"] = True
@@ -269,9 +630,14 @@ threading.Thread(target=_preload_worker, daemon=True).start()
 @app.route("/")
 @login_required
 def index():
+    sites = load_sites()
+    clinics = sites.get("clinics", [])
+    territories = sites.get("territories", {})
     return render_template("index.html",
-                           clinics=CLINICS,
-                           clinics_json=json.dumps(CLINICS))
+                           clinics=clinics,
+                           clinics_json=json.dumps(clinics),
+                           territories=territories,
+                           territories_json=json.dumps(territories))
 
 @app.route("/preload-status")
 @login_required
@@ -296,6 +662,7 @@ def clinic_coords():
             "lat": lat,
             "lon": lon,
             "isochrone": _cache.get(iso_key),  # None if not yet cached
+            "color": clinic.get("color", "blue"),
         })
     return jsonify(results)
 
@@ -308,12 +675,42 @@ def isochrone_endpoint():
     name = data.get("name", address)
     if not address:
         return jsonify({"error": "No address"}), 400
-    coords = geocode_address(address)
-    if not coords:
-        return jsonify({"error": f"Could not geocode: {address}"})
-    lat, lon = coords
+    # Accept direct lat/lon for partner facilities (skip geocoding)
+    direct_lat = data.get("lat")
+    direct_lon = data.get("lon")
+    if direct_lat and direct_lon:
+        lat, lon = float(direct_lat), float(direct_lon)
+    else:
+        coords = geocode_address(address)
+        if not coords:
+            return jsonify({"error": f"Could not geocode: {address}"})
+        lat, lon = coords
     iso = get_isochrone(lat, lon)
     return jsonify({"name": name, "address": address, "lat": lat, "lon": lon, "isochrone": iso})
+
+
+@app.route("/compare")
+@login_required
+def compare_page():
+    sites = load_sites()
+    territories = sites.get("territories", {})
+    # Load Looker productivity data
+    looker_data = {}
+    try:
+        import os as _os
+        p2_path = _os.path.join(_os.path.dirname(__file__), "phase2_results.json")
+        with open(p2_path) as _f:
+            _p2 = json.load(_f)
+        for _r in _p2.get("results", []):
+            if _r.get("created_initials") is not None:
+                looker_data[_r["name"]] = {
+                    "created_initials": _r["created_initials"],
+                    "fulfilled_initials": _r.get("fulfilled_initials"),
+                }
+    except Exception as _e:
+        print(f"Looker data load error: {_e}")
+    return render_template("compare.html", territories=territories,
+                           looker_data_json=json.dumps(looker_data))
 
 @app.route("/demographics", methods=["POST"])
 @login_required
@@ -323,27 +720,427 @@ def demographics():
     address = (data.get("address") or "").strip()
     if not address:
         return jsonify({"error": "No address"}), 400
-    coords = geocode_address(address)
-    if not coords:
-        return jsonify({"error": f"Could not geocode: {address}"})
-    lat, lon = coords
+    # Accept direct lat/lon for partner facilities (skip geocoding)
+    direct_lat = data.get("lat")
+    direct_lon = data.get("lon")
+    if direct_lat and direct_lon:
+        lat, lon = float(direct_lat), float(direct_lon)
+    else:
+        coords = geocode_address(address)
+        if not coords:
+            return jsonify({"error": f"Could not geocode: {address}"})
+        lat, lon = coords
     zipcode = extract_zip(address)
     state_fips, county_fips = get_county_fips(lat, lon)
-    acs = get_census_acs(state_fips, county_fips) if state_fips else {}
-    sahie = get_sahie(state_fips, county_fips) if state_fips else {}
-    cms = get_cms(zipcode) if zipcode else {}
+    # Run ACS, SAHIE, CMS concurrently for speed
+    from concurrent.futures import ThreadPoolExecutor as _TPE
+    def _acs(): return get_census_acs(state_fips, county_fips) if state_fips else {}
+    def _sahie(): return get_sahie(state_fips, county_fips) if state_fips else {}
+    def _cms(): return get_cms(zipcode, state_fips=state_fips) if zipcode else {}
+    def _zip_inc(): return get_zip_income(zipcode) if zipcode else None
+    with _TPE(max_workers=4) as ex:
+        f_acs = ex.submit(_acs)
+        f_sahie = ex.submit(_sahie)
+        f_cms = ex.submit(_cms)
+        f_zip = ex.submit(_zip_inc)
+        acs = f_acs.result()
+        sahie = f_sahie.result()
+        cms = f_cms.result()
+        zip_income = f_zip.result()
     density = None
     if acs.get("population"):
         density = round(acs["population"] / (math.pi * 10 ** 2), 1)
+    # Check ring population from cache WITHOUT blocking on HERE API call
+    # Ring population: serve from cache if preloaded, else return nulls and let frontend poll /ring-pop
+    iso_key = f"iso:{lat:.4f},{lon:.4f}"
+    iso = _cache.get(iso_key)
+    ring_key_10 = f"pop_ring:10:{hash(str(iso))}" if iso else None
+    ring_key_20 = f"pop_ring:20:{hash(str(iso))}" if iso else None
+    pop10 = _cache.get(ring_key_10, {}) if ring_key_10 else {}
+    pop20 = _cache.get(ring_key_20, {}) if ring_key_20 else {}
+    rings_ready = bool(pop10 or pop20)
+
     return jsonify({
         "lat": lat, "lon": lon, "zip": zipcode,
+        # Legacy county-level fields
         "population_density": density,
         "median_income": acs.get("median_income"),
         "insured_pct": sahie.get("insured_pct"),
+        # CPT procedure volume (all 3 codes)
         "cpt36475_volume": cms.get("cpt36475_volume"),
+        "cpt36465_volume": cms.get("cpt36465_volume"),
+        "cpt36466_volume": cms.get("cpt36466_volume"),
+        "cpt_total_volume": cms.get("cpt_total_volume"),
+        # Medicare reimbursement rates
+        "medicare_rate_36475": cms.get("medicare_rate_36475"),
+        "medicare_rate_36465": cms.get("medicare_rate_36465"),
+        "medicare_rate_36466": cms.get("medicare_rate_36466"),
+        # Competitors in same ZIP
+        "rings_ready": rings_ready,
+        "competitors": cms.get("competitors", []),
+        # Population within drive-time rings (block-group level)
+        "pop_10min": pop10.get("total_pop"),
+        "female_35plus_10min": pop10.get("female_35plus"),
+        "median_income_zip": zip_income,
+        "pop_20min": pop20.get("total_pop"),
+        "female_35plus_20min": pop20.get("female_35plus"),
+        "median_income_20min": pop20.get("median_income"),  # kept for compat
     })
+
+
+
+@app.route("/ring-pop", methods=["POST"])
+@login_required
+def ring_pop():
+    """Async endpoint for ring population - called by frontend after fast data loads."""
+    data = request.get_json()
+    address = (data.get("address") or "").strip()
+    direct_lat = data.get("lat")
+    direct_lon = data.get("lon")
+    if direct_lat and direct_lon:
+        lat, lon = float(direct_lat), float(direct_lon)
+    elif address:
+        coords = geocode_address(address)
+        if not coords:
+            return jsonify({"error": "geocode failed"})
+        lat, lon = coords
+    else:
+        return jsonify({"error": "No address or coords"}), 400
+    iso = get_isochrone(lat, lon)
+    if not iso:
+        return jsonify({"error": "no isochrone"})
+    pop10 = get_population_in_ring(iso, 10)
+    pop20 = get_population_in_ring(iso, 20)
+    return jsonify({
+        "pop_10min": pop10.get("total_pop"),
+        "female_35plus_10min": pop10.get("female_35plus"),
+        "median_income_zip": zip_income,
+        "pop_20min": pop20.get("total_pop"),
+        "female_35plus_20min": pop20.get("female_35plus"),
+        "median_income_20min": pop20.get("median_income"),  # kept for compat
+    })
+
+
+@app.route("/upload", methods=["POST"])
+@login_required
+def upload():
+    f = request.files.get("file")
+    if not f or not f.filename.endswith(".xlsx"):
+        return jsonify({"error": "Please upload a .xlsx file"}), 400
+    try:
+        import openpyxl, io
+        wb = openpyxl.load_workbook(io.BytesIO(f.read()), data_only=True)
+        STATUS_COLORS = {
+            "open": "blue",
+            "pending opening day": "purple",
+            "possible new sites": "orange",
+        }
+        territories = {}
+        clinics = []
+        for sheet_name in wb.sheetnames:
+            ws = wb[sheet_name]
+            rows = list(ws.iter_rows(values_only=True))
+            if len(rows) < 2:
+                continue
+            territory_clinics = []
+            for row in rows[1:]:
+                if len(row) < 4:
+                    continue
+                name, address, status, include = row[0], row[1], row[2], row[3]
+                if include is not True and str(include).strip().lower() not in ("true", "yes", "1"):
+                    continue
+                if not name or not address:
+                    continue
+                status = str(status).strip() if status else ""
+                color = STATUS_COLORS.get(status.lower(), "blue")
+                clinic = {
+                    "name": str(name).strip(),
+                    "address": str(address).strip(),
+                    "status": status,
+                    "color": color,
+                    "territory": sheet_name,
+                }
+                territory_clinics.append(clinic)
+                clinics.append(clinic)
+            if territory_clinics:
+                territories[sheet_name] = territory_clinics
+        data = {"territories": territories, "clinics": clinics}
+        with open("/tmp/vip_sites.json", "w") as out:
+            json.dump(data, out)
+        global CLINICS, _preload_status
+        new_only = _smart_cache_refresh(CLINICS, clinics)
+        CLINICS = clinics
+        # Only preload new/changed clinics; existing cache stays warm
+        to_preload = new_only if new_only else clinics
+        _preload_status = {"done": len(clinics) - len(to_preload), "total": len(clinics), "complete": len(to_preload) == 0}
+        import threading as _t
+        if to_preload:
+            def _partial_preload():
+                from concurrent.futures import ThreadPoolExecutor
+                def load_one(clinic):
+                    try:
+                        coords = geocode_address(clinic["address"])
+                        if coords:
+                            lat, lon = coords
+                            iso = get_isochrone(lat, lon)
+                            zipcode = extract_zip(clinic["address"])
+                            state_fips, county_fips = get_county_fips(lat, lon)
+                            if state_fips:
+                                get_census_acs(state_fips, county_fips)
+                                get_sahie(state_fips, county_fips)
+                            if zipcode:
+                                get_cms(zipcode)
+                            if iso:
+                                get_population_in_ring(iso, 10)
+                                get_population_in_ring(iso, 20)
+                    except Exception as e:
+                        print(f"Preload error: {e}")
+                    finally:
+                        _preload_status["done"] += 1
+                with ThreadPoolExecutor(max_workers=3) as ex:
+                    ex.map(load_one, to_preload)
+                _preload_status["complete"] = True
+            _t.Thread(target=_partial_preload, daemon=True).start()
+        return jsonify({"ok": True, "count": len(clinics), "territories": list(territories.keys()), "new_clinics": len(new_only)})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/sites-data")
+@login_required
+def sites_data():
+    try:
+        with open("/tmp/vip_sites.json") as f:
+            return jsonify(json.load(f))
+    except:
+        return jsonify({"territories": {}, "clinics": []})
+
+
+@app.route("/sync", methods=["POST"])
+@login_required
+def sync_from_sheets():
+    try:
+        import sys, os
+        sys.path.insert(0, os.path.dirname(__file__))
+        import sheets_sync
+        # Update config path to app directory
+        sheets_sync.CONFIG_FILE = os.path.join(os.path.dirname(__file__), 'google_sheets_config.json')
+        count, tabs = sheets_sync.sync()
+        from sheets_sync import SITES_FILE
+        new_clinics = load_sites().get('clinics', [])
+        global CLINICS, _preload_status
+        new_only = _smart_cache_refresh(CLINICS, new_clinics)
+        CLINICS = new_clinics
+        to_preload = new_only if new_only else new_clinics
+        _preload_status = {'done': len(new_clinics) - len(to_preload), 'total': len(new_clinics), 'complete': len(to_preload) == 0}
+        import threading as _t
+        if to_preload:
+            def _partial_preload_sheets():
+                from concurrent.futures import ThreadPoolExecutor
+                def load_one(clinic):
+                    try:
+                        coords = geocode_address(clinic["address"])
+                        if coords:
+                            lat, lon = coords
+                            iso = get_isochrone(lat, lon)
+                            zipcode = extract_zip(clinic["address"])
+                            state_fips, county_fips = get_county_fips(lat, lon)
+                            if state_fips:
+                                get_census_acs(state_fips, county_fips)
+                                get_sahie(state_fips, county_fips)
+                            if zipcode:
+                                get_cms(zipcode)
+                            if iso:
+                                get_population_in_ring(iso, 10)
+                                get_population_in_ring(iso, 20)
+                    except Exception as e:
+                        print(f"Preload error: {e}")
+                    finally:
+                        _preload_status["done"] += 1
+                with ThreadPoolExecutor(max_workers=3) as ex:
+                    ex.map(load_one, to_preload)
+                _preload_status["complete"] = True
+            _t.Thread(target=_partial_preload_sheets, daemon=True).start()
+        return jsonify({'ok': True, 'count': count, 'territories': tabs, 'new_clinics': len(new_only)})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=False)
+
+
+@app.route('/clinic-performance')
+@login_required
+def clinic_performance_page():
+    return render_template('clinic_performance.html')
+
+@app.route('/api/clinic-performance')
+@login_required
+def api_clinic_performance():
+    start = request.args.get('startDate', '')
+    end   = request.args.get('endDate', '')
+    campaign_ids = [c.strip() for c in request.args.get('campaignIds','').split(',') if c.strip()]
+    if not start or not end:
+        return jsonify({'error': 'startDate and endDate required'}), 400
+    data, err = get_clinic_performance(start, end, campaign_ids or None)
+    if err:
+        return jsonify({'error': err}), 500
+    return jsonify(data)
+
+@app.route('/api/campaigns-list')
+@login_required
+def api_campaigns_list():
+    start = request.args.get('startDate', '')
+    end   = request.args.get('endDate', '')
+    if not start or not end:
+        return jsonify({'error': 'startDate and endDate required'}), 400
+    campaigns, err = get_campaigns_list(start, end)
+    if err:
+        return jsonify({'error': err}), 500
+    return jsonify({'campaigns': campaigns})
+
+
+@app.route('/clinic-demographics/api/patient-heatmap')
+@app.route('/api/patient-heatmap')
+@login_required
+def api_patient_heatmap():
+    clinic = request.args.get('clinic', '')
+    if not clinic:
+        return jsonify({'error': 'clinic required'}), 400
+    try:
+        points, total = get_heatmap_points(clinic)
+        if points is None:
+            return jsonify({'error': 'No data for clinic', 'clinic': clinic}), 404
+        return jsonify({'points': points, 'total': total, 'clinic': clinic})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ring-ads', methods=['POST'])
+@login_required
+def api_ring_ads():
+    data = request.get_json()
+    lat = data.get('lat')
+    lon = data.get('lon')
+    start_date = data.get('startDate', '')
+    end_date   = data.get('endDate', '')
+    if not all([lat, lon, start_date, end_date]):
+        return jsonify({'error': 'lat, lon, startDate, endDate required'}), 400
+    result = compute_ring_ads(float(lat), float(lon), start_date, end_date)
+    return jsonify(result)
+
+
+
+# Partner facilities cache (loaded once at startup)
+_partner_cache = None
+def _get_partner_data():
+    global _partner_cache
+    if _partner_cache is None:
+        import os
+        base = '/opt/mikala-apps/clinic-demographics'
+        keep = {'name','lat','lng','city','state','type'}
+        result = {'uspi': [], 'sca': [], 'nuehealth': []}
+        for key, fname in [('uspi','uspi_locations.json'),('sca','sca_locations.json'),('nuehealth','nuehealth_locations.json')]:
+            path = os.path.join(base, fname)
+            if os.path.exists(path):
+                with open(path) as fh:
+                    data = json.load(fh)
+                result[key] = [{k:v for k,v in f.items() if k in keep}
+                               for f in data if f.get('lat') and f.get('lng')]
+        _partner_cache = result
+    return _partner_cache
+@app.route('/clinic-demographics/api/partner-facilities')
+@app.route('/api/partner-facilities')
+@login_required
+def api_partner_facilities():
+    from flask import make_response
+    data = _get_partner_data()
+    resp = make_response(jsonify(data))
+    resp.headers['Cache-Control'] = 'public, max-age=3600'
+    return resp
+
+
+# ── Site Scoring Endpoint ─────────────────────────────────────────
+
+@app.route('/clinic-demographics/api/site-score', methods=['POST'])
+@login_required
+def api_site_score():
+    """Compute composite VIP site score for a location."""
+    from site_scorer import compute_site_score
+    from poi_scorer import get_poi_scores
+
+    data = request.get_json() or {}
+    lat = data.get('lat')
+    lng = data.get('lng') or data.get('lon')
+    address = (data.get('address') or '').strip()
+
+    if not lat or not lng:
+        if not address:
+            return jsonify({'error': 'lat/lng or address required'}), 400
+        coords = geocode_address(address)
+        if not coords:
+            return jsonify({'error': f'Could not geocode: {address}'}), 400
+        lat, lng = coords
+
+    lat, lng = float(lat), float(lng)
+
+    # Cache check (7 days)
+    cache_key = f"score:{lat:.3f},{lng:.3f}"
+    if cache_key in _cache:
+        entry = _cache[cache_key]
+        from datetime import datetime, timedelta
+        if datetime.utcnow() - entry['_cached_at'] < timedelta(days=7):
+            result = dict(entry)
+            result.pop('_cached_at', None)
+            return jsonify(result)
+
+    # Get demo data if not provided
+    demo_data = data.get('demo') or {}
+    ring_pop_data = data.get('ring_pop') or {}
+
+    if not demo_data:
+        # Try to load from cache or fetch
+        if not address:
+            # Reverse-geocode not available — use what we have
+            pass
+        else:
+            zipcode = extract_zip(address)
+            state_fips, county_fips = get_county_fips(lat, lng)
+            if state_fips:
+                acs = get_census_acs(state_fips, county_fips)
+                sahie = get_sahie(state_fips, county_fips)
+                demo_data.update(acs or {})
+                demo_data.update(sahie or {})
+            if zipcode:
+                cms = get_cms(zipcode, state_fips=state_fips)
+                demo_data['competitors'] = cms.get('competitors', [])
+                zip_inc = get_zip_income(zipcode)
+                demo_data['median_income_zip'] = zip_inc
+
+    if not ring_pop_data:
+        iso_key = f"iso:{lat:.4f},{lng:.4f}"
+        iso = _cache.get(iso_key) or get_isochrone(lat, lng)
+        if iso:
+            pop10 = get_population_in_ring(iso, 10)
+            pop20 = get_population_in_ring(iso, 20)
+            ring_pop_data = {
+                'pop_10min': pop10.get('total_pop'),
+                'pop_20min': pop20.get('total_pop'),
+                'female_35plus_10min': pop10.get('female_35plus'),
+                'female_35plus_20min': pop20.get('female_35plus'),
+            }
+
+    # Compute score
+    try:
+        score_result = compute_site_score(lat, lng, address, demo_data, ring_pop_data, None)
+    except Exception as e:
+        return jsonify({'error': f'Scoring error: {e}'}), 500
+
+    # Cache result
+    from datetime import datetime
+    cached_entry = dict(score_result)
+    cached_entry['_cached_at'] = datetime.utcnow()
+    _cache[cache_key] = cached_entry
+
+    return jsonify(score_result)
