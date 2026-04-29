@@ -191,8 +191,17 @@ async function runComparison() {
   }
 
   document.getElementById('loading-bar').style.display = 'none';
-  buildGrid(results);
-  document.getElementById('grid-wrap').style.display = 'block';
+  // Load Buxton scores then build grid
+  window._buxtonScoresCompare = window._buxtonScoresCompare || null;
+  var _buildGridFn = function(r) { buildGrid(r); document.getElementById('grid-wrap').style.display = 'block'; };
+  if (window._buxtonScoresCompare) {
+    _buildGridFn(results);
+  } else {
+    fetch('/clinic-demographics/api/buxton-scores')
+      .then(function(r){ return r.json(); })
+      .then(function(d){ window._buxtonScoresCompare = d; _buildGridFn(results); })
+      .catch(function(){ window._buxtonScoresCompare = {}; _buildGridFn(results); });
+  }
 }
 
 function buildGrid(clinics) {
@@ -228,6 +237,8 @@ function buildGrid(clinics) {
     {key:'medicare_rate_36466', label:'Rate \u00B7 CPT 36466',     fmt:v=>fmt(v,'$'), dir:1, blue:true},
     {section: '\u{1F3C1} Competition'},
     {key:'_comp',               label:'Competitors in ZIP',         fmt:v=>fmt(v),     dir:-1, blue:true},
+    {section: '\u{1F4CA} Buxton Score'},
+    {key:'_buxton',             label:'Buxton Score',               fmt:v=>v!=null?v:'<span class=\"cmp-na\">—</span>', dir:1, blue:true},
   ];
 
   const hdr = document.getElementById('cmp-header-row');
@@ -269,6 +280,9 @@ function buildGrid(clinics) {
       tbody.appendChild(tr); continue;
     }
     const vals = clinics.map(c => {
+      if (m.key === '_buxton') {
+        return (window._buxtonScoresCompare || {})[c.name] || null;
+      }
       if (m.key === '_comp') return c.competitors ? c.competitors.length : null;
       if (m.key === '_created_monthly') {
         const ld = LOOKER[c.name];

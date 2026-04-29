@@ -120,6 +120,25 @@
     .full-tab-bar { flex-shrink:0; background:#fff; border-bottom:1px solid #e5e7eb; padding:8px 16px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
     .full-tab-map { flex:1; position:relative; }
     .full-tab-map > div[id^="map"] { position:absolute; top:0;left:0;right:0;bottom:0; }
+
+#sidebar-panels { display:flex; flex-direction:column; flex:1; overflow:hidden; min-height:0; }
+#clinic-panel { flex:1; overflow-y:auto; min-height:80px; border-bottom:2px solid #cbd5e1; }
+#clinic-panel::-webkit-scrollbar { width:4px; }
+#clinic-panel::-webkit-scrollbar-thumb { background:#ddd; border-radius:4px; }
+#partner-panel { flex:1; overflow-y:auto; min-height:80px; background:#f8fdf9; }
+#partner-panel::-webkit-scrollbar { width:4px; }
+#partner-panel::-webkit-scrollbar-thumb { background:#bbf7d0; border-radius:4px; }
+.partner-state-header { padding:5px 14px 3px; font-size:.67rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:#166534; background:#dcfce7; border-top:1px solid #bbf7d0; cursor:pointer; display:flex; align-items:center; justify-content:space-between; user-select:none; }
+.partner-state-header:hover { background:#bbf7d0; }
+.partner-state-body { }
+.partner-row { padding:4px 14px 4px 18px; border-bottom:1px solid #f0fdf4; cursor:pointer; display:flex; align-items:center; gap:6px; }
+.partner-row:hover { background:#f0fdf4; }
+.partner-badge { font-size:.58rem; font-weight:700; padding:1px 4px; border-radius:3px; flex-shrink:0; }
+.badge-uspi { background:#dbeafe; color:#1d4ed8; }
+.badge-sca { background:#fef9c3; color:#854d0e; }
+.badge-nue { background:#dcfce7; color:#14532d; }
+.partner-name { font-size:.72rem; color:#1e293b; line-height:1.2; }
+.partner-city { font-size:.64rem; color:#94a3b8; }
   </style>
 </head>
 <body>
@@ -143,23 +162,34 @@
       <div class="title"><i class="fa fa-map-marker-alt me-1"></i>Select a Clinic</div>
       <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search clinics..."/>
     </div>
-    <div id="clinic-list">
-      {% for clinic in clinics %}
-      <button class="clinic-btn"
-              data-address="{{ clinic.address }}"
-              data-name="{{ clinic.name }}"
-              onclick="selectClinic(this)">
-        <div class="cname">{{ clinic.name }}</div>
-        <div class="caddr">{{ clinic.address }}</div>
-      </button>
-      {% endfor %}
-    </div>
-    <div id="sidebar-footer">
-      <div style="font-size:.78rem;font-weight:600;color:#16a34a;margin-bottom:6px;"><i class="fa fa-plus-circle me-1"></i>Analyze New Location</div>
-      <input type="text" id="newAddress" class="form-control form-control-sm mb-2" placeholder="Enter any address..."/>
-      <button class="btn btn-success btn-sm w-100 fw-semibold" onclick="analyzeCustom()">
-        <i class="fa fa-search-location me-1"></i>Run Analysis
-      </button>
+    <div id="sidebar-panels" style="display:flex;flex-direction:column;flex:1;overflow:hidden;min-height:0;">
+      <!-- TOP PANEL: VIP Clinics -->
+      <div id="clinic-panel" style="flex:1;overflow-y:auto;min-height:80px;border-bottom:2px solid #cbd5e1;">
+        <div id="clinic-list">
+          {% for clinic in clinics %}
+          <button class="clinic-btn"
+                  data-address="{{ clinic.address }}"
+                  data-name="{{ clinic.name }}"
+                  onclick="selectClinic(this)">
+            <div class="cname">{{ clinic.name }}</div>
+            <div class="caddr">{{ clinic.address }}</div>
+          </button>
+          {% endfor %}
+        </div>
+      </div>
+      <!-- BOTTOM PANEL: Partner Facilities -->
+      <div id="partner-panel" style="flex:1;overflow-y:auto;min-height:80px;background:#f8fdf9;">
+        <div style="padding:6px 14px;background:#14532d;color:#fff;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+          <span><i class="fa fa-hospital me-1"></i>Partner Facilities</span>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span id="partner-panel-count" style="font-weight:400;font-size:.65rem;opacity:.8"></span>
+            <button id="partner-map-btn" onclick="togglePartnerFacilities()" style="font-size:.62rem;padding:2px 7px;border-radius:8px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:#fff;cursor:pointer;white-space:nowrap;">Show on Map</button>
+          </div>
+        </div>
+        <div id="partner-list-body">
+          <div style="padding:12px 14px;color:#94a3b8;font-size:.75rem;"><i class="fa fa-spinner fa-spin me-1"></i>Loading...</div>
+        </div>
+      </div>
     </div>
     <div id="sidebar-legend">
       <span class="dot" style="background:#1a56db;"></span>10-min drive &nbsp;
@@ -235,6 +265,11 @@
 
         <!-- ─── VIP SITE SCORE ─── -->
         <div class="m-section-label" style="background:#eff6ff;color:#1d4ed8;">🏆 VIP Site Score (Buxton Methodology)</div>
+        <div style="display:flex;gap:8px;align-items:center;padding:4px 0 6px 0;">
+          <div style="font-size:.68rem;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:.04em;">Buxton Score:</div>
+          <div id="buxton-score-display" style="font-size:1.1rem;font-weight:700;color:#7c3aed;">--</div>
+          <div id="buxton-score-grade" style="font-size:.75rem;font-weight:600;color:#9ca3af;"></div>
+        </div>
         <div id="site-score-card" style="width:100%;padding:8px 0;">
           <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
             <div id="site-score-spinner" style="color:#94a3b8;font-size:.78rem;display:none;">
@@ -376,6 +411,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // Load all clinic coords from server (pre-cached by background thread)
   loadClinicCoords();
   pollPreload();
+
+  // Auto-populate partner sidebar
+  fetch('/clinic-demographics/api/partner-facilities')
+    .then(function(r){ return r.json(); })
+    .then(function(data){ _partnerData = data; buildPartnerSidebar(data); })
+    .catch(function(){
+      var el = document.getElementById('partner-list-body');
+      if (el) el.innerHTML = '<div style="padding:10px 14px;color:#dc2626;font-size:.72rem;">Failed to load.</div>';
+    });
 });
 
 function loadClinicCoords() {
@@ -473,6 +517,7 @@ function showClinic(address, name) {
   const strip = document.getElementById('data-strip');
   strip.style.display = 'block';
   document.getElementById('strip-title').textContent = name;
+  displayBuxtonScore(name);
   document.getElementById('strip-addr').textContent = address;
   document.getElementById('strip-spinner').style.display = 'inline';
   document.getElementById('strip-zip').style.display = 'none';
@@ -722,6 +767,179 @@ function clearPotentials() {
   switchTab('market');
   renderPotentialList();
 }
+
+// ── Partner Facilities ────────────────────────────────────────────────────
+var _partnerData = null;
+var _partnerLayerGroup = null;
+
+var USPI_ICON = L.divIcon({className:'', html:'<div style="width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:14px solid #16a34a;"></div>', iconSize:[14,14], iconAnchor:[7,14]});
+var SCA_ICON = L.divIcon({className:'', html:'<div style="color:#16a34a;font-weight:900;font-size:16px;line-height:1;margin-top:-8px;">+</div>', iconSize:[14,14], iconAnchor:[7,7]});
+var NUEHEALTH_ICON = L.divIcon({className:'', html:'<div style="width:10px;height:10px;background:#16a34a;transform:rotate(45deg);margin:2px;"></div>', iconSize:[14,14], iconAnchor:[7,7]});
+
+function togglePartnerFacilities() {
+  var btn = document.getElementById('partner-map-btn');
+  if (_partnerLayerGroup && map1.hasLayer(_partnerLayerGroup)) {
+    map1.removeLayer(_partnerLayerGroup);
+    if (btn) { btn.textContent = 'Show on Map'; btn.style.background = 'rgba(255,255,255,.15)'; }
+    return;
+  }
+  if (!_partnerData) {
+    fetch('/clinic-demographics/api/partner-facilities')
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        _partnerData = data;
+        buildPartnerSidebar(data);
+        _showPartnerOnMap(data, btn);
+      });
+    return;
+  }
+  _showPartnerOnMap(_partnerData, btn);
+}
+
+function _showPartnerOnMap(data, btn) {
+  _partnerLayerGroup = L.markerClusterGroup({maxClusterRadius:40, showCoverageOnHover:false});
+  var uspiMarkers = (data.uspi||[]).filter(function(f){return f.lat&&f.lng;}).map(function(f){
+    return L.marker([f.lat,f.lng],{icon:USPI_ICON}).bindTooltip(f.name+' (USPI)',{sticky:true});
+  });
+  var scaMarkers = (data.sca||[]).filter(function(f){return f.lat&&f.lng;}).map(function(f){
+    return L.marker([f.lat,f.lng],{icon:SCA_ICON}).bindTooltip(f.name+' (SCA)',{sticky:true});
+  });
+  var nueMarkers = (data.nuehealth||[]).filter(function(f){return f.lat&&f.lng;}).map(function(f){
+    return L.marker([f.lat,f.lng],{icon:NUEHEALTH_ICON}).bindTooltip(f.name+' (NueHealth)',{sticky:true});
+  });
+  _partnerLayerGroup.addLayers(uspiMarkers.concat(scaMarkers).concat(nueMarkers));
+  _partnerLayerGroup.addTo(map1);
+  if (btn) { btn.textContent = 'Hide from Map'; btn.style.background = 'rgba(255,255,255,.3)'; }
+}
+
+function buildPartnerSidebar(data) {
+  var all = []
+    .concat((data.uspi||[]).map(function(f){ return Object.assign({},f,{ptype:'USPI'}); }))
+    .concat((data.sca||[]).map(function(f){ return Object.assign({},f,{ptype:'SCA'}); }))
+    .concat((data.nuehealth||[]).map(function(f){ return Object.assign({},f,{ptype:'NueHealth'}); }))
+    .filter(function(f){ return f.lat&&f.lng; });
+  var byState = {};
+  all.forEach(function(f) {
+    var s = (f.state||'??').toUpperCase();
+    if (!byState[s]) byState[s] = [];
+    byState[s].push(f);
+  });
+  var states = Object.keys(byState).sort();
+  states.forEach(function(s){ byState[s].sort(function(a,b){return a.name.localeCompare(b.name);}); });
+  var SF = {AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming'};
+  var html = '';
+  states.forEach(function(state) {
+    var facilities = byState[state];
+    var stateName = SF[state] || state;
+    html += '<div class="partner-state-header" onclick="togglePartnerState(this)">'
+          + '<span>' + stateName + ' <span style="color:#4ade80;font-weight:400;">(' + facilities.length + ')</span></span>'
+          + '<span class="pstate-chevron" style="font-size:.6rem;transition:transform .2s">&#9660;</span></div>'
+          + '<div class="partner-state-body" style="display:none;">';
+    facilities.forEach(function(f) {
+      var badge = f.ptype==='USPI'?'badge-uspi':f.ptype==='SCA'?'badge-sca':'badge-nue';
+      html += '<div class="partner-row" onclick="selectPartnerFacility(' + f.lat + ',' + f.lng + ',this)"'
+            + ' data-pname="' + (f.name||'').replace(/"/g,'&quot;') + '"'
+            + ' data-paddr="' + (f.address||f.address1||'').replace(/"/g,'&quot;') + '"'
+            + ' data-ptype="' + f.ptype + '">'
+            + '<span class="partner-badge ' + badge + '">' + f.ptype + '</span>'
+            + '<div><div class="partner-name">' + f.name + '</div>'
+            + '<div class="partner-city">' + (f.city||'') + '</div></div></div>';
+    });
+    html += '</div>';
+  });
+  document.getElementById('partner-list-body').innerHTML = html;
+  document.getElementById('partner-panel-count').textContent = all.length + ' facilities';
+}
+
+function togglePartnerState(header) {
+  var body = header.nextElementSibling;
+  var chev = header.querySelector('.pstate-chevron');
+  var collapsed = body.style.display === 'none';
+  body.style.display = collapsed ? '' : 'none';
+  if (chev) chev.style.transform = collapsed ? '' : 'rotate(-90deg)';
+}
+
+function selectPartnerFacility(lat, lng, el) {
+  var row = el.closest ? el.closest('.partner-row') : el;
+  var name = row.dataset.pname || '';
+  var addr = row.dataset.paddr || '';
+  var partnerType = row.dataset.ptype || '';
+  if (window.innerWidth <= 768) closeSidebar();
+  document.querySelectorAll('.clinic-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.partner-row').forEach(function(r){ r.style.background=''; });
+  row.style.background = '#bbf7d0';
+  document.getElementById('map-hint').classList.add('hidden');
+  var strip = document.getElementById('data-strip');
+  strip.style.display = 'block';
+  document.getElementById('strip-title').textContent = name + ' (' + partnerType + ')';
+  displayBuxtonScore(name);
+  document.getElementById('strip-addr').textContent = addr || (lat.toFixed(4)+', '+lng.toFixed(4));
+  document.getElementById('strip-spinner').style.display = 'inline';
+  document.getElementById('strip-zip').style.display = 'none';
+  resetMetrics();
+  map1.setView([lat, lng], 13);
+  if (addr) loadRingAds(addr, lat, lng);
+  _partnerRingLayers.forEach(function(l){ try{map1.removeLayer(l);}catch(e){} });
+  _partnerRingLayers = [];
+  fetch('/clinic-demographics/isochrone', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr,lat:lat,lon:lng,name:name})})
+  .then(function(r){return r.json();}).then(function(d){
+    document.getElementById('strip-spinner').style.display='none';
+    if (d.isochrone) {
+      d.isochrone.features.forEach(function(f){
+        var color = (f.properties&&f.properties.contour)===10?'#1a56db':'#93c5fd';
+        var layer = L.geoJSON(f,{style:{color:color,weight:2,fillOpacity:.08,fillColor:color}}).addTo(map1);
+        _partnerRingLayers.push(layer);
+      });
+      fetch('/clinic-demographics/ring-pop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr,lat:lat,lon:lng})})
+      .then(function(r){return r.json();}).then(function(pop){
+        if(pop.population_10min) document.getElementById('pop10').textContent=pop.population_10min.toLocaleString();
+        if(pop.population_20min) document.getElementById('pop20').textContent=pop.population_20min.toLocaleString();
+        if(pop.female_35plus_10min) document.getElementById('fem10').textContent=pop.female_35plus_10min.toLocaleString();
+        if(pop.female_35plus_20min) document.getElementById('fem20').textContent=pop.female_35plus_20min.toLocaleString();
+      }).catch(function(){});
+    }
+    fetch('/clinic-demographics/demographics',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr,lat:lat,lon:lng})})
+    .then(function(r){return r.json();}).then(function(dem){
+      if(dem.median_income) document.getElementById('income').textContent='$'+parseInt(dem.median_income).toLocaleString();
+      if(dem.zip_code){document.getElementById('strip-zip').textContent='ZIP '+dem.zip_code;document.getElementById('strip-zip').style.display='inline';}
+      if(dem.insured_pct) document.getElementById('insured').textContent=dem.insured_pct+'%';
+      if(dem.competitors!==undefined) document.getElementById('competitors').textContent=dem.competitors;
+    }).catch(function(){});
+    loadSiteScore(lat, lng, addr);
+  }).catch(function(){ document.getElementById('strip-spinner').style.display='none'; });
+}
+var _partnerRingLayers = [];
+
+// ── Buxton Scores ─────────────────────────────────────────────────────────
+var _buxtonScores = null;
+function loadBuxtonScores() {
+  if (_buxtonScores) return Promise.resolve(_buxtonScores);
+  return fetch('/clinic-demographics/api/buxton-scores')
+    .then(function(r){ return r.json(); })
+    .then(function(d){ _buxtonScores = d; return d; })
+    .catch(function(){ _buxtonScores = {}; return {}; });
+}
+function displayBuxtonScore(clinicName) {
+  var bd = document.getElementById('buxton-score-display');
+  var bg = document.getElementById('buxton-score-grade');
+  if (!bd) return;
+  bd.textContent = '--'; bg.textContent = '';
+  loadBuxtonScores().then(function(scores) {
+    var score = scores[clinicName];
+    if (!score) {
+      var nl = (clinicName||'').toLowerCase().trim();
+      Object.keys(scores).forEach(function(k) {
+        if (!score && (k.toLowerCase().trim()===nl || k.toLowerCase().includes(nl) || nl.includes(k.toLowerCase()))) score = scores[k];
+      });
+    }
+    if (score) {
+      var grade = score>=110?'Excellent':score>=100?'Good':score>=90?'Average':'Below Avg';
+      var color = score>=110?'#16a34a':score>=100?'#1d4ed8':score>=90?'#d97706':'#dc2626';
+      bd.textContent=score; bd.style.color=color; bg.textContent=grade;
+    } else { bd.textContent='N/A'; bg.textContent='not scored'; }
+  });
+}
+
 </script>
 </body>
 </html>
