@@ -8,6 +8,7 @@ import os
 import math
 import statistics
 
+from esri_scorer import get_esri_demographics, get_esri_traffic
 from poi_scorer import get_poi_scores
 from competition_scorer import get_competition_decay_score, get_patients_per_competitor
 
@@ -15,6 +16,111 @@ PHASE2_FILE = '/opt/mikala-apps/clinic-demographics/phase2_results.json'
 NORMS_FILE = '/opt/mikala-apps/clinic-demographics/score_norms.json'
 
 # Weights (must sum to 1.0)
+
+import sys, os
+sys.path.insert(0, os.path.dirname(__file__))
+
+CENSUS_API_KEY = "39d91e3ea57b794ee42f0e60b4548835eb21293b"
+
+def get_census_demographics(lat, lng, zip_code=None):
+    """
+    Fetch Census-based patient value variables:
+    - population_45plus (total pop 45+ within ~5 mile radius ZIP)
+    - population_growth_pct (ACS 2023 vs ACS 2019 comparison)
+    Returns dict or None on failure.
+    """
+    import requests, json, os, time
+    
+    cache_file = os.path.join(os.path.dirname(__file__), "census_phase2_cache.json")
+    cache_key = f"{round(lat,3)},{round(lng,3)}"
+    
+    # Load cache
+    try:
+        with open(cache_file) as f:
+            cache = json.load(f)
+    except:
+        cache = {}
+    
+    if cache_key in cache and time.time() - cache[cache_key].get("ts", 0) < 30*24*3600:
+        return cache[cache_key]["data"]
+    
+    result = {"population_45plus": None, "population_growth_pct": None}
+    
+    if not zip_code:
+        # Reverse geocode to ZIP using Census geocoder
+        try:
+            r = requests.get(
+                "https://geocoding.geo.census.gov/geocoder/geographies/coordinates",
+                params={"x": lng, "y": lat, "benchmark": "Public_AR_Current", "vintage": "Current_Current", "format": "json"},
+                timeout=10
+            )
+            geos = r.json().get("result", {}).get("geographies", {})
+            zips = geos.get("2020 ZIP Code Tabulation Areas", [])
+            if zips:
+                zip_code = zips[0].get("GEOID", "")[:5]
+        except Exception as e:
+            print(f"Census reverse geocode error: {e}")
+    
+    if zip_code:
+        # Population 45+ from B01001 table
+        # B01001_016E through B01001_025E = Male 45-85+
+        # B01001_040E through B01001_049E = Female 45-85+
+        male_45 = "+".join([f"B01001_0{str(i).zfill(3)}E" for i in range(16, 26)])
+        female_45 = "+".join([f"B01001_0{str(i).zfill(3)}E" for i in range(40, 50)])
+        vars_45 = male_45 + "," + female_45.replace("+", ",")
+        
+        try:
+            r = requests.get(
+                "https://api.census.gov/data/2023/acs/acs5",
+                params={
+                    "get": ",".join([f"B01001_0{str(i).zfill(3)}E" for i in list(range(16,26)) + list(range(40,50))]),
+                    "for": f"zip code tabulation area:{zip_code}",
+                    "key": CENSUS_API_KEY
+                },
+                timeout=15
+            )
+            data = r.json()
+            if len(data) > 1:
+                row = data[1]
+                # Sum up all the age variables (indices 0-19 are the 20 age vars)
+                total_45plus = sum(int(v or 0) for v in row[:20])
+                result["population_45plus"] = total_45plus
+        except Exception as e:
+            print(f"Census pop45+ error: {e}")
+        
+        # Population growth: compare ACS 2023 vs 2019 total population
+        try:
+            r_now = requests.get(
+                "https://api.census.gov/data/2023/acs/acs5",
+                params={"get": "B01003_001E", "for": f"zip code tabulation area:{zip_code}", "key": CENSUS_API_KEY},
+                timeout=10
+            )
+            r_past = requests.get(
+                "https://api.census.gov/data/2019/acs/acs5",
+                params={"get": "B01003_001E", "for": f"zip code tabulation area:{zip_code}", "key": CENSUS_API_KEY},
+                timeout=10
+            )
+            now_data = r_now.json()
+            past_data = r_past.json()
+            if len(now_data) > 1 and len(past_data) > 1:
+                pop_now = int(now_data[1][0] or 0)
+                pop_past = int(past_data[1][0] or 0)
+                if pop_past > 0:
+                    result["population_growth_pct"] = round((pop_now - pop_past) / pop_past * 100, 2)
+        except Exception as e:
+            print(f"Census growth error: {e}")
+    
+    # Cache
+    cache[cache_key] = {"ts": time.time(), "data": result}
+    try:
+        with open(cache_file, "w") as f:
+            json.dump(cache, f)
+    except:
+        pass
+    
+    return result
+
+
 WEIGHTS = {
     'area_draw': 0.35,
     'patient_value': 0.18,
@@ -171,8 +277,26 @@ def compute_site_score(lat, lng, address, demo_data=None, ring_pop_data=None, is
     ppc = get_patients_per_competitor(pop_20, comp_scores['competitor_count_2mi'])
     components['patients_per_competitor'] = ppc if ppc != float('inf') else (pop_20 or 0)
 
-    # Traffic (placeholder until ESRI)
-    components['avg_daily_traffic'] = None
+    # Phase 3: ESRI GeoEnrichment — population 45+, income, growth, traffic
+    esri_dem = get_esri_demographics(lat, lng)
+    if esri_dem:
+        pop_45plus = esri_dem.get('population_45plus')
+        pop_growth_pct = esri_dem.get('population_growth_pct')
+        # Override median income with ESRI (more accurate than Census ZIP-level)
+        if esri_dem.get('median_income'):
+            demo_data['median_income'] = esri_dem['median_income']
+    else:
+        # Fallback to Census
+        zip_code = demo_data.get('zip_code') or demo_data.get('zip')
+        census_p2 = get_census_demographics(lat, lng, zip_code)
+        pop_45plus = census_p2.get('population_45plus') if census_p2 else None
+        pop_growth_pct = census_p2.get('population_growth_pct') if census_p2 else None
+    components['population_45plus'] = pop_45plus
+    components['population_growth_pct'] = pop_growth_pct
+
+    # Traffic from ESRI (may be None if Traffic collection not available)
+    esri_traffic = get_esri_traffic(lat, lng)
+    components['avg_daily_traffic'] = esri_traffic.get('avg_daily_traffic') if esri_traffic else None
 
     # Location characteristics (greenfield defaults)
     components['days_per_week'] = 5
@@ -203,8 +327,18 @@ def compute_site_score(lat, lng, address, demo_data=None, ring_pop_data=None, is
     neg_ref = list(range(0, 10))
     neg_pct = _simple_percentile(poi['negative_cotenant_count'], neg_ref, higher_is_better=False)
 
-    # traffic: 0 until ESRI (neutral 75)
-    traffic_pct = 75
+    # Traffic: use ESRI if available, else neutral
+    avg_traffic = components.get('avg_daily_traffic')
+    if avg_traffic and avg_traffic > 0:
+        # Score: <5k=30, 5-15k=50, 15-30k=70, 30-60k=85, 60-100k=95, 100k+=100
+        if avg_traffic >= 100000: traffic_pct = 100
+        elif avg_traffic >= 60000: traffic_pct = 95
+        elif avg_traffic >= 30000: traffic_pct = 85
+        elif avg_traffic >= 15000: traffic_pct = 70
+        elif avg_traffic >= 5000: traffic_pct = 50
+        else: traffic_pct = 30
+    else:
+        traffic_pct = 75  # neutral until data available
 
     area_draw_raw = (
         pharm_pct * AREA_DRAW_W['pharmacy_score'] +
@@ -225,11 +359,22 @@ def compute_site_score(lat, lng, address, demo_data=None, ring_pop_data=None, is
     # population growth (placeholder 0 until ESRI → neutral)
     growth_pct = 75
 
+    # Population 45+ (Buxton-aligned, better than female 35+ alone)
+    p2_pop45 = [r.get('population_45plus') for r in phase2 if r.get('population_45plus')]
+    pop45_pct = _simple_percentile(pop_45plus, p2_pop45, higher_is_better=True) if (pop_45plus and p2_pop45) else f35_pct
+
+    # Population growth score
+    if pop_growth_pct is not None:
+        growth_pct = 100 + (pop_growth_pct * 5)  # each 1% growth = +5 pts
+        growth_pct = max(0, min(150, growth_pct))
+    else:
+        growth_pct = 75  # neutral until data available
+
     patient_value_score = max(0, min(150,
-        f35_pct * 0.40 +
+        pop45_pct * 0.35 +
         insured_pct_score * 0.30 +
         income_pct * 0.15 +
-        growth_pct * 0.15
+        growth_pct * 0.20
     ))
 
     # ── Competition (22%) ─────────────────────────────────────────
