@@ -765,38 +765,46 @@ def demographics():
     zipcode = extract_zip(address)
     state_fips, county_fips = get_county_fips(lat, lon)
 
-    # ── ESRI (primary demographics source, pre-cached) ──────────────────
-    from esri_scorer import get_esri_demographics
-    esri = get_esri_demographics(lat, lon) or {}
+    # ── ESRI: 20-min isochrone polygon enrichment (primary) ─────────────
+    from esri_scorer import get_esri_demographics, get_esri_demographics_polygon
+    iso_key = f"iso:{lat:.4f},{lon:.4f}"
+    cached_iso = _cache.get(iso_key)
 
-    # ── CMS + SAHIE (procedure volumes, competitors, insured%) ──────────
+    # Run ESRI polygon + CMS/SAHIE concurrently
     from concurrent.futures import ThreadPoolExecutor as _TPE
+    def _esri_poly():
+        if cached_iso:
+            return get_esri_demographics_polygon(lat, lon, cached_iso, minutes=20) or {}
+        return {}
+    def _esri_point():
+        # 1-mile ring fallback for growth rate (polygon call doesn't always include PopulationTotals)
+        return get_esri_demographics(lat, lon) or {}
     def _sahie(): return get_sahie(state_fips, county_fips) if state_fips else {}
     def _cms(): return get_cms(zipcode, state_fips=state_fips) if zipcode else {}
-    with _TPE(max_workers=2) as ex:
+    with _TPE(max_workers=4) as ex:
+        f_poly  = ex.submit(_esri_poly)
+        f_point = ex.submit(_esri_point)
         f_sahie = ex.submit(_sahie)
-        f_cms = ex.submit(_cms)
+        f_cms   = ex.submit(_cms)
+        esri_poly  = f_poly.result()
+        esri_point = f_point.result()
         sahie = f_sahie.result()
-        cms = f_cms.result()
+        cms   = f_cms.result()
 
-    # ── Ring population cache ─────────────────────────────────────────────
-    iso_key = f"iso:{lat:.4f},{lon:.4f}"
-    iso = _cache.get(iso_key)
-    ring_key_10 = f"pop_ring:10:{hash(str(iso))}" if iso else None
-    ring_key_20 = f"pop_ring:20:{hash(str(iso))}" if iso else None
-    pop10 = _cache.get(ring_key_10, {}) if ring_key_10 else {}
-    pop20 = _cache.get(ring_key_20, {}) if ring_key_20 else {}
-    rings_ready = bool(pop10 or pop20)
+    # Prefer polygon data; fall back to 1-mile ring if polygon not available
+    esri = esri_poly if esri_poly.get("total_population") else esri_point
+    esri_label = "20-min drive ring" if esri_poly.get("total_population") else "1-mile ring"
 
     return jsonify({
         "lat": lat, "lon": lon, "zip": zipcode,
-        # ── ESRI demographics (1-mile ring, pre-cached) ──
+        # ── ESRI demographics ──
         "total_population": esri.get("total_population"),
         "population_45plus": esri.get("population_45plus"),
         "pop45_pct": esri.get("pop45_pct"),
         "median_income": esri.get("median_income"),
-        "population_growth_pct": esri.get("population_growth_pct"),
-        "esri_source": bool(esri),
+        "population_growth_pct": esri_point.get("population_growth_pct"),  # from point (reliable)
+        "esri_source": bool(esri.get("total_population")),
+        "esri_label": esri_label,
         # ── SAHIE (county insured%) ──
         "insured_pct": sahie.get("insured_pct"),
         # ── CMS procedure volumes ──
@@ -807,14 +815,9 @@ def demographics():
         "medicare_rate_36475": cms.get("medicare_rate_36475"),
         "medicare_rate_36465": cms.get("medicare_rate_36465"),
         "medicare_rate_36466": cms.get("medicare_rate_36466"),
-        # ── Competitors + ring population ──
-        "rings_ready": rings_ready,
+        # ── Competitors ──
         "competitors": cms.get("competitors", []),
-        "pop_10min": pop10.get("total_pop"),
-        "female_35plus_10min": pop10.get("female_35plus"),
-        "pop_20min": pop20.get("total_pop"),
-        "female_35plus_20min": pop20.get("female_35plus"),
-        "median_income_zip": esri.get("median_income"),  # use ESRI income (better than ZIP census)
+        "median_income_zip": esri.get("median_income"),
     })
 
 

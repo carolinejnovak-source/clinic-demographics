@@ -40,7 +40,7 @@ def _enrich(lat, lng, data_collections):
     cache_key = f"{lat:.4f},{lng:.4f}|{'|'.join(data_collections)}"
     if cache_key in cache:
         entry = cache[cache_key]
-        if time.time() - entry.get('ts', 0) < 86400 * 30:
+        if time.time() - entry.get('ts', 0) < 86400 * 90:
             return entry.get('data')
 
     study_areas = json.dumps([{"geometry": {"x": lng, "y": lat}}])
@@ -69,6 +69,114 @@ def _enrich(lat, lng, data_collections):
         return attrs
     except Exception as e:
         print(f"ESRI enrich exception: {e}")
+        return None
+
+
+
+def _geojson_to_esri_rings(geojson_geometry):
+    """Convert GeoJSON Polygon or MultiPolygon to ESRI rings format."""
+    gtype = geojson_geometry.get('type', '')
+    coords = geojson_geometry.get('coordinates', [])
+    if gtype == 'Polygon':
+        return [[[c[0], c[1]] for c in ring] for ring in coords]
+    elif gtype == 'MultiPolygon':
+        # Flatten all polygons — take largest ring set
+        rings = []
+        for poly in coords:
+            for ring in poly:
+                rings.append([[c[0], c[1]] for c in ring])
+        return rings
+    return []
+
+
+def get_esri_demographics_polygon(lat, lng, isochrone_geojson, minutes=20):
+    """
+    Enrich using actual isochrone polygon instead of a 1-mile ring buffer.
+    isochrone_geojson: full GeoJSON FeatureCollection from /isochrone endpoint.
+    minutes: which contour to use (10 or 20).
+    Results cached by lat/lon + minutes with 90-day TTL.
+    """
+    global _cache
+    cache = _load_cache()
+    cache_key = f"{lat:.4f},{lng:.4f}|iso{minutes}|KeyUSFacts"
+    if cache_key in cache:
+        entry = cache[cache_key]
+        if time.time() - entry.get('ts', 0) < 86400 * 90:
+            return entry.get('data')
+
+    # Extract the target contour feature
+    features = (isochrone_geojson or {}).get('features', [])
+    target = None
+    for f in sorted(features, key=lambda x: x.get('properties', {}).get('contour', 0)):
+        if f.get('properties', {}).get('contour', 0) >= minutes:
+            target = f
+            break
+    if not target and features:
+        target = features[-1]  # fallback: largest available
+    if not target:
+        return None
+
+    rings = _geojson_to_esri_rings(target.get('geometry', {}))
+    if not rings:
+        return None
+
+    study_area = {
+        "geometry": {
+            "rings": rings,
+            "spatialReference": {"wkid": 4326}
+        }
+    }
+
+    collections = ['KeyUSFacts', 'Age']
+    try:
+        r = requests.post(ENRICH_URL,
+            params={'token': ESRI_API_KEY, 'f': 'json'},
+            data={
+                'studyAreas': json.dumps([study_area]),
+                'dataCollections': json.dumps(collections),
+                'f': 'json'
+            },
+            headers=ESRI_HEADERS, timeout=25)
+        d = r.json()
+        if 'error' in d:
+            print(f"ESRI polygon enrich error: {d['error']}")
+            return None
+        results = d.get('results', [])
+        if not results:
+            return None
+        featuresets = results[0].get('value', {}).get('FeatureSet', [])
+        if not featuresets:
+            return None
+        features_out = featuresets[0].get('features', [])
+        if not features_out:
+            return None
+        attrs = features_out[0].get('attributes', {})
+
+        # Build structured result
+        age_buckets = [0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85]
+        pop45_m = sum(attrs.get(f'MALE{a}', 0) or 0 for a in age_buckets if a >= 45)
+        pop45_f = sum(attrs.get(f'FEM{a}', 0) or 0 for a in age_buckets if a >= 45)
+        pop45 = pop45_m + pop45_f
+        total_pop = attrs.get('TOTPOP_CY', 0) or 0
+        median_inc = attrs.get('MEDHINC_CY', 0) or 0
+        growth = attrs.get('POPGRWCYFY', None)
+
+        result = {
+            'source': 'esri_polygon',
+            'minutes': minutes,
+            'total_population': total_pop if total_pop > 0 else None,
+            'population_45plus': pop45 if pop45 > 0 else None,
+            'pop45_pct': round(pop45 / total_pop * 100, 1) if total_pop > 0 and pop45 > 0 else None,
+            'median_income': median_inc if median_inc > 0 else None,
+            'population_growth_pct': round(float(growth) * 100, 2) if growth is not None else None,
+        }
+
+        cache[cache_key] = {'data': result, 'ts': time.time()}
+        _cache = cache
+        _save_cache()
+        return result
+    except Exception as e:
+        print(f"ESRI polygon enrich exception: {e}")
         return None
 
 
