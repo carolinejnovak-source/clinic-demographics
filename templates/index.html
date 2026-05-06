@@ -266,29 +266,43 @@
         <div class="m-card">
           <div class="m-icon text-primary"><i class="fa fa-users"></i></div>
           <div class="m-val" id="m-density">—</div>
-          <div class="m-lbl">Pop. Density</div>
-          <div class="m-sub">people/sq mi</div>
-          <div class="m-src">Census ACS 2022</div>
+          <div class="m-lbl">Total Population</div>
+          <div class="m-sub" id="m-density-sub">1-mile ring</div>
+          <div class="m-src">ESRI GeoEnrich</div>
+        </div>
+        <div class="m-card">
+          <div class="m-icon text-primary"><i class="fa fa-female"></i></div>
+          <div class="m-val" id="m-pop45">—</div>
+          <div class="m-lbl">Pop. 45+</div>
+          <div class="m-sub" id="m-pop45-sub">1-mile ring</div>
+          <div class="m-src">ESRI GeoEnrich</div>
         </div>
         <div class="m-card">
           <div class="m-icon text-success"><i class="fa fa-dollar-sign"></i></div>
           <div class="m-val" id="m-income">—</div>
-          <div class="m-lbl">Median Income</div>
-          <div class="m-sub">per household</div>
-          <div class="m-src">Census ACS 2022</div>
+          <div class="m-lbl">Median HH Income</div>
+          <div class="m-sub">1-mile ring</div>
+          <div class="m-src">ESRI GeoEnrich</div>
+        </div>
+        <div class="m-card">
+          <div class="m-icon text-info"><i class="fa fa-chart-line"></i></div>
+          <div class="m-val" id="m-growth">—</div>
+          <div class="m-lbl">Pop. Growth</div>
+          <div class="m-sub">current→forecast</div>
+          <div class="m-src">ESRI GeoEnrich</div>
         </div>
         <div class="m-card">
           <div class="m-icon text-info"><i class="fa fa-shield-alt"></i></div>
           <div class="m-val" id="m-insured">—</div>
           <div class="m-lbl">% Insured</div>
-          <div class="m-sub">county population</div>
+          <div class="m-sub">county</div>
           <div class="m-src">SAHIE 2022</div>
         </div>
         <div class="m-card">
           <div class="m-icon text-warning"><i class="fa fa-syringe"></i></div>
           <div class="m-val" id="m-cpt">—</div>
           <div class="m-lbl">CPT 36475 Vol.</div>
-          <div class="m-sub">Medicare · ZIP</div>
+          <div class="m-sub">Medicare · state</div>
           <div class="m-src">CMS Medicare</div>
         </div>
         <div class="m-card">
@@ -659,8 +673,18 @@ function loadDemographics(address, name) {
       zEl.textContent = 'ZIP ' + d.zip;
       zEl.style.display = 'inline';
     }
-    document.getElementById('m-density').textContent = d.population_density != null ? d.population_density.toLocaleString() : '—';
+    // ── ESRI demographics ─────────────────────────────────────
+    document.getElementById('m-density').textContent = d.total_population != null ? d.total_population.toLocaleString() : '—';
+    document.getElementById('m-pop45').textContent = d.population_45plus != null
+      ? d.population_45plus.toLocaleString() + (d.pop45_pct ? ' (' + d.pop45_pct + '%)' : '') : '—';
     document.getElementById('m-income').textContent = d.median_income ? '$' + d.median_income.toLocaleString() : '—';
+    document.getElementById('m-growth').textContent = d.population_growth_pct != null
+      ? (d.population_growth_pct > 0 ? '+' : '') + d.population_growth_pct.toFixed(1) + '%/yr' : '—';
+    var growthEl = document.getElementById('m-growth');
+    if (d.population_growth_pct != null) {
+      growthEl.style.color = d.population_growth_pct >= 0.5 ? '#16a34a' : d.population_growth_pct >= 0 ? '#d97706' : '#dc2626';
+    }
+    // ── SAHIE + CMS ───────────────────────────────────────────
     document.getElementById('m-insured').textContent = d.insured_pct != null ? d.insured_pct + '%' : '—';
     document.getElementById('m-cpt').textContent = d.cpt36475_volume != null ? d.cpt36475_volume.toLocaleString() : '—';
     const zip = d.zip || '';
@@ -675,7 +699,7 @@ function loadDemographics(address, name) {
 }
 
 function resetMetrics() {
-  ['m-density','m-income','m-insured','m-cpt'].forEach(id => {
+  ['m-density','m-pop45','m-income','m-growth','m-insured','m-cpt'].forEach(id => {
     document.getElementById(id).textContent = '…';
   });
   document.getElementById('fh-link').innerHTML = '';

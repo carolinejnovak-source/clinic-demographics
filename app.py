@@ -1,3 +1,4 @@
+import time
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, flash
 import openpyxl
 import io
@@ -15,6 +16,10 @@ from clinic_performance import get_clinic_performance, get_campaigns_list
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "vtc-clinic-demo-secret-2024")
+app.config["SESSION_COOKIE_PATH"] = "/"
+app.config["SESSION_COOKIE_NAME"] = "cd_session"
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = False
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -24,10 +29,10 @@ def login():
         password = request.form.get("password", "").strip()
         if check_credentials(username, password):
             session["logged_in"] = True
-            next_url = request.args.get("next", "/")
-        if not next_url.startswith("/clinic-demographics"):
-            next_url = "/clinic-demographics" + next_url
-        return redirect(next_url)
+            next_url = request.args.get("next", "/clinic-demographics/")
+            if not next_url.startswith("/clinic-demographics"):
+                next_url = "/clinic-demographics" + next_url
+            return redirect(next_url)
         flash("Invalid username or password.", "danger")
     return render_template("login.html")
 
@@ -37,7 +42,7 @@ def logout():
     session.clear()
     return redirect(url_for("login"))
 
-SITES_FILE = '/tmp/vip_sites.json'
+SITES_FILE = '/opt/mikala-apps/clinic-demographics/vip_sites.json'
 STATUS_COLORS = {
     'open': 'blue',
     'pending opening day': 'purple',
@@ -69,6 +74,27 @@ STATE_FIPS = {
 }
 
 _cache = {}
+_DISK_CACHE_FILE = os.path.join(os.path.dirname(__file__), 'geo_iso_cache.json')
+
+def _load_disk_cache():
+    global _cache
+    try:
+        with open(_DISK_CACHE_FILE) as f:
+            _cache = json.load(f)
+        print(f"Loaded {len(_cache)} cached entries from disk")
+    except Exception:
+        _cache = {}
+
+def _save_disk_cache():
+    try:
+        # Only save geo + iso keys (not raw population data - too large)
+        to_save = {k: v for k, v in _cache.items() if k.startswith('geo:') or k.startswith('iso:')}
+        with open(_DISK_CACHE_FILE, 'w') as f:
+            json.dump(to_save, f)
+    except Exception as e:
+        print(f"Cache save error: {e}")
+
+_load_disk_cache()
 
 def _evict_clinic_cache(address):
     """Remove all cache entries related to a specific clinic address."""
@@ -124,6 +150,7 @@ def geocode_address(address):
             c = matches[0]["coordinates"]
             result = (float(c["y"]), float(c["x"]))
             _cache[key] = result
+            _save_disk_cache()
             return result
     except Exception as e:
         print(f"Geocode error for {address}: {e}")
@@ -616,8 +643,13 @@ def _preload_worker():
         finally:
             _preload_status["done"] += 1
 
-    with ThreadPoolExecutor(max_workers=3) as ex:
-        ex.map(load_one, CLINICS)
+    time.sleep(5)  # let app start serving first
+    # Only preload clinics not already in disk cache
+    to_preload = [cl for cl in CLINICS if f"geo:{cl['address']}" not in _cache]
+    print(f"Preloading {len(to_preload)}/{len(CLINICS)} clinics (others cached)")
+    _preload_status["total"] = len(to_preload)
+    with ThreadPoolExecutor(max_workers=1) as ex:
+        ex.map(load_one, to_preload)
 
     _preload_status["complete"] = True
     print(f"Preload complete: {_preload_status['done']}/{_preload_status['total']} clinics cached")
@@ -715,7 +747,7 @@ def compare_page():
 @app.route("/demographics", methods=["POST"])
 @login_required
 def demographics():
-    """Fetch census + CMS data for a single address (separate from isochrone)."""
+    """Fetch ESRI (primary) + CMS/SAHIE data for a single address."""
     data = request.get_json()
     address = (data.get("address") or "").strip()
     if not address:
@@ -732,26 +764,22 @@ def demographics():
         lat, lon = coords
     zipcode = extract_zip(address)
     state_fips, county_fips = get_county_fips(lat, lon)
-    # Run ACS, SAHIE, CMS concurrently for speed
+
+    # ── ESRI (primary demographics source, pre-cached) ──────────────────
+    from esri_scorer import get_esri_demographics
+    esri = get_esri_demographics(lat, lon) or {}
+
+    # ── CMS + SAHIE (procedure volumes, competitors, insured%) ──────────
     from concurrent.futures import ThreadPoolExecutor as _TPE
-    def _acs(): return get_census_acs(state_fips, county_fips) if state_fips else {}
     def _sahie(): return get_sahie(state_fips, county_fips) if state_fips else {}
     def _cms(): return get_cms(zipcode, state_fips=state_fips) if zipcode else {}
-    def _zip_inc(): return get_zip_income(zipcode) if zipcode else None
-    with _TPE(max_workers=4) as ex:
-        f_acs = ex.submit(_acs)
+    with _TPE(max_workers=2) as ex:
         f_sahie = ex.submit(_sahie)
         f_cms = ex.submit(_cms)
-        f_zip = ex.submit(_zip_inc)
-        acs = f_acs.result()
         sahie = f_sahie.result()
         cms = f_cms.result()
-        zip_income = f_zip.result()
-    density = None
-    if acs.get("population"):
-        density = round(acs["population"] / (math.pi * 10 ** 2), 1)
-    # Check ring population from cache WITHOUT blocking on HERE API call
-    # Ring population: serve from cache if preloaded, else return nulls and let frontend poll /ring-pop
+
+    # ── Ring population cache ─────────────────────────────────────────────
     iso_key = f"iso:{lat:.4f},{lon:.4f}"
     iso = _cache.get(iso_key)
     ring_key_10 = f"pop_ring:10:{hash(str(iso))}" if iso else None
@@ -762,29 +790,31 @@ def demographics():
 
     return jsonify({
         "lat": lat, "lon": lon, "zip": zipcode,
-        # Legacy county-level fields
-        "population_density": density,
-        "median_income": acs.get("median_income"),
+        # ── ESRI demographics (1-mile ring, pre-cached) ──
+        "total_population": esri.get("total_population"),
+        "population_45plus": esri.get("population_45plus"),
+        "pop45_pct": esri.get("pop45_pct"),
+        "median_income": esri.get("median_income"),
+        "population_growth_pct": esri.get("population_growth_pct"),
+        "esri_source": bool(esri),
+        # ── SAHIE (county insured%) ──
         "insured_pct": sahie.get("insured_pct"),
-        # CPT procedure volume (all 3 codes)
+        # ── CMS procedure volumes ──
         "cpt36475_volume": cms.get("cpt36475_volume"),
         "cpt36465_volume": cms.get("cpt36465_volume"),
         "cpt36466_volume": cms.get("cpt36466_volume"),
         "cpt_total_volume": cms.get("cpt_total_volume"),
-        # Medicare reimbursement rates
         "medicare_rate_36475": cms.get("medicare_rate_36475"),
         "medicare_rate_36465": cms.get("medicare_rate_36465"),
         "medicare_rate_36466": cms.get("medicare_rate_36466"),
-        # Competitors in same ZIP
+        # ── Competitors + ring population ──
         "rings_ready": rings_ready,
         "competitors": cms.get("competitors", []),
-        # Population within drive-time rings (block-group level)
         "pop_10min": pop10.get("total_pop"),
         "female_35plus_10min": pop10.get("female_35plus"),
-        "median_income_zip": zip_income,
         "pop_20min": pop20.get("total_pop"),
         "female_35plus_20min": pop20.get("female_35plus"),
-        "median_income_20min": pop20.get("median_income"),  # kept for compat
+        "median_income_zip": esri.get("median_income"),  # use ESRI income (better than ZIP census)
     })
 
 
@@ -865,7 +895,7 @@ def upload():
             if territory_clinics:
                 territories[sheet_name] = territory_clinics
         data = {"territories": territories, "clinics": clinics}
-        with open("/tmp/vip_sites.json", "w") as out:
+        with open("/opt/mikala-apps/clinic-demographics/vip_sites.json", "w") as out:
             json.dump(data, out)
         global CLINICS, _preload_status
         new_only = _smart_cache_refresh(CLINICS, clinics)
@@ -910,7 +940,7 @@ def upload():
 @login_required
 def sites_data():
     try:
-        with open("/tmp/vip_sites.json") as f:
+        with open("/opt/mikala-apps/clinic-demographics/vip_sites.json") as f:
             return jsonify(json.load(f))
     except:
         return jsonify({"territories": {}, "clinics": []})
@@ -1050,6 +1080,19 @@ def _get_partner_data():
                                for f in data if f.get('lat') and f.get('lng')]
         _partner_cache = result
     return _partner_cache
+
+@app.route('/clinic-demographics/api/buxton-scores')
+@app.route('/api/buxton-scores')
+@login_required
+def buxton_scores():
+    import os as _os
+    path = _os.path.join(_os.path.dirname(__file__), 'buxton_scores.json')
+    try:
+        with open(path) as f2:
+            return jsonify(json.load(f2))
+    except Exception:
+        return jsonify({})
+
 @app.route('/clinic-demographics/api/partner-facilities')
 @app.route('/api/partner-facilities')
 @login_required
