@@ -471,9 +471,12 @@ function loadClinicCoords() {
           .bindPopup(`<b>${c.name}</b><br><span style="font-size:.78rem;color:#666;">${c.address}</span>`)
           .addTo(map1);
 
-        // If isochrone already cached by server, draw it lightly
+        // Cache isochrone data (rings only drawn when user toggles 10/20 buttons)
         if (c.isochrone) {
-          drawIsochrones(map1, c.isochrone, c.name, {inner:'#1a56db', outer:'#5ba3f5'}, 0.07, 0.04);
+          if (!clinicCache[c.address]) clinicCache[c.address] = {};
+          clinicCache[c.address].lat = c.lat;
+          clinicCache[c.address].lon = c.lon;
+          clinicCache[c.address].isochrone = c.isochrone;
         }
       });
     })
@@ -555,37 +558,22 @@ function showClinic(address, name) {
   document.getElementById('strip-zip').style.display = 'none';
   resetMetrics();
 
-  // Check if we have cached coords
+  // Check if we have cached coords — just zoom, do NOT auto-draw rings
   const cached = clinicCache[address];
   if (cached && cached.lat) {
-    // Immediately zoom map to clinic
     map1.setView([cached.lat, cached.lon], 12);
-
-    // Clear old isochrone highlight layers
-    map1IsoLayers.forEach(l => map1.removeLayer(l));
-    map1IsoLayers = [];
-
-    if (cached.isochrone) {
-      // Draw isochrones right away from cache
-      map1IsoLayers = drawIsochrones(map1, cached.isochrone, name,
-        {inner:'#1a56db', outer:'#5ba3f5'});
-      fitToIsochrone(cached.isochrone);
-    } else {
-      // Fetch isochrone in background
-      fetchAndDrawIsochrone(address, name, cached.lat, cached.lon);
-    }
   } else {
-    // Need to geocode + fetch isochrone
-    fetchAndDrawIsochrone(address, name, null, null);
+    // Geocode only (no ring drawing) — cache coords for later ring toggles
+    geocodeOnly(address, name);
   }
 
   // Load demographics separately (slower)
   loadDemographics(address, name);
   // Load site score async
   (function() {
-    var c = clinicCache[address];
-    if (c && c.lat) {
-      fetchSiteScore(c.lat, c.lon, address);
+    var cc = clinicCache[address];
+    if (cc && cc.lat) {
+      fetchSiteScore(cc.lat, cc.lon, address);
     } else {
       setTimeout(function() {
         var c2 = clinicCache[address];
@@ -593,6 +581,33 @@ function showClinic(address, name) {
       }, 4000);
     }
   })();
+}
+
+function geocodeOnly(address, name) {
+  // Fetch coords + cache isochrone data for ring toggles, but don't draw anything
+  fetch('/clinic-demographics/isochrone', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({address, name})
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.error || !d.lat) return;
+    if (!clinicCache[address]) clinicCache[address] = {};
+    clinicCache[address].lat = d.lat;
+    clinicCache[address].lon = d.lon;
+    clinicCache[address].isochrone = d.isochrone;
+    map1.setView([d.lat, d.lon], 12);
+    // Re-draw any active toggle rings for this clinic now that we have data
+    [10, 20].forEach(function(min) {
+      var key = address + '|' + min;
+      var btn = document.querySelector('.ring-btn[data-ring="'+min+'"][data-address="'+address.replace(/"/g,'&quot;')+'"]');
+      if (btn && btn.classList.contains('active-' + min) && !_ringLayers[key]) {
+        _drawRingForMinutes(address, d.isochrone, min, key);
+      }
+    });
+  })
+  .catch(e => console.warn('Geocode error:', e));
 }
 
 function fetchAndDrawIsochrone(address, name, knownLat, knownLon) {
@@ -615,7 +630,7 @@ function fetchAndDrawIsochrone(address, name, knownLat, knownLon) {
 
     if (!knownLat) map1.setView([d.lat, d.lon], 12);
 
-    map1IsoLayers = drawIsochrones(map1, d.isochrone, name, {inner:'#1a56db', outer:'#5ba3f5'});
+    // rings only drawn via toggle buttons — do not auto-draw here
     fitToIsochrone(d.isochrone);
   })
   .catch(e => console.warn('Isochrone error:', e));
