@@ -75,6 +75,12 @@
     .bulk-ring-btn:hover { background:#eff6ff; }
     .bulk-ring-btn.clear { border-color:#fca5a5; color:#dc2626; }
     .bulk-ring-btn.clear:hover { background:#fef2f2; }
+    .bulk-ring-btn.comp-btn { border-color:#fca5a5; color:#dc2626; }
+    .bulk-ring-btn.comp-btn.comp-active { background:#dc2626; color:#fff; border-color:#dc2626; }
+    .bulk-ring-btn.comp-btn:hover { background:#fef2f2; }
+    .comp-t1 { width:10px; height:10px; border-radius:50%; background:#dc2626; border:1.5px solid #fff; display:block; }
+    .comp-t2 { width:10px; height:10px; border-radius:2px; background:#dc2626; border:1.5px solid #fff; display:block; transform:rotate(0deg); }
+    .comp-popup { font-size:11px; line-height:1.5; }
     .clinic-btn .caddr { font-size: .7rem; color: #9ca3af; }
     .territory-header { padding:5px 14px 3px; font-size:.67rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:#1e40af; background:#eff6ff; border-top:1px solid #dbeafe; cursor:pointer; display:flex; align-items:center; justify-content:space-between; user-select:none; }
     .territory-header:hover { background:#dbeafe; }
@@ -186,6 +192,7 @@
         <button class="bulk-ring-btn" onclick="bulkRings(10)" title="Show 10-min rings for all clinics">All <b>10</b></button>
         <button class="bulk-ring-btn" onclick="bulkRings(20)" title="Show 20-min rings for all clinics">All <b>20</b></button>
         <button class="bulk-ring-btn clear" onclick="clearAllRings()" title="Clear all rings">Clear All</button>
+        <button class="bulk-ring-btn comp-btn" id="comp-toggle-btn" onclick="toggleCompetitors()" title="Show competitors in selected clinic's ring (T1=dot, T2=square)">🔴 Competitors</button>
       </div>
       {% if territories %}
         {% for territory, tclinics in territories.items() %}
@@ -573,6 +580,9 @@ function selectClinic(btn) {
   btn.classList.add('active');
   const address = btn.dataset.address;
   const name = btn.dataset.name;
+  // Update competitor clinic and refresh if visible
+  _compClinic = name;
+  if (_compVisible) _loadCompetitors(name);
   showClinic(address, name);
 }
 
@@ -926,6 +936,64 @@ document.getElementById('searchInput').addEventListener('input', function() {
 function syncSheet() {
   var btn = event.target.closest('button');
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>Syncing...'; }
+  
+// ── Competitor markers ────────────────────────────────────────────────────
+var _compLayers = [];
+var _compVisible = false;
+var _compClinic  = null;
+
+function toggleCompetitors() {
+  if (_compVisible) {
+    _clearCompetitors();
+    _compVisible = false;
+    document.getElementById('comp-toggle-btn').classList.remove('comp-active');
+  } else {
+    _compVisible = true;
+    document.getElementById('comp-toggle-btn').classList.add('comp-active');
+    if (_compClinic) _loadCompetitors(_compClinic);
+  }
+}
+
+function _clearCompetitors() {
+  _compLayers.forEach(function(l){ map1.removeLayer(l); });
+  _compLayers = [];
+}
+
+function _loadCompetitors(clinicName) {
+  _clearCompetitors();
+  fetch('/clinic-demographics/api/competitors', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({name: clinicName})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(comps) {
+    comps.forEach(function(c) {
+      var iconHtml = c.tier >= 2
+        ? '<span class="comp-t2"></span>'
+        : '<span class="comp-t1"></span>';
+      var icon = L.divIcon({
+        html: iconHtml,
+        className: '',
+        iconSize: [10, 10],
+        iconAnchor: [5, 5]
+      });
+      var stars = c.rating ? '★ ' + c.rating.toFixed(1) : 'No rating';
+      var revs  = c.reviews ? ' · ' + c.reviews + ' reviews' : '';
+      var tier_label = c.tier >= 2 ? '<b style="color:#dc2626;">■ Tier 2</b>' : '<span style="color:#6b7280;">● Tier 1</span>';
+      var popup = '<div class="comp-popup"><b>' + c.name + '</b><br>'
+                + tier_label + '<br>' + stars + revs + '</div>';
+      var mk = L.marker([c.lat, c.lon], {icon: icon}).bindPopup(popup);
+      mk.addTo(map1);
+      _compLayers.push(mk);
+    });
+  })
+  .catch(function(e){ console.warn('competitor load error', e); });
+}
+
+// Hook into clinic selection to auto-refresh competitors
+var _origSelectClinic = window.selectClinic;
+
   fetch('/clinic-demographics/sync', {method: 'POST'})
     .then(function(r){ return r.json(); })
     .then(function(d){

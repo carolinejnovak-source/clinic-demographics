@@ -1181,6 +1181,68 @@ def api_partner_facilities():
     return resp
 
 
+
+# ── Competitors API ──────────────────────────────────────────────────────────
+
+@app.route('/clinic-demographics/api/competitors', methods=['POST'])
+@app.route('/api/competitors', methods=['POST'])
+@login_required
+def api_competitors():
+    """Return T1/T2 classified competitors for a clinic."""
+    import os as _os
+    data  = request.get_json() or {}
+    name  = (data.get('name') or '').strip()
+    if not name:
+        return jsonify([])
+
+    cache_path = _os.path.join(_os.path.dirname(__file__), 'competitor_cache.json')
+    try:
+        with open(cache_path) as f:
+            comp_cache = json.load(f)
+    except Exception:
+        return jsonify([])
+
+    entry = comp_cache.get(name)
+    if not entry:
+        # Try fuzzy match
+        for k in comp_cache:
+            if k.lower() == name.lower() or name.lower() in k.lower():
+                entry = comp_cache[k]
+                break
+    if not entry:
+        return jsonify([])
+
+    places = entry.get('places', [])
+    result = []
+    seen   = set()
+    for p in places:
+        lat = p.get('lat')
+        lon = p.get('lon')
+        if not lat or not lon:
+            continue
+        key = f"{lat:.4f},{lon:.4f}"
+        if key in seen:
+            continue
+        seen.add(key)
+        rating  = p.get('rating') or 0
+        reviews = p.get('reviews') or 0
+        # Tier classification
+        if rating >= 4.5 and reviews >= 20:
+            tier = 2
+        else:
+            tier = 1
+        result.append({
+            'name':    p.get('name', 'Unknown'),
+            'lat':     lat,
+            'lon':     lon,
+            'rating':  rating,
+            'reviews': reviews,
+            'tier':    tier,
+        })
+    # Sort: T2 first, then by review count desc
+    result.sort(key=lambda x: (-x['tier'], -x['reviews']))
+    return jsonify(result)
+
 # ── Site Scoring Endpoint ─────────────────────────────────────────
 
 @app.route('/clinic-demographics/api/site-score', methods=['POST'])
