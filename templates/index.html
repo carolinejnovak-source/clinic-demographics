@@ -111,7 +111,7 @@
     #main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
     /* ─ MAP — explicit height, NOT flex-1 alone ─ */
-    #map-wrap { position: relative; flex: 1; min-height: 300px; }
+    #map-wrap { position: relative; flex: 1; min-height: 200px; overflow: hidden; }
     #map1 { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
     #map-hint {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
@@ -127,6 +127,8 @@
       background: #fff;
       border-top: 2px solid #1a56db;
       display: none;
+      max-height: 220px;
+      overflow-y: auto;
     }
     #strip-header {
       display: flex; align-items: center; gap: 10px;
@@ -986,11 +988,11 @@ function toggleCompetitorsForClinic(btn) {
     // Turn on
     btn.classList.add('active-comp');
     document.getElementById('map-hint').classList.add('hidden');
-    // Zoom to clinic if we have coords
-    var clinicBtn = document.querySelector('.ring-btn.comp-ind[data-name="' + name.replace(/"/g, '&quot;') + '"]');
-    var addr = clinicBtn ? document.querySelector('.clinic-btn[data-name="' + name.replace(/"/g,'&quot;') + '"]') : null;
-    if (addr) {
-      var addrVal = addr.dataset.address;
+    // Zoom to clinic if we have coords — find address from sibling clinic-btn
+    var wrap = btn.closest('.clinic-btn-wrap');
+    var siblingBtn = wrap ? wrap.querySelector('.clinic-btn') : null;
+    if (siblingBtn) {
+      var addrVal = siblingBtn.dataset.address;
       var cc = clinicCache[addrVal];
       if (cc && cc.lat) map1.setView([cc.lat, cc.lon], 12);
     }
