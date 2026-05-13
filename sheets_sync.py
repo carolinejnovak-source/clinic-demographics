@@ -7,7 +7,7 @@ import json, urllib.request, urllib.parse
 
 SHEET_ID = '1zt3zMiqerSDs7NKodnx0Gj6zTGM6yTwNjQXkSDMQuuY'
 CONFIG_FILE = '/root/.openclaw/workspace/google_sheets_config.json'
-SITES_FILE = '/tmp/vip_sites.json'
+SITES_FILE = '/opt/mikala-apps/clinic-demographics/vip_sites.json'
 
 STATUS_COLORS = {
     'open': 'blue',

@@ -1,0 +1,3558 @@
+{
+  "Addison": {
+    "all": 6,
+    "tier2": 5,
+    "tier3": 4,
+    "lat": 32.9948897,
+    "lon": -96.8277366,
+    "places": [
+      {
+        "name": "StrideCare Vascular",
+        "rating": 4.9,
+        "reviews": 671
+      },
+      {
+        "name": "Unscripted Functional Aesthetic Medicine",
+        "rating": 5,
+        "reviews": 39
+      },
+      {
+        "name": "deNovo Health & Aesthetics (North Dallas)",
+        "rating": 5,
+        "reviews": 58
+      },
+      {
+        "name": "Danny Chan, MD, MBA",
+        "rating": 5,
+        "reviews": 97
+      },
+      {
+        "name": "Skin by Lucy",
+        "rating": 4.7,
+        "reviews": 133
+      },
+      {
+        "name": "Jaryd Stein, MD",
+        "rating": 4.8,
+        "reviews": 5
+      }
+    ]
+  },
+  "Allwood": {
+    "all": 7,
+    "tier2": 3,
+    "tier3": 3,
+    "lat": 40.891549203159,
+    "lon": -74.212783202944,
+    "places": [
+      {
+        "name": "Center for Vein Restoration | Dr. David Shevitz",
+        "rating": 4.8,
+        "reviews": 134
+      },
+      {
+        "name": "Gastroenterology Diagnostics of Northern New Jersey",
+        "rating": 4.9,
+        "reviews": 1051
+      },
+      {
+        "name": "Northeast Laser Vein Institute",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "Azura Vascular Care Woodland Park",
+        "rating": 5,
+        "reviews": 128
+      },
+      {
+        "name": "Hudson Pain and Spine: Dr. Saurabh Dang",
+        "rating": 5,
+        "reviews": 7
+      },
+      {
+        "name": "Pain Free Lives - Woodland Park",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "John Danks, MD",
+        "rating": 5,
+        "reviews": 2
+      }
+    ]
+  },
+  "Arlington": {
+    "all": 20,
+    "tier2": 12,
+    "tier3": 11,
+    "lat": 32.694890318273,
+    "lon": -97.108633716641,
+    "places": [
+      {
+        "name": "Metro Vein Centers | Arlington",
+        "rating": 5,
+        "reviews": 387
+      },
+      {
+        "name": "Atlas Vein Care",
+        "rating": 5,
+        "reviews": 260
+      },
+      {
+        "name": "StrideCare Vascular",
+        "rating": 4.8,
+        "reviews": 814
+      },
+      {
+        "name": "Dr. Thomas Eric Eidson, DO",
+        "rating": 4.7,
+        "reviews": 15
+      },
+      {
+        "name": "Vivo Infusion Arlington",
+        "rating": 4.6,
+        "reviews": 36
+      },
+      {
+        "name": "Labcorp",
+        "rating": 3.4,
+        "reviews": 67
+      },
+      {
+        "name": "Accent On You Cosmetic Surgery Center And Medi-Spa",
+        "rating": 4.8,
+        "reviews": 115
+      },
+      {
+        "name": "Touchstone Imaging Arlington",
+        "rating": 4.5,
+        "reviews": 907
+      },
+      {
+        "name": "Dr. Garrett Peel, MD",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Complete Vascular Care: Joseph M Caruso, MD, FACS",
+        "rating": 4.8,
+        "reviews": 86
+      },
+      {
+        "name": "Ivan Noffsker, MD",
+        "rating": 4.7,
+        "reviews": 10
+      },
+      {
+        "name": "Mina Tawfik, MD",
+        "rating": 3.9,
+        "reviews": 7
+      },
+      {
+        "name": "Ayman Samman Tahhan, MD",
+        "rating": 5,
+        "reviews": 2
+      },
+      {
+        "name": "Metroplex Dermatology",
+        "rating": 4.8,
+        "reviews": 1808
+      },
+      {
+        "name": "John R. Landry, DPM",
+        "rating": 4.9,
+        "reviews": 697
+      },
+      {
+        "name": "Arlington Family Practice, PA",
+        "rating": 4,
+        "reviews": 313
+      },
+      {
+        "name": "Texas Health Heart & Vascular Specialists",
+        "rating": 4.6,
+        "reviews": 85
+      },
+      {
+        "name": "Texas Cardiovascular Specialists - Arlington",
+        "rating": 4.8,
+        "reviews": 185
+      },
+      {
+        "name": "North Texas Surgical Specialists - Arlington",
+        "rating": 4,
+        "reviews": 1
+      },
+      {
+        "name": "Danny D. Le, DO, FACC",
+        "rating": 4.9,
+        "reviews": 296
+      }
+    ]
+  },
+  "Astoria": {
+    "all": 12,
+    "tier2": 7,
+    "tier3": 5,
+    "lat": 40.778004820991,
+    "lon": -73.919717388324,
+    "places": [
+      {
+        "name": "USA Vein Clinics - Astoria",
+        "rating": 3.9,
+        "reviews": 41
+      },
+      {
+        "name": "NYMVCare \u2013 Astoria",
+        "rating": 4.9,
+        "reviews": 56
+      },
+      {
+        "name": "Astra Vein Treatment Center",
+        "rating": 5,
+        "reviews": 23
+      },
+      {
+        "name": "Nao Medical - Astoria Urgent Care",
+        "rating": 4.3,
+        "reviews": 1596
+      },
+      {
+        "name": "Dr. Ayman Attia",
+        "rating": 4.6,
+        "reviews": 203
+      },
+      {
+        "name": "Lenox Hill Radiology | Astoria",
+        "rating": 4.7,
+        "reviews": 3970
+      },
+      {
+        "name": "Wellness IV Therapy",
+        "rating": 5,
+        "reviews": 42
+      },
+      {
+        "name": "PH Skin & Laser Lab",
+        "rating": 5,
+        "reviews": 79
+      },
+      {
+        "name": "NewYork-Presbyterian Medical Group Queens - Vascular Surgery - Astoria",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "John Phair, MD",
+        "rating": 4.9,
+        "reviews": 117
+      },
+      {
+        "name": "Varuna M. Sundaram, MD",
+        "rating": 4.9,
+        "reviews": 9
+      },
+      {
+        "name": "Ageliki Vouyouka, MD",
+        "rating": 4.9,
+        "reviews": 17
+      }
+    ]
+  },
+  "Bethesda": {
+    "all": 13,
+    "tier2": 6,
+    "tier3": 4,
+    "lat": 39.0240563,
+    "lon": -77.1348008,
+    "places": [
+      {
+        "name": "Capitol Vein & Laser Centers - Bethesda",
+        "rating": 4.9,
+        "reviews": 264
+      },
+      {
+        "name": "Dr. Paul M. McNeill",
+        "rating": 3.5,
+        "reviews": 16
+      },
+      {
+        "name": "Kamran A Saraf M.D - Vein Treatment Specialist",
+        "rating": 5,
+        "reviews": 20
+      },
+      {
+        "name": "Community Radiology Associates | Bethesda Imaging Center",
+        "rating": 4.7,
+        "reviews": 2624
+      },
+      {
+        "name": "Labcorp",
+        "rating": 2.8,
+        "reviews": 95
+      },
+      {
+        "name": "Garth Rosenberg",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Cosmetic Surgery Associates",
+        "rating": 4.6,
+        "reviews": 205
+      },
+      {
+        "name": "Quest Diagnostics",
+        "rating": 2.7,
+        "reviews": 125
+      },
+      {
+        "name": "Yuliya Shifrin, LAc - Holistic Acupuncture Specialist",
+        "rating": 5,
+        "reviews": 39
+      },
+      {
+        "name": "Nava Health & Vitality Center",
+        "rating": 4.5,
+        "reviews": 220
+      },
+      {
+        "name": "The Medspa at PSIW",
+        "rating": 4.8,
+        "reviews": 16
+      },
+      {
+        "name": "Johns Hopkins Medical Imaging",
+        "rating": 3.7,
+        "reviews": 60
+      },
+      {
+        "name": "Dr. Kunda S. Biswas, MD",
+        "rating": 5,
+        "reviews": 2
+      }
+    ]
+  },
+  "Bowie": {
+    "all": 5,
+    "tier2": 0,
+    "tier3": 0,
+    "lat": 38.947771,
+    "lon": -76.7362674,
+    "places": [
+      {
+        "name": "Labcorp",
+        "rating": 3.2,
+        "reviews": 89
+      },
+      {
+        "name": "Quest Diagnostics",
+        "rating": 3.7,
+        "reviews": 123
+      },
+      {
+        "name": "Lisa Alford, MD",
+        "rating": 5,
+        "reviews": 2
+      },
+      {
+        "name": "UM Surgical Associates at Bowie",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "CVIRS \u2013 Capital Vascular and Interventional Radiology Specialists",
+        "rating": 0,
+        "reviews": 0
+      }
+    ]
+  },
+  "Brighton Beach": {
+    "all": 32,
+    "tier2": 20,
+    "tier3": 19,
+    "lat": 40.581893563761,
+    "lon": -73.956232364464,
+    "places": [
+      {
+        "name": "USA Vein Clinics - Brighton Beach",
+        "rating": 4.1,
+        "reviews": 45
+      },
+      {
+        "name": "Dr. Micheal Bezuevsky DO",
+        "rating": 4.5,
+        "reviews": 15
+      },
+      {
+        "name": "El Jard\u00edn de la Salud",
+        "rating": 4.7,
+        "reviews": 1016
+      },
+      {
+        "name": "NYMVCare \u2013 Sheepshead Bay",
+        "rating": 4.9,
+        "reviews": 104
+      },
+      {
+        "name": "NYC Health + Hospitals/South Brooklyn Health",
+        "rating": 3.2,
+        "reviews": 1560
+      },
+      {
+        "name": "New York Vascular Medicine",
+        "rating": 5,
+        "reviews": 5
+      },
+      {
+        "name": "Triborough GI: Brooklyn",
+        "rating": 4.8,
+        "reviews": 1254
+      },
+      {
+        "name": "New York Vein Treatment Center",
+        "rating": 5,
+        "reviews": 7
+      },
+      {
+        "name": "Kleydman Dermatology",
+        "rating": 4.3,
+        "reviews": 160
+      },
+      {
+        "name": "Brooklyn Veins Clinic \u5e03\u9c81\u514b\u6797\u8840\u7ba1\u8bca\u6240",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Labcorp",
+        "rating": 4,
+        "reviews": 85
+      },
+      {
+        "name": "Quest Diagnostics",
+        "rating": 3.1,
+        "reviews": 17
+      },
+      {
+        "name": "Aestheticus",
+        "rating": 5,
+        "reviews": 142
+      },
+      {
+        "name": "Metodica Med Spa",
+        "rating": 4.8,
+        "reviews": 128
+      },
+      {
+        "name": "Centers Urgent Care of Coney Island",
+        "rating": 4.7,
+        "reviews": 2155
+      },
+      {
+        "name": "REN\u016a Medical Spa",
+        "rating": 5,
+        "reviews": 10
+      },
+      {
+        "name": "Michelin Beauty Studio",
+        "rating": 5,
+        "reviews": 114
+      },
+      {
+        "name": "Baker Health | Diana Palanker M.D.",
+        "rating": 4.9,
+        "reviews": 465
+      },
+      {
+        "name": "Simin Laser Clinique",
+        "rating": 4.7,
+        "reviews": 269
+      },
+      {
+        "name": "Laser by JanaBay",
+        "rating": 4.8,
+        "reviews": 244
+      },
+      {
+        "name": "ML Wellness Spa",
+        "rating": 4.9,
+        "reviews": 73
+      },
+      {
+        "name": "Advanced Medical Care",
+        "rating": 4.7,
+        "reviews": 274
+      },
+      {
+        "name": "Brooklyn Gastroenterology and Endoscopy Associates",
+        "rating": 4.5,
+        "reviews": 287
+      },
+      {
+        "name": "KHROM AESTHETICS",
+        "rating": 5,
+        "reviews": 174
+      },
+      {
+        "name": "Dr. Roman Rayham, MD",
+        "rating": 4.9,
+        "reviews": 141
+      },
+      {
+        "name": "BEAUTY ART STUDIO",
+        "rating": 5,
+        "reviews": 173
+      },
+      {
+        "name": "La Vie Spa",
+        "rating": 4.5,
+        "reviews": 278
+      },
+      {
+        "name": "Elina Laser Boutique",
+        "rating": 4.9,
+        "reviews": 178
+      },
+      {
+        "name": "Vilena Laser Spa",
+        "rating": 4.8,
+        "reviews": 115
+      },
+      {
+        "name": "Cosmed Laser Center",
+        "rating": 4.5,
+        "reviews": 48
+      },
+      {
+        "name": "Dr. Sreedhar Kallakuri, MD",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "Dr. David M. Glass, MD",
+        "rating": 2.7,
+        "reviews": 3
+      }
+    ]
+  },
+  "Bronx": {
+    "all": 3,
+    "tier2": 1,
+    "tier3": 1,
+    "lat": 40.869359394118,
+    "lon": -73.826114418962,
+    "places": [
+      {
+        "name": "Labcorp",
+        "rating": 3.6,
+        "reviews": 83
+      },
+      {
+        "name": "JAG Physical Therapy",
+        "rating": 4.9,
+        "reviews": 154
+      },
+      {
+        "name": "Dr. Amit R. Shah, MD",
+        "rating": 5,
+        "reviews": 2
+      }
+    ]
+  },
+  "Brooklyn": {
+    "all": 31,
+    "tier2": 19,
+    "tier3": 11,
+    "lat": 40.69412431727,
+    "lon": -73.992095547784,
+    "places": [
+      {
+        "name": "Metro Vein Centers | Brooklyn, Downtown",
+        "rating": 4.9,
+        "reviews": 236
+      },
+      {
+        "name": "Downtown Vein and vascular",
+        "rating": 5,
+        "reviews": 45
+      },
+      {
+        "name": "Advanced Varicose Vein Treatments of Manhattan",
+        "rating": 4.5,
+        "reviews": 16
+      },
+      {
+        "name": "New York Vein Treatment Center",
+        "rating": 4.6,
+        "reviews": 39
+      },
+      {
+        "name": "Center for Vein Restoration | Dr. Shubha Varma",
+        "rating": 4.3,
+        "reviews": 33
+      },
+      {
+        "name": "USA Vein Clinics - Lower Manhattan",
+        "rating": 4,
+        "reviews": 21
+      },
+      {
+        "name": "Brooklyn Endovascular - American Endovascular",
+        "rating": 4.9,
+        "reviews": 172
+      },
+      {
+        "name": "Lenox Hill Radiology | Cobble Hill",
+        "rating": 4.6,
+        "reviews": 3847
+      },
+      {
+        "name": "Dr Ron Lev, MD",
+        "rating": 4.7,
+        "reviews": 13
+      },
+      {
+        "name": "Nelson Menezes Vascular Specialist PC: Nelson Menezes, MD",
+        "rating": 4.8,
+        "reviews": 41
+      },
+      {
+        "name": "Downtown Vein Physicians",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "Herrick Wun, M.D.",
+        "rating": 4.8,
+        "reviews": 156
+      },
+      {
+        "name": "Weiser Robert K MD",
+        "rating": 3,
+        "reviews": 2
+      },
+      {
+        "name": "Lov MedSpa Brooklyn",
+        "rating": 4.8,
+        "reviews": 344
+      },
+      {
+        "name": "CityMD Brooklyn Heights Urgent Care - Brooklyn",
+        "rating": 4,
+        "reviews": 381
+      },
+      {
+        "name": "CityMD Fulton Urgent Care - NYC",
+        "rating": 4.2,
+        "reviews": 463
+      },
+      {
+        "name": "Physio Logic NYC - Physical Therapy and Chiropractic",
+        "rating": 4.9,
+        "reviews": 456
+      },
+      {
+        "name": "Aesthetics21 Medspa and Wellness Clinic",
+        "rating": 5,
+        "reviews": 48
+      },
+      {
+        "name": "Pain Treatment Specialists | Brooklyn, NY",
+        "rating": 5,
+        "reviews": 43
+      },
+      {
+        "name": "Callen-Lorde Brooklyn",
+        "rating": 3.1,
+        "reviews": 130
+      },
+      {
+        "name": "The Dermatology Specialists",
+        "rating": 4.3,
+        "reviews": 742
+      },
+      {
+        "name": "BYou Laser Clinic - Flatbush Prospect Heights",
+        "rating": 4.8,
+        "reviews": 287
+      },
+      {
+        "name": "Manhattan Footcare",
+        "rating": 4.8,
+        "reviews": 91
+      },
+      {
+        "name": "Lumena Aesthetics",
+        "rating": 5,
+        "reviews": 45
+      },
+      {
+        "name": "Heights Dermatology and Laser",
+        "rating": 4.7,
+        "reviews": 149
+      },
+      {
+        "name": "Petals Laser Lounge",
+        "rating": 4.9,
+        "reviews": 202
+      },
+      {
+        "name": "I Wanna Be Prettty",
+        "rating": 5,
+        "reviews": 35
+      },
+      {
+        "name": "Dr. Nelly Cohen & Dr. Arthur Yunov",
+        "rating": 4.5,
+        "reviews": 157
+      },
+      {
+        "name": "Downtown Fibroid Treatment Specialists",
+        "rating": 5,
+        "reviews": 9
+      },
+      {
+        "name": "Nicole Ilonzo, M.D.",
+        "rating": 4.8,
+        "reviews": 28
+      },
+      {
+        "name": "USA Vascular Centers - Lower Manhattan",
+        "rating": 0,
+        "reviews": 0
+      }
+    ]
+  },
+  "Cedar Park": {
+    "all": 1,
+    "tier2": 1,
+    "tier3": 1,
+    "lat": 30.499446280285,
+    "lon": -97.819093371255,
+    "places": [
+      {
+        "name": "Joshua H. Reinhart, MD",
+        "rating": 4.8,
+        "reviews": 278
+      }
+    ]
+  },
+  "Clifton": {
+    "all": 14,
+    "tier2": 10,
+    "tier3": 8,
+    "lat": 40.870290673891,
+    "lon": -74.181800499994,
+    "places": [
+      {
+        "name": "NJ Vein Care and Aesthetics Center",
+        "rating": 4.6,
+        "reviews": 96
+      },
+      {
+        "name": "CURA Vein Doctors - Vein Treatment Center",
+        "rating": 5,
+        "reviews": 131
+      },
+      {
+        "name": "New Jersey Heart and Vein- Dr. Joseph A. Daibes",
+        "rating": 4.9,
+        "reviews": 320
+      },
+      {
+        "name": "Complete Vein & Vascular",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "TeamMD | Pain, Vein, Orthopedic, Foot & Ankle",
+        "rating": 4.8,
+        "reviews": 66
+      },
+      {
+        "name": "Gary Nackman, MD, FACS",
+        "rating": 4.9,
+        "reviews": 99
+      },
+      {
+        "name": "Vein Treatments",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Premier Health Group",
+        "rating": 5,
+        "reviews": 23
+      },
+      {
+        "name": "Pain Treatment Specialists | Clifton",
+        "rating": 4.9,
+        "reviews": 134
+      },
+      {
+        "name": "Dr. Jeffrey Deygoo, MD - Pain Treatment Specialist",
+        "rating": 4.8,
+        "reviews": 22
+      },
+      {
+        "name": "Wellness and Pain",
+        "rating": 5,
+        "reviews": 69
+      },
+      {
+        "name": "Affiliated Endoscopy Services of Clifton",
+        "rating": 4.8,
+        "reviews": 742
+      },
+      {
+        "name": "Dr. Massimo M. Napolitano",
+        "rating": 5,
+        "reviews": 7
+      },
+      {
+        "name": "Bobila Alexis C MD",
+        "rating": 3.7,
+        "reviews": 3
+      }
+    ]
+  },
+  "Edgewater": {
+    "all": 4,
+    "tier2": 2,
+    "tier3": 2,
+    "lat": 40.827987532843,
+    "lon": -73.972950072104,
+    "places": [
+      {
+        "name": "Vein Treatment Doctors of New Jersey",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Beyond The Surface",
+        "rating": 4.9,
+        "reviews": 221
+      },
+      {
+        "name": "Restore Hyper Wellness",
+        "rating": 4.3,
+        "reviews": 84
+      },
+      {
+        "name": "Amari Aesthetics",
+        "rating": 4.8,
+        "reviews": 56
+      }
+    ]
+  },
+  "Encino": {
+    "all": 20,
+    "tier2": 14,
+    "tier3": 12,
+    "lat": 34.156815508599,
+    "lon": -118.487313764747,
+    "places": [
+      {
+        "name": "Incredible Veins, Skin & Body",
+        "rating": 4.6,
+        "reviews": 43
+      },
+      {
+        "name": "LA Vascular Specialists",
+        "rating": 4.1,
+        "reviews": 18
+      },
+      {
+        "name": "NPMD",
+        "rating": 5,
+        "reviews": 74
+      },
+      {
+        "name": "Balboa Medical Center & Spa",
+        "rating": 4.7,
+        "reviews": 121
+      },
+      {
+        "name": "A E Skin",
+        "rating": 5,
+        "reviews": 231
+      },
+      {
+        "name": "Unified Health - Sherman Oaks",
+        "rating": 4.7,
+        "reviews": 297
+      },
+      {
+        "name": "Aluna Cosmetic",
+        "rating": 4.4,
+        "reviews": 5
+      },
+      {
+        "name": "Rejuvenate Medical",
+        "rating": 4.8,
+        "reviews": 192
+      },
+      {
+        "name": "Petra Medi Spa",
+        "rating": 4.9,
+        "reviews": 56
+      },
+      {
+        "name": "Advanced Surgical Solutions: Samuel Kashani, MD",
+        "rating": 4.8,
+        "reviews": 51
+      },
+      {
+        "name": "George Wang, DO",
+        "rating": 4.6,
+        "reviews": 29
+      },
+      {
+        "name": "Rejuve",
+        "rating": 4.9,
+        "reviews": 99
+      },
+      {
+        "name": "Cal Coast Dermatology",
+        "rating": 4.9,
+        "reviews": 159
+      },
+      {
+        "name": "AMC Dragon Acupuncture in Encino",
+        "rating": 5,
+        "reviews": 161
+      },
+      {
+        "name": "Forever Young by Rita",
+        "rating": 4.8,
+        "reviews": 77
+      },
+      {
+        "name": "BHSkin Dermatology",
+        "rating": 4.7,
+        "reviews": 75
+      },
+      {
+        "name": "Ramtin Massoudi, MD",
+        "rating": 5,
+        "reviews": 3
+      },
+      {
+        "name": "LA Vascular Clinic",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Mohammad Gharavi, M.D. : California Center for Cardiothoracic Surgery",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Harout Dermendjian, MD",
+        "rating": 0,
+        "reviews": 0
+      }
+    ]
+  },
+  "Farmington": {
+    "all": 10,
+    "tier2": 1,
+    "tier3": 1,
+    "lat": 41.7278293,
+    "lon": -72.80125199999999,
+    "places": [
+      {
+        "name": "Jefferson Radiology, Vein Center",
+        "rating": 5,
+        "reviews": 2
+      },
+      {
+        "name": "The Vascular Experts-Farmington",
+        "rating": 4.9,
+        "reviews": 9
+      },
+      {
+        "name": "Jefferson Radiology, Farmington",
+        "rating": 3.1,
+        "reviews": 82
+      },
+      {
+        "name": "UConn Health Imaging",
+        "rating": 4.8,
+        "reviews": 1099
+      },
+      {
+        "name": "Hartford HealthCare Heart & Vascular Institute",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "Justin D'Addario, MD (Vascular and Endovascular Surgeon)",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Kwame Amankwah",
+        "rating": 4.5,
+        "reviews": 4
+      },
+      {
+        "name": "Vivo Infusion Farmington",
+        "rating": 4.6,
+        "reviews": 11
+      },
+      {
+        "name": "UConn Health",
+        "rating": 3.2,
+        "reviews": 434
+      },
+      {
+        "name": "Jeremy Wells, MD",
+        "rating": 5,
+        "reviews": 1
+      }
+    ]
+  },
+  "FiDi": {
+    "all": 21,
+    "tier2": 8,
+    "tier3": 6,
+    "lat": 40.709918436249,
+    "lon": -74.005983591704,
+    "places": [
+      {
+        "name": "Metro Vein Centers | Manhattan, Downtown",
+        "rating": 5,
+        "reviews": 111
+      },
+      {
+        "name": "Advanced Varicose Vein Treatments of Manhattan",
+        "rating": 4.5,
+        "reviews": 16
+      },
+      {
+        "name": "USA Vein Clinics - Lower Manhattan",
+        "rating": 4,
+        "reviews": 21
+      },
+      {
+        "name": "Dr Ron Lev, MD",
+        "rating": 4.7,
+        "reviews": 13
+      },
+      {
+        "name": "Downtown Vein Physicians",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "Herrick Wun, M.D.",
+        "rating": 4.8,
+        "reviews": 156
+      },
+      {
+        "name": "Weill Cornell Medicine - Vascular And Endovascular Surgery",
+        "rating": 4,
+        "reviews": 1
+      },
+      {
+        "name": "Dr. Herrick H. Wun, MD",
+        "rating": 4.8,
+        "reviews": 6
+      },
+      {
+        "name": "CityMD Fulton Urgent Care - NYC",
+        "rating": 4.2,
+        "reviews": 463
+      },
+      {
+        "name": "CityMD Brooklyn Heights Urgent Care - Brooklyn",
+        "rating": 4,
+        "reviews": 381
+      },
+      {
+        "name": "Rejuvia Aesthetic Beauty & Therapy",
+        "rating": 5,
+        "reviews": 9
+      },
+      {
+        "name": "Aesthetics21 Medspa and Wellness Clinic",
+        "rating": 5,
+        "reviews": 48
+      },
+      {
+        "name": "Glo Spa",
+        "rating": 4.9,
+        "reviews": 58
+      },
+      {
+        "name": "Great Many Noho",
+        "rating": 4.9,
+        "reviews": 238
+      },
+      {
+        "name": "Pain Treatment Specialists | Brooklyn, NY",
+        "rating": 5,
+        "reviews": 43
+      },
+      {
+        "name": "Callen-Lorde Brooklyn",
+        "rating": 3.1,
+        "reviews": 130
+      },
+      {
+        "name": "The Dermatology Specialists",
+        "rating": 4.3,
+        "reviews": 742
+      },
+      {
+        "name": "Soho Health",
+        "rating": 4.7,
+        "reviews": 177
+      },
+      {
+        "name": "36 North Moore Dermatology by Dr Evan Rieder",
+        "rating": 4.8,
+        "reviews": 73
+      },
+      {
+        "name": "USA Vascular Centers - Lower Manhattan",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Windsor Ting, MD",
+        "rating": 2.3,
+        "reviews": 9
+      }
+    ]
+  },
+  "Forest Hills": {
+    "all": 38,
+    "tier2": 19,
+    "tier3": 19,
+    "lat": 40.720126417958,
+    "lon": -73.843358275954,
+    "places": [
+      {
+        "name": "Metro Vein Centers | Queens, Forest Hills",
+        "rating": 4.8,
+        "reviews": 836
+      },
+      {
+        "name": "NYC Vein Docs - Forest Hills, Queens",
+        "rating": 4.8,
+        "reviews": 71
+      },
+      {
+        "name": "USA Vein Clinics - Forest Hills",
+        "rating": 3.8,
+        "reviews": 225
+      },
+      {
+        "name": "Vein Center: Zvi Zisbrod, MD",
+        "rating": 4.3,
+        "reviews": 17
+      },
+      {
+        "name": "M&S Vascular and Orthopedic Group",
+        "rating": 5,
+        "reviews": 10
+      },
+      {
+        "name": "Adult & Pediatric Dermatology - Skin Specialist, Botox, Fillers, CoolSculpting & EmSculpt in Queens, NY",
+        "rating": 4.8,
+        "reviews": 1234
+      },
+      {
+        "name": "USA Vascular Centers - Forest Hills",
+        "rating": 1,
+        "reviews": 1
+      },
+      {
+        "name": "USA Fibroid Centers - Forest Hills",
+        "rating": 4.2,
+        "reviews": 39
+      },
+      {
+        "name": "Century Aesthetics",
+        "rating": 5,
+        "reviews": 64
+      },
+      {
+        "name": "Aesthetic Solutions NY: Medical Spa Queens, Botox, IV Hydration, NAD+, Tirzepatide, Semaglutide, Mounjaro",
+        "rating": 4.9,
+        "reviews": 230
+      },
+      {
+        "name": "Northwell Labs at Rego Park",
+        "rating": 4.6,
+        "reviews": 217
+      },
+      {
+        "name": "Serenity Skin NY",
+        "rating": 5,
+        "reviews": 199
+      },
+      {
+        "name": "NYC Retina - Queens",
+        "rating": 4.7,
+        "reviews": 119
+      },
+      {
+        "name": "Essen Health Care: 8989 Union Turnpike",
+        "rating": 4.2,
+        "reviews": 307
+      },
+      {
+        "name": "Best Vein Doctors Queens",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Dr Goals",
+        "rating": 5,
+        "reviews": 3
+      },
+      {
+        "name": "Dr Robert Shirinov, MD",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Dr. Lana Schikman",
+        "rating": 4.9,
+        "reviews": 79
+      },
+      {
+        "name": "Dr Alexander Gart, MD",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "The Beauty Icon Med Spa",
+        "rating": 5,
+        "reviews": 130
+      },
+      {
+        "name": "Beautopia MedSpa",
+        "rating": 5,
+        "reviews": 109
+      },
+      {
+        "name": "Northwell Health-GoHealth Urgent Care",
+        "rating": 4.5,
+        "reviews": 1271
+      },
+      {
+        "name": "Lenox Hill Radiology | Kew Gardens",
+        "rating": 4.6,
+        "reviews": 5652
+      },
+      {
+        "name": "VIPMedSpa.us",
+        "rating": 5,
+        "reviews": 14
+      },
+      {
+        "name": "Future Care Internal Medicine",
+        "rating": 4.9,
+        "reviews": 138
+      },
+      {
+        "name": "Rich Bich Med Spa",
+        "rating": 4.7,
+        "reviews": 13
+      },
+      {
+        "name": "Duo Dental & Laser Spa",
+        "rating": 4.9,
+        "reviews": 316
+      },
+      {
+        "name": "Viva Eve - Forest Hills",
+        "rating": 4.7,
+        "reviews": 943
+      },
+      {
+        "name": "Vision Sense Eye Center - Forest Hills",
+        "rating": 5,
+        "reviews": 225
+      },
+      {
+        "name": "Garden OB/GYN Forest Hills",
+        "rating": 4.2,
+        "reviews": 1690
+      },
+      {
+        "name": "Bare Esthetics \u2022 Aesthetic Clinic",
+        "rating": 5,
+        "reviews": 314
+      },
+      {
+        "name": "Body Spa by Irina",
+        "rating": 4.5,
+        "reviews": 159
+      },
+      {
+        "name": "Kew Gardens Aesthetics",
+        "rating": 5,
+        "reviews": 7
+      },
+      {
+        "name": "Queens Vascular Surgery Doctor",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Dr. Alan P. Zeitlin, MD",
+        "rating": 5,
+        "reviews": 9
+      },
+      {
+        "name": "Dr. Rafik Moufid",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "John Phair, MD",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "Richard Di Fiore",
+        "rating": 3,
+        "reviews": 2
+      }
+    ]
+  },
+  "Fort Worth": {
+    "all": 1,
+    "tier2": 1,
+    "tier3": 1,
+    "lat": 32.731691318007,
+    "lon": -97.367702579676,
+    "places": [
+      {
+        "name": "Midtown Medical Imaging-Fort Worth",
+        "rating": 4.9,
+        "reviews": 972
+      }
+    ]
+  },
+  "Hamden": {
+    "all": 7,
+    "tier2": 3,
+    "tier3": 1,
+    "lat": 41.374141000853,
+    "lon": -72.905262101826,
+    "places": [
+      {
+        "name": "Metro Vein Centers | Hamden",
+        "rating": 5,
+        "reviews": 199
+      },
+      {
+        "name": "Connecticut Vascular Center",
+        "rating": 4.4,
+        "reviews": 20
+      },
+      {
+        "name": "Antoine M Ferneini MD",
+        "rating": 4.7,
+        "reviews": 36
+      },
+      {
+        "name": "PACT Gastroenterology Center | Hamden",
+        "rating": 3.1,
+        "reviews": 35
+      },
+      {
+        "name": "Patrick C Thompson MD",
+        "rating": 5,
+        "reviews": 25
+      },
+      {
+        "name": "Ralph W DeNatale MD",
+        "rating": 5,
+        "reviews": 2
+      },
+      {
+        "name": "Brian W Coyle MD",
+        "rating": 5,
+        "reviews": 2
+      }
+    ]
+  },
+  "Harrison": {
+    "all": 6,
+    "tier2": 3,
+    "tier3": 2,
+    "lat": 40.742748364351,
+    "lon": -74.151543666107,
+    "places": [
+      {
+        "name": "Center for Vein Restoration | Dr. David Shevitz",
+        "rating": 4.6,
+        "reviews": 154
+      },
+      {
+        "name": "Newark Advanced Vein Center",
+        "rating": 4.8,
+        "reviews": 24
+      },
+      {
+        "name": "Pulse Vascular Kearny",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "Armenti Medical Group",
+        "rating": 4.8,
+        "reviews": 291
+      },
+      {
+        "name": "Pain Treatment Specialists | Harrison",
+        "rating": 5,
+        "reviews": 3
+      },
+      {
+        "name": "Newark Cardiology & Vascular Center---Khalil Kaid,MD",
+        "rating": 4.4,
+        "reviews": 43
+      }
+    ]
+  },
+  "Hartsdale": {
+    "all": 5,
+    "tier2": 5,
+    "tier3": 1,
+    "lat": 41.027298550883,
+    "lon": -73.791024387308,
+    "places": [
+      {
+        "name": "Alessi Medical Spa",
+        "rating": 4.9,
+        "reviews": 39
+      },
+      {
+        "name": "beauty nurse aesthetics",
+        "rating": 5,
+        "reviews": 28
+      },
+      {
+        "name": "Sedora Medical Aesthetics - White Plains MedSpa",
+        "rating": 4.9,
+        "reviews": 649
+      },
+      {
+        "name": "4Her Women's Medical Spa",
+        "rating": 5,
+        "reviews": 34
+      },
+      {
+        "name": "SYR Men\u2019s Med Spa Studio",
+        "rating": 5,
+        "reviews": 37
+      }
+    ]
+  },
+  "Hoboken": {
+    "all": 8,
+    "tier2": 7,
+    "tier3": 7,
+    "lat": 40.736532171283,
+    "lon": -74.030107368939,
+    "places": [
+      {
+        "name": "Vein Institute of NJ at The Cardiovascular Care Group",
+        "rating": 5,
+        "reviews": 18
+      },
+      {
+        "name": "Joseph Popovich, MD, FACS",
+        "rating": 4.7,
+        "reviews": 67
+      },
+      {
+        "name": "Apex Heart & Vascular Care",
+        "rating": 4.6,
+        "reviews": 400
+      },
+      {
+        "name": "Lumturi Wellness Aesthetics",
+        "rating": 4.9,
+        "reviews": 90
+      },
+      {
+        "name": "Sach Aesthetics",
+        "rating": 5,
+        "reviews": 96
+      },
+      {
+        "name": "fillir",
+        "rating": 5,
+        "reviews": 200
+      },
+      {
+        "name": "4Ever Young Med Spa & Wellness Center - Hoboken",
+        "rating": 5,
+        "reviews": 168
+      },
+      {
+        "name": "IV Elements",
+        "rating": 4.9,
+        "reviews": 515
+      }
+    ]
+  },
+  "Huntington Beach": {
+    "all": 2,
+    "tier2": 1,
+    "tier3": 1,
+    "lat": 33.734023461402,
+    "lon": -117.997518453611,
+    "places": [
+      {
+        "name": "OC Urgent Care Huntington Beach North",
+        "rating": 3.4,
+        "reviews": 88
+      },
+      {
+        "name": "Huntington Beach Oral and Maxillofacial Surgery",
+        "rating": 4.9,
+        "reviews": 1262
+      }
+    ]
+  },
+  "Irvine": {
+    "all": 7,
+    "tier2": 4,
+    "tier3": 1,
+    "lat": 33.6796166,
+    "lon": -117.8017862,
+    "places": [
+      {
+        "name": "Dr Farshid Etaee MD",
+        "rating": 5,
+        "reviews": 38
+      },
+      {
+        "name": "West Medical Irvine",
+        "rating": 4.4,
+        "reviews": 64
+      },
+      {
+        "name": "George Tadros, MD",
+        "rating": 4.8,
+        "reviews": 34
+      },
+      {
+        "name": "Imperial Valley Family Care Medical Group",
+        "rating": 5,
+        "reviews": 21
+      },
+      {
+        "name": "Labcorp",
+        "rating": 3.2,
+        "reviews": 141
+      },
+      {
+        "name": "Masters Medspa",
+        "rating": 5,
+        "reviews": 155
+      },
+      {
+        "name": "YouthFill MD Med Spa - Irvine",
+        "rating": 5,
+        "reviews": 11
+      }
+    ]
+  },
+  "Jericho": {
+    "all": 5,
+    "tier2": 3,
+    "tier3": 2,
+    "lat": 40.7933884,
+    "lon": -73.5382083,
+    "places": [
+      {
+        "name": "Vein Specialist Centers",
+        "rating": 5,
+        "reviews": 12
+      },
+      {
+        "name": "Zalekha Shair, MD FACS",
+        "rating": 5,
+        "reviews": 32
+      },
+      {
+        "name": "Vein Care of Ny",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Pain Treatment Specialists | Jericho",
+        "rating": 4.9,
+        "reviews": 84
+      },
+      {
+        "name": "Bespoke Medesthetics - Jericho",
+        "rating": 5,
+        "reviews": 226
+      }
+    ]
+  },
+  "Kyle": {
+    "all": 9,
+    "tier2": 5,
+    "tier3": 3,
+    "lat": 30.0094605,
+    "lon": -97.86019519999999,
+    "places": [
+      {
+        "name": "Shane Volney, MD- Texas Vein Specialist",
+        "rating": 5,
+        "reviews": 43
+      },
+      {
+        "name": "Total Men's Primary Care - Kyle",
+        "rating": 4.9,
+        "reviews": 1016
+      },
+      {
+        "name": "Hays Foot and Ankle Surgical Associates Pllc",
+        "rating": 4.4,
+        "reviews": 52
+      },
+      {
+        "name": "Vamsi S. Krishna, MD",
+        "rating": 4.9,
+        "reviews": 224
+      },
+      {
+        "name": "Lili Sadri, MD",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "Ascension Texas Cardiovascular - Hays",
+        "rating": 4.8,
+        "reviews": 479
+      },
+      {
+        "name": "Brady E. Anderson, MD",
+        "rating": 4.9,
+        "reviews": 26
+      },
+      {
+        "name": "Joseph J. Dubose, MD",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Joseph J. Dubose, MD",
+        "rating": 0,
+        "reviews": 0
+      }
+    ]
+  },
+  "Midtown": {
+    "all": 59,
+    "tier2": 33,
+    "tier3": 27,
+    "lat": 40.751861806347,
+    "lon": -73.980060357908,
+    "places": [
+      {
+        "name": "New York Vein Treatment Center",
+        "rating": 4.9,
+        "reviews": 134
+      },
+      {
+        "name": "Elite Veins New York",
+        "rating": 4.7,
+        "reviews": 45
+      },
+      {
+        "name": "Metro Vein Centers | Manhattan, Midtown",
+        "rating": 4.9,
+        "reviews": 894
+      },
+      {
+        "name": "Vein Specialist Centers",
+        "rating": 5,
+        "reviews": 34
+      },
+      {
+        "name": "Fox Vein and Vascular",
+        "rating": 4.8,
+        "reviews": 48
+      },
+      {
+        "name": "USA Vein Clinics - Lenox Hill",
+        "rating": 3.9,
+        "reviews": 74
+      },
+      {
+        "name": "USA Vein Clinics - Chelsea",
+        "rating": 4.4,
+        "reviews": 40
+      },
+      {
+        "name": "Renew Vein Centers",
+        "rating": 5,
+        "reviews": 5
+      },
+      {
+        "name": "Advanced Varicose Vein Treatments of Manhattan",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "Varicose Veins Treatment Center NYC",
+        "rating": 5,
+        "reviews": 4
+      },
+      {
+        "name": "Vein Center at NYU Langone Medical Center",
+        "rating": 3.8,
+        "reviews": 4
+      },
+      {
+        "name": "HeartVeinNYC",
+        "rating": 4.2,
+        "reviews": 36
+      },
+      {
+        "name": "Epic Vein and Vascular Center, Inc",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Chideckel Norman MD",
+        "rating": 3.9,
+        "reviews": 17
+      },
+      {
+        "name": "Vein Care Center NYC",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Skin City Lab",
+        "rating": 4.9,
+        "reviews": 322
+      },
+      {
+        "name": "Vein Treatment Doctors",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "OMNY Vein & Cardiovascular - Manhattan",
+        "rating": 4.7,
+        "reviews": 70
+      },
+      {
+        "name": "Fox Vein Care",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Vein Doc NYC",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Dr. Juan Montoya",
+        "rating": 3,
+        "reviews": 2
+      },
+      {
+        "name": "CityMD East 50th Urgent Care - NYC",
+        "rating": 4,
+        "reviews": 419
+      },
+      {
+        "name": "The Vascular Birthmark Center",
+        "rating": 4.8,
+        "reviews": 85
+      },
+      {
+        "name": "Manhattan Aesthetics",
+        "rating": 4.8,
+        "reviews": 118
+      },
+      {
+        "name": "Donna Mendes MD, FACS - Mendes Vein Care - Vascular Surgeon",
+        "rating": 3.8,
+        "reviews": 4
+      },
+      {
+        "name": "City Vein and Surgical",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "Mikel Sadek, MD",
+        "rating": 4.8,
+        "reviews": 62
+      },
+      {
+        "name": "Murray Hill Plastic Surgery & Vein Center - Dr. M Zakir Sabry",
+        "rating": 4.9,
+        "reviews": 62
+      },
+      {
+        "name": "Lev M. Khitin, M.D., F.A.C.S.",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "Richard L. Mueller, MD, FACC, FACP, FAHA, FACPh",
+        "rating": 4.7,
+        "reviews": 38
+      },
+      {
+        "name": "Viva Eve - Manhattan",
+        "rating": 4.7,
+        "reviews": 1142
+      },
+      {
+        "name": "Jeffrey Stein, M.D.",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "NYU Langone Vascular & Endovascular Surgery Associates",
+        "rating": 3.7,
+        "reviews": 3
+      },
+      {
+        "name": "Collagen Bar NYC Microneedling and Body Contouring",
+        "rating": 4.9,
+        "reviews": 88
+      },
+      {
+        "name": "NYC Alternative Massage Therapy",
+        "rating": 5,
+        "reviews": 61
+      },
+      {
+        "name": "Derm Artisan",
+        "rating": 5,
+        "reviews": 105
+      },
+      {
+        "name": "Perfect Med Spa",
+        "rating": 4.8,
+        "reviews": 192
+      },
+      {
+        "name": "Eureka Body Care and Spa + Medspa, Botox",
+        "rating": 4.8,
+        "reviews": 690
+      },
+      {
+        "name": "Central Park Beauty",
+        "rating": 4.8,
+        "reviews": 83
+      },
+      {
+        "name": "King Aesthetics",
+        "rating": 5,
+        "reviews": 103
+      },
+      {
+        "name": "Collagen Bar NYC",
+        "rating": 5,
+        "reviews": 37
+      },
+      {
+        "name": "The Bodie Co",
+        "rating": 4.9,
+        "reviews": 235
+      },
+      {
+        "name": "Pain Treatment Specialists | Manhattan, Midtown",
+        "rating": 5,
+        "reviews": 164
+      },
+      {
+        "name": "AlyneMD NYC",
+        "rating": 5,
+        "reviews": 13
+      },
+      {
+        "name": "Meraki Integrative",
+        "rating": 4.8,
+        "reviews": 48
+      },
+      {
+        "name": "Baked Bar Medspa",
+        "rating": 4.7,
+        "reviews": 57
+      },
+      {
+        "name": "Ariel Ostad MD",
+        "rating": 4.9,
+        "reviews": 457
+      },
+      {
+        "name": "Lumos Dermatology",
+        "rating": 4.7,
+        "reviews": 87
+      },
+      {
+        "name": "Lov MedSpa New York",
+        "rating": 5,
+        "reviews": 72
+      },
+      {
+        "name": "StarPro Physical Therapy - Columbus Circle NY",
+        "rating": 5,
+        "reviews": 294
+      },
+      {
+        "name": "Manhattan Specialty Care",
+        "rating": 4.8,
+        "reviews": 482
+      },
+      {
+        "name": "Next Health",
+        "rating": 5,
+        "reviews": 1193
+      },
+      {
+        "name": "Sant\u00e9 Laser & Microneedling",
+        "rating": 5,
+        "reviews": 80
+      },
+      {
+        "name": "Be Beautiful New York",
+        "rating": 5,
+        "reviews": 10
+      },
+      {
+        "name": "Le DAJE Wellness Studio",
+        "rating": 4.9,
+        "reviews": 123
+      },
+      {
+        "name": "Dr. Mohamed Islam",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "Thomas Maldonado, MD",
+        "rating": 3.5,
+        "reviews": 13
+      },
+      {
+        "name": "Patrick J. Lamparello, MD",
+        "rating": 3.9,
+        "reviews": 8
+      },
+      {
+        "name": "Karan Garg, MD",
+        "rating": 3.4,
+        "reviews": 16
+      }
+    ]
+  },
+  "Morris County": {
+    "all": 27,
+    "tier2": 11,
+    "tier3": 8,
+    "lat": 40.784893876015,
+    "lon": -74.452698373823,
+    "places": [
+      {
+        "name": "Center for Vein Restoration | Dr. Peter Pappas",
+        "rating": 4.9,
+        "reviews": 155
+      },
+      {
+        "name": "Vein Institute of NJ at The Cardiovascular Care Group",
+        "rating": 4.9,
+        "reviews": 38
+      },
+      {
+        "name": "Vein Center\u2014Morristown",
+        "rating": 5,
+        "reviews": 2
+      },
+      {
+        "name": "Advanced Vascular Associates - Morristown",
+        "rating": 4.3,
+        "reviews": 38
+      },
+      {
+        "name": "The Cardiovascular Care Group",
+        "rating": 4.8,
+        "reviews": 78
+      },
+      {
+        "name": "Kabnick",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Atlantic Health Morristown Medical Center",
+        "rating": 3.2,
+        "reviews": 1102
+      },
+      {
+        "name": "Atlantic Health System Laboratory Services",
+        "rating": 3.3,
+        "reviews": 14
+      },
+      {
+        "name": "Alexandra Braunstein, MD",
+        "rating": 4.6,
+        "reviews": 52
+      },
+      {
+        "name": "Dr. Michael Ombrellino, MD, FACS",
+        "rating": 4.8,
+        "reviews": 122
+      },
+      {
+        "name": "Dr. Kunal Vani, DO, FACS",
+        "rating": 5,
+        "reviews": 44
+      },
+      {
+        "name": "Dr. Combiz Rezayat, MD, FACS",
+        "rating": 4.9,
+        "reviews": 79
+      },
+      {
+        "name": "Dr. Jonathan Lee, MD",
+        "rating": 4.9,
+        "reviews": 8
+      },
+      {
+        "name": "Atlantic Vascular",
+        "rating": 3.3,
+        "reviews": 3
+      },
+      {
+        "name": "Kabnick Lowell S MD RPhS FACS FACPh",
+        "rating": 4.2,
+        "reviews": 5
+      },
+      {
+        "name": "Omer J. Riaz, MD",
+        "rating": 5,
+        "reviews": 5
+      },
+      {
+        "name": "Thomas Y. Lee, MD",
+        "rating": 5,
+        "reviews": 7
+      },
+      {
+        "name": "Michael Resnikoff, MD",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Retina Vitreous Consultants",
+        "rating": 4.9,
+        "reviews": 137
+      },
+      {
+        "name": "ImageCare at Morristown",
+        "rating": 4.9,
+        "reviews": 3816
+      },
+      {
+        "name": "Morristown Oral Surgery & Implantology Associates",
+        "rating": 4.9,
+        "reviews": 317
+      },
+      {
+        "name": "Kevin V. James, MD",
+        "rating": 5,
+        "reviews": 2
+      },
+      {
+        "name": "Dr. Kristen Lee, DO",
+        "rating": 3,
+        "reviews": 1
+      },
+      {
+        "name": "Dr. Bruce J. Brener, MD, FACS",
+        "rating": 4.7,
+        "reviews": 31
+      },
+      {
+        "name": "Amit V. Patel, MD",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "Brian Daniel Wernick, MD",
+        "rating": 5,
+        "reviews": 5
+      },
+      {
+        "name": "Gina M. Cavallo, MD",
+        "rating": 0,
+        "reviews": 0
+      }
+    ]
+  },
+  "Morristown": {
+    "all": 27,
+    "tier2": 11,
+    "tier3": 8,
+    "lat": 40.784893876015,
+    "lon": -74.452698373823,
+    "places": [
+      {
+        "name": "Center for Vein Restoration | Dr. Peter Pappas",
+        "rating": 4.9,
+        "reviews": 155
+      },
+      {
+        "name": "Vein Institute of NJ at The Cardiovascular Care Group",
+        "rating": 4.9,
+        "reviews": 38
+      },
+      {
+        "name": "Vein Center\u2014Morristown",
+        "rating": 5,
+        "reviews": 2
+      },
+      {
+        "name": "Advanced Vascular Associates - Morristown",
+        "rating": 4.3,
+        "reviews": 38
+      },
+      {
+        "name": "The Cardiovascular Care Group",
+        "rating": 4.8,
+        "reviews": 78
+      },
+      {
+        "name": "Kabnick",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Atlantic Health Morristown Medical Center",
+        "rating": 3.2,
+        "reviews": 1102
+      },
+      {
+        "name": "Atlantic Health System Laboratory Services",
+        "rating": 3.3,
+        "reviews": 14
+      },
+      {
+        "name": "Alexandra Braunstein, MD",
+        "rating": 4.6,
+        "reviews": 52
+      },
+      {
+        "name": "Dr. Michael Ombrellino, MD, FACS",
+        "rating": 4.8,
+        "reviews": 122
+      },
+      {
+        "name": "Dr. Kunal Vani, DO, FACS",
+        "rating": 5,
+        "reviews": 44
+      },
+      {
+        "name": "Dr. Combiz Rezayat, MD, FACS",
+        "rating": 4.9,
+        "reviews": 79
+      },
+      {
+        "name": "Dr. Jonathan Lee, MD",
+        "rating": 4.9,
+        "reviews": 8
+      },
+      {
+        "name": "Atlantic Vascular",
+        "rating": 3.3,
+        "reviews": 3
+      },
+      {
+        "name": "Kabnick Lowell S MD RPhS FACS FACPh",
+        "rating": 4.2,
+        "reviews": 5
+      },
+      {
+        "name": "Omer J. Riaz, MD",
+        "rating": 5,
+        "reviews": 5
+      },
+      {
+        "name": "Thomas Y. Lee, MD",
+        "rating": 5,
+        "reviews": 7
+      },
+      {
+        "name": "Michael Resnikoff, MD",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Retina Vitreous Consultants",
+        "rating": 4.9,
+        "reviews": 137
+      },
+      {
+        "name": "ImageCare at Morristown",
+        "rating": 4.9,
+        "reviews": 3816
+      },
+      {
+        "name": "Morristown Oral Surgery & Implantology Associates",
+        "rating": 4.9,
+        "reviews": 317
+      },
+      {
+        "name": "Kevin V. James, MD",
+        "rating": 5,
+        "reviews": 2
+      },
+      {
+        "name": "Dr. Kristen Lee, DO",
+        "rating": 3,
+        "reviews": 1
+      },
+      {
+        "name": "Dr. Bruce J. Brener, MD, FACS",
+        "rating": 4.7,
+        "reviews": 31
+      },
+      {
+        "name": "Amit V. Patel, MD",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "Brian Daniel Wernick, MD",
+        "rating": 5,
+        "reviews": 5
+      },
+      {
+        "name": "Gina M. Cavallo, MD",
+        "rating": 0,
+        "reviews": 0
+      }
+    ]
+  },
+  "National City": {
+    "all": 7,
+    "tier2": 2,
+    "tier3": 1,
+    "lat": 32.650154218501,
+    "lon": -117.09716421018,
+    "places": [
+      {
+        "name": "Sharp Laboratory Services Chula Vista",
+        "rating": 4.8,
+        "reviews": 16
+      },
+      {
+        "name": "Hassan Kafri MD",
+        "rating": 4.8,
+        "reviews": 226
+      },
+      {
+        "name": "Chula Vista VA Clinic",
+        "rating": 4.1,
+        "reviews": 76
+      },
+      {
+        "name": "David Mazza, DPM - So Cal Foot Care PC",
+        "rating": 4.6,
+        "reviews": 29
+      },
+      {
+        "name": "Mark W. Huang, MD - CVTS Medical Group Chula Vista",
+        "rating": 3.6,
+        "reviews": 5
+      },
+      {
+        "name": "Seemal Mumtaz, MD - CVTS Medical Group Chula Vista",
+        "rating": 5,
+        "reviews": 8
+      },
+      {
+        "name": "Hugo Hernan Barrera",
+        "rating": 5,
+        "reviews": 1
+      }
+    ]
+  },
+  "Newport Beach": {
+    "all": 25,
+    "tier2": 13,
+    "tier3": 12,
+    "lat": 33.629740486769,
+    "lon": -117.930044129448,
+    "places": [
+      {
+        "name": "Coastal Vascular Medicine",
+        "rating": 5,
+        "reviews": 2
+      },
+      {
+        "name": "Ehab N Mady, DO (Coastal Vascular Medicine)",
+        "rating": 3.5,
+        "reviews": 22
+      },
+      {
+        "name": "Dr. David Nabi, MD, FACS",
+        "rating": 4.6,
+        "reviews": 21
+      },
+      {
+        "name": "Beauty With A Mission - Orange County's Premier Medical Spa",
+        "rating": 5,
+        "reviews": 124
+      },
+      {
+        "name": "Labcorp",
+        "rating": 3.6,
+        "reviews": 64
+      },
+      {
+        "name": "WaveImaging Newport Beach",
+        "rating": 4.7,
+        "reviews": 4593
+      },
+      {
+        "name": "Youvoria Aesthetics",
+        "rating": 5,
+        "reviews": 13
+      },
+      {
+        "name": "Dr. John Laura",
+        "rating": 5,
+        "reviews": 212
+      },
+      {
+        "name": "Reclamation Room Aesthetics | Med Spa Costa Mesa",
+        "rating": 5,
+        "reviews": 8
+      },
+      {
+        "name": "OC Vascular Specialists",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Blue Harbor Dermatology & Laser Institute:: Newport Beach Office",
+        "rating": 4.5,
+        "reviews": 119
+      },
+      {
+        "name": "OC Beauty Med Spa",
+        "rating": 5,
+        "reviews": 10
+      },
+      {
+        "name": "Brien Heather W MD",
+        "rating": 3,
+        "reviews": 4
+      },
+      {
+        "name": "Belle Vie Wellness & Medical Aesthetics",
+        "rating": 4.9,
+        "reviews": 296
+      },
+      {
+        "name": "Cardiology Specialists of Orange County",
+        "rating": 4.9,
+        "reviews": 128
+      },
+      {
+        "name": "Dr. Amy Bandy",
+        "rating": 4.8,
+        "reviews": 56
+      },
+      {
+        "name": "DermFx",
+        "rating": 4.9,
+        "reviews": 344
+      },
+      {
+        "name": "The Treatment Skin Boutique Newport Beach",
+        "rating": 5,
+        "reviews": 65
+      },
+      {
+        "name": "Ali Sajjadian, M.D., F.A.C.S",
+        "rating": 4.9,
+        "reviews": 356
+      },
+      {
+        "name": "Rock Star Mobile IV Therapy",
+        "rating": 5,
+        "reviews": 103
+      },
+      {
+        "name": "Feinerman Vision",
+        "rating": 4.9,
+        "reviews": 273
+      },
+      {
+        "name": "Antonio J. Covarrubias, M.D.",
+        "rating": 4.6,
+        "reviews": 10
+      },
+      {
+        "name": "Lindsay Stephen F MD",
+        "rating": 3.7,
+        "reviews": 6
+      },
+      {
+        "name": "Allen G. Murga, MD",
+        "rating": 5,
+        "reviews": 5
+      },
+      {
+        "name": "Dr. Madi",
+        "rating": 0,
+        "reviews": 0
+      }
+    ]
+  },
+  "Palo Alto": {
+    "all": 6,
+    "tier2": 3,
+    "tier3": 3,
+    "lat": 37.4295552,
+    "lon": -122.1441123,
+    "places": [
+      {
+        "name": "Palo Alto Laser & Skin Care",
+        "rating": 4.9,
+        "reviews": 103
+      },
+      {
+        "name": "Sutter Urgent Care",
+        "rating": 4.5,
+        "reviews": 1080
+      },
+      {
+        "name": "Abbey Neuropsychology Clinic",
+        "rating": 4.9,
+        "reviews": 16
+      },
+      {
+        "name": "L&P Aesthetics - Palo Alto",
+        "rating": 4.8,
+        "reviews": 111
+      },
+      {
+        "name": "Potion Revive",
+        "rating": 5,
+        "reviews": 7
+      },
+      {
+        "name": "Eric Leveen",
+        "rating": 5,
+        "reviews": 3
+      }
+    ]
+  },
+  "Paramus": {
+    "all": 11,
+    "tier2": 5,
+    "tier3": 5,
+    "lat": 40.927369894098,
+    "lon": -74.090363367885,
+    "places": [
+      {
+        "name": "Chuback Vein Center",
+        "rating": 4.9,
+        "reviews": 117
+      },
+      {
+        "name": "USA Vein Clinics - Paramus",
+        "rating": 4.8,
+        "reviews": 16
+      },
+      {
+        "name": "John Asghar Chuback, MD",
+        "rating": 5,
+        "reviews": 19
+      },
+      {
+        "name": "Vein Care Center NJ",
+        "rating": 5,
+        "reviews": 3
+      },
+      {
+        "name": "VeinologyNJ",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Veins Doctors",
+        "rating": 5,
+        "reviews": 2
+      },
+      {
+        "name": "Hello Hydration",
+        "rating": 4.8,
+        "reviews": 488
+      },
+      {
+        "name": "Restore Hyper Wellness",
+        "rating": 4.6,
+        "reviews": 121
+      },
+      {
+        "name": "SR Aesthetics",
+        "rating": 5,
+        "reviews": 15
+      },
+      {
+        "name": "Tri-State Health & Wellness Medical Center",
+        "rating": 4.8,
+        "reviews": 80
+      },
+      {
+        "name": "Open MRl 17 - Advanced Diagnostic Imaging of NJ",
+        "rating": 4.9,
+        "reviews": 561
+      }
+    ]
+  },
+  "Port Jefferson": {
+    "all": 17,
+    "tier2": 7,
+    "tier3": 3,
+    "lat": 40.937829406368,
+    "lon": -73.054434338937,
+    "places": [
+      {
+        "name": "Suffolk Vascular & Vein Center",
+        "rating": 4.4,
+        "reviews": 23
+      },
+      {
+        "name": "Varicose Vein Center",
+        "rating": 4.9,
+        "reviews": 33
+      },
+      {
+        "name": "Thomas E. Arnold, MD, FACS",
+        "rating": 4.6,
+        "reviews": 10
+      },
+      {
+        "name": "Mather Medical Group Vascular Surgery & Vein Care",
+        "rating": 4.8,
+        "reviews": 24
+      },
+      {
+        "name": "Suffolk Vascular Associates",
+        "rating": 2.6,
+        "reviews": 5
+      },
+      {
+        "name": "Ahmad F. Bhatti, MD",
+        "rating": 4.9,
+        "reviews": 125
+      },
+      {
+        "name": "Quest Diagnostics Port Jefferson",
+        "rating": 3,
+        "reviews": 46
+      },
+      {
+        "name": "Mather Medical Group: Interventional Radiology",
+        "rating": 5,
+        "reviews": 18
+      },
+      {
+        "name": "Dr. Jerry Ninia OBGYN",
+        "rating": 5,
+        "reviews": 40
+      },
+      {
+        "name": "Michael Dayan, MD, MBA",
+        "rating": 4.4,
+        "reviews": 13
+      },
+      {
+        "name": "Robert M. Pollina, MD, FACS",
+        "rating": 3.7,
+        "reviews": 3
+      },
+      {
+        "name": "Cristina Bernadin, FNP-BC",
+        "rating": 5,
+        "reviews": 27
+      },
+      {
+        "name": "Dr. Charles Bleecher",
+        "rating": 4.7,
+        "reviews": 167
+      },
+      {
+        "name": "Specialty Infusion Centers",
+        "rating": 4,
+        "reviews": 12
+      },
+      {
+        "name": "Mohit Sharma, MD, FACC",
+        "rating": 5,
+        "reviews": 67
+      },
+      {
+        "name": "Mauricio Szuchmacher, MD, FACS",
+        "rating": 5,
+        "reviews": 5
+      },
+      {
+        "name": "Frank P Lunati Jr PC",
+        "rating": 5,
+        "reviews": 5
+      }
+    ]
+  },
+  "Poway": {
+    "all": 7,
+    "tier2": 2,
+    "tier3": 2,
+    "lat": 32.997964762828,
+    "lon": -117.057951613812,
+    "places": [
+      {
+        "name": "Labcorp",
+        "rating": 3.3,
+        "reviews": 108
+      },
+      {
+        "name": "SS Vascular",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Nikolas London, MD FACS",
+        "rating": 4.9,
+        "reviews": 478
+      },
+      {
+        "name": "Michael Ammar, MD",
+        "rating": 5,
+        "reviews": 357
+      },
+      {
+        "name": "424 Cosmetic Dermatology Inc",
+        "rating": 4.6,
+        "reviews": 13
+      },
+      {
+        "name": "Sedwitz Mark MD Gen & Vascular",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Devin Zarkowsky, MD",
+        "rating": 0,
+        "reviews": 0
+      }
+    ]
+  },
+  "Princeton": {
+    "all": 9,
+    "tier2": 4,
+    "tier3": 3,
+    "lat": 40.344011265993,
+    "lon": -74.615952808884,
+    "places": [
+      {
+        "name": "Princeton Surgical Associates",
+        "rating": 3.6,
+        "reviews": 39
+      },
+      {
+        "name": "Acupuncture Tuina Center LLC",
+        "rating": 5,
+        "reviews": 64
+      },
+      {
+        "name": "Princeton Surgical Associates: Kenneth A. Goldman, M.D., RVT, FACS",
+        "rating": 4.9,
+        "reviews": 63
+      },
+      {
+        "name": "Dr. Elliot B. Sambol, MD",
+        "rating": 5,
+        "reviews": 43
+      },
+      {
+        "name": "Hazen Medical Spa",
+        "rating": 4.8,
+        "reviews": 52
+      },
+      {
+        "name": "Seth Stein, MD",
+        "rating": 5,
+        "reviews": 9
+      },
+      {
+        "name": "Hamilton Cardiology Associates",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "Juha Ramez MD",
+        "rating": 4.2,
+        "reviews": 10
+      },
+      {
+        "name": "Jordan III Lawrence J MD",
+        "rating": 5,
+        "reviews": 7
+      }
+    ]
+  },
+  "San Diego": {
+    "all": 19,
+    "tier2": 9,
+    "tier3": 8,
+    "lat": 32.891244152695,
+    "lon": -117.194344290456,
+    "places": [
+      {
+        "name": "Cosmetic Laser Dermatology",
+        "rating": 4.7,
+        "reviews": 882
+      },
+      {
+        "name": "Laser Cliniq\u00fae | San Diego's Premier Medical Spa",
+        "rating": 4.9,
+        "reviews": 1056
+      },
+      {
+        "name": "Medizen Medspa",
+        "rating": 5,
+        "reviews": 26
+      },
+      {
+        "name": "Golden Triangle Facial Plastic Surgery",
+        "rating": 4.8,
+        "reviews": 238
+      },
+      {
+        "name": "Surgical Center of San Diego",
+        "rating": 5,
+        "reviews": 1073
+      },
+      {
+        "name": "South Coast MedSpa",
+        "rating": 4.8,
+        "reviews": 232
+      },
+      {
+        "name": "NAD MD Inc.",
+        "rating": 5,
+        "reviews": 5
+      },
+      {
+        "name": "Advanced Foot And Ankle Center Of San Diego",
+        "rating": 4.5,
+        "reviews": 84
+      },
+      {
+        "name": "Dr. Pooya Ataii",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "MedSpa San Diego: Alexus MD",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "Dr. Jameson Loyal",
+        "rating": 5,
+        "reviews": 17
+      },
+      {
+        "name": "Faces Plus: Dr. Steven Cohen",
+        "rating": 4.7,
+        "reviews": 142
+      },
+      {
+        "name": "P. Alexander Ataii, MD, Medical Director",
+        "rating": 5,
+        "reviews": 8
+      },
+      {
+        "name": "Belladerma Cosmetic Surgery & Skin Care Center",
+        "rating": 4.9,
+        "reviews": 322
+      },
+      {
+        "name": "John Lane, MD, MS, FACS",
+        "rating": 3,
+        "reviews": 1
+      },
+      {
+        "name": "Mahmoud B. Malas, MD, MHS, RPVI, FACS",
+        "rating": 5,
+        "reviews": 4
+      },
+      {
+        "name": "UC San Diego Health Vascular Surgery",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Tom Alsaigh, MD",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Ann Gaffey, MD, MS",
+        "rating": 0,
+        "reviews": 0
+      }
+    ]
+  },
+  "San Jose": {
+    "all": 8,
+    "tier2": 2,
+    "tier3": 1,
+    "lat": 37.3021532,
+    "lon": -121.949502,
+    "places": [
+      {
+        "name": "Walter Lech",
+        "rating": 5,
+        "reviews": 2
+      },
+      {
+        "name": "Labcorp",
+        "rating": 2.7,
+        "reviews": 55
+      },
+      {
+        "name": "Campbell Physical Therapy and Sports Care",
+        "rating": 4.4,
+        "reviews": 27
+      },
+      {
+        "name": "Evoke Acupuncture",
+        "rating": 5,
+        "reviews": 168
+      },
+      {
+        "name": "Hydration Room - Campbell",
+        "rating": 5,
+        "reviews": 27
+      },
+      {
+        "name": "Eric Pillado, MD - Stanford Medicine Children's Health",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Dr. John G. Brawley III, MD",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Dr. Gregg A. Adams, MD",
+        "rating": 5,
+        "reviews": 1
+      }
+    ]
+  },
+  "Scotch Plains": {
+    "all": 1,
+    "tier2": 0,
+    "tier3": 0,
+    "lat": 40.6456375,
+    "lon": -74.3718394,
+    "places": [
+      {
+        "name": "Labcorp",
+        "rating": 3.2,
+        "reviews": 79
+      }
+    ]
+  },
+  "Stamford": {
+    "all": 21,
+    "tier2": 9,
+    "tier3": 6,
+    "lat": 41.0493467,
+    "lon": -73.5639207,
+    "places": [
+      {
+        "name": "Metro Vein Centers | Stamford",
+        "rating": 4.9,
+        "reviews": 99
+      },
+      {
+        "name": "Center for Vein Restoration | Dr. Mark Edelman",
+        "rating": 4.8,
+        "reviews": 104
+      },
+      {
+        "name": "The Vascular Experts\u2013Stamford",
+        "rating": 3.3,
+        "reviews": 8
+      },
+      {
+        "name": "Greenwich MD",
+        "rating": 4.9,
+        "reviews": 97
+      },
+      {
+        "name": "Bauer Stephen M MD - The Vascular Experts - Greenwich",
+        "rating": 3.5,
+        "reviews": 2
+      },
+      {
+        "name": "Labcorp",
+        "rating": 3.1,
+        "reviews": 66
+      },
+      {
+        "name": "Ambulatory Surgery Center of Stamford | NYBG",
+        "rating": 5,
+        "reviews": 36
+      },
+      {
+        "name": "Aesth\u00e9 by MD",
+        "rating": 4.9,
+        "reviews": 184
+      },
+      {
+        "name": "Jonathan N. Bowman, MD, FACS - The Vascular Experts - Greenwich",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Specialty Surgeons of Connecticut",
+        "rating": 5,
+        "reviews": 2
+      },
+      {
+        "name": "Ben U. Marsan, MD, FACS - The Vascular Experts - Greenwich",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Beholding Beauty Aesthetics",
+        "rating": 5,
+        "reviews": 41
+      },
+      {
+        "name": "PURE Medical Aesthetics",
+        "rating": 4.9,
+        "reviews": 110
+      },
+      {
+        "name": "Schweiger Dermatology Group - Stamford",
+        "rating": 4.6,
+        "reviews": 112
+      },
+      {
+        "name": "Dr. Debra Pruzan MD",
+        "rating": 4.8,
+        "reviews": 45
+      },
+      {
+        "name": "Stamford Health Heart and Vascular Institute",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Richard C. Hsu",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Susan M. Conklin",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Janine Tedesco, MHS, PA-C - The Vascular Experts - Greenwich",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Kimberly L. DaRos",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "Timothy Manoni",
+        "rating": 0,
+        "reviews": 0
+      }
+    ]
+  },
+  "Staten Island": {
+    "all": 9,
+    "tier2": 3,
+    "tier3": 2,
+    "lat": 40.536720900826,
+    "lon": -74.151055121874,
+    "places": [
+      {
+        "name": "Zarcone Vein & Aesthetics: John Zarcone, MD",
+        "rating": 4.9,
+        "reviews": 57
+      },
+      {
+        "name": "Labcorp",
+        "rating": 2.3,
+        "reviews": 155
+      },
+      {
+        "name": "Metro Pain Centers",
+        "rating": 3,
+        "reviews": 2
+      },
+      {
+        "name": "Northwell Health-GoHealth Urgent Care",
+        "rating": 4.5,
+        "reviews": 653
+      },
+      {
+        "name": "Quest Diagnostics",
+        "rating": 3.5,
+        "reviews": 164
+      },
+      {
+        "name": "Quest Diagnostics",
+        "rating": 4.4,
+        "reviews": 53
+      },
+      {
+        "name": "IV Vitamin Infusion",
+        "rating": 5,
+        "reviews": 49
+      },
+      {
+        "name": "Dr. Lance Jung, MD",
+        "rating": 4.3,
+        "reviews": 6
+      },
+      {
+        "name": "Kishore Shivbhagwan Agrawal, MD",
+        "rating": 4.5,
+        "reviews": 12
+      }
+    ]
+  },
+  "Temecula": {
+    "all": 9,
+    "tier2": 6,
+    "tier3": 6,
+    "lat": 33.525229441683,
+    "lon": -117.166608489517,
+    "places": [
+      {
+        "name": "Empire Vein Specialists",
+        "rating": 4.8,
+        "reviews": 88
+      },
+      {
+        "name": "The Lab Performance & Recovery Center",
+        "rating": 4.9,
+        "reviews": 392
+      },
+      {
+        "name": "Bella Vida Medspa",
+        "rating": 4.9,
+        "reviews": 350
+      },
+      {
+        "name": "Advanced Institute for Plastic Surgery",
+        "rating": 4.8,
+        "reviews": 295
+      },
+      {
+        "name": "Temecula Body Contouring",
+        "rating": 4.7,
+        "reviews": 66
+      },
+      {
+        "name": "Renova Med Spa Temecula",
+        "rating": 4.8,
+        "reviews": 102
+      },
+      {
+        "name": "Kaiser Permanente Temecula Medical Offices",
+        "rating": 4.1,
+        "reviews": 194
+      },
+      {
+        "name": "Dr. Kelly J. O'Neil, MD",
+        "rating": 4.7,
+        "reviews": 13
+      },
+      {
+        "name": "Franklin Kieu Torres",
+        "rating": 0,
+        "reviews": 0
+      }
+    ]
+  },
+  "Upper East Side": {
+    "all": 46,
+    "tier2": 27,
+    "tier3": 20,
+    "lat": 40.782459259859,
+    "lon": -73.955449071532,
+    "places": [
+      {
+        "name": "Ousaima Al-Misky MD",
+        "rating": 4.8,
+        "reviews": 20
+      },
+      {
+        "name": "Dr. Norman Chideckel at Varicose Vein Treatment NYC",
+        "rating": 4.8,
+        "reviews": 19
+      },
+      {
+        "name": "USA Vein Clinics - New York on 1st Ave",
+        "rating": 4.3,
+        "reviews": 69
+      },
+      {
+        "name": "Schulman Vein and Laser Center, Dr. Lee G. Schulman M.D.",
+        "rating": 4.9,
+        "reviews": 89
+      },
+      {
+        "name": "Vein and Knee Pain Vascular Group",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Vascular Centers Of America",
+        "rating": 4.8,
+        "reviews": 295
+      },
+      {
+        "name": "Upper East Side Cardiology & Vein Institute",
+        "rating": 4.9,
+        "reviews": 1059
+      },
+      {
+        "name": "Beso Vein Clinic",
+        "rating": 0,
+        "reviews": 0
+      },
+      {
+        "name": "Schulman Vein and Laser Center: Martin L Schulman M.D.",
+        "rating": 4.7,
+        "reviews": 3
+      },
+      {
+        "name": "CityMD East 96th Urgent Care - NYC",
+        "rating": 4.2,
+        "reviews": 444
+      },
+      {
+        "name": "Mount Sinai Doctors - East 85th Street - Vascular Surgery",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "Vicken Nichan Pamoukian, MD",
+        "rating": 5,
+        "reviews": 54
+      },
+      {
+        "name": "Dr. Vicken Pamoukian",
+        "rating": 4,
+        "reviews": 1
+      },
+      {
+        "name": "Koru Wellness Aesthetics NYC: Med Spa Upper East Side & Midtown",
+        "rating": 4.9,
+        "reviews": 87
+      },
+      {
+        "name": "NY Vascular-Laser Center",
+        "rating": 4.4,
+        "reviews": 7
+      },
+      {
+        "name": "Fresh IV Drips-Mobile IV Therapy NYC",
+        "rating": 5,
+        "reviews": 45
+      },
+      {
+        "name": "SoVous",
+        "rating": 5,
+        "reviews": 99
+      },
+      {
+        "name": "Deep Blue Med Spa",
+        "rating": 4.8,
+        "reviews": 132
+      },
+      {
+        "name": "Smooth Synergy Medical Spa & Laser Center",
+        "rating": 5,
+        "reviews": 201
+      },
+      {
+        "name": "Modern Age Upper East Side",
+        "rating": 4.8,
+        "reviews": 37
+      },
+      {
+        "name": "Dr. Susan Binder Dermatology - Cosmetic Dermatologist NYC",
+        "rating": 4.9,
+        "reviews": 53
+      },
+      {
+        "name": "Ariel Ostad MD",
+        "rating": 4.9,
+        "reviews": 457
+      },
+      {
+        "name": "Aesthetics Park Avenue",
+        "rating": 5,
+        "reviews": 2
+      },
+      {
+        "name": "Nush Skincare",
+        "rating": 4.6,
+        "reviews": 108
+      },
+      {
+        "name": "Manhattan Specialty Care",
+        "rating": 4.8,
+        "reviews": 335
+      },
+      {
+        "name": "Aion Aesthetics",
+        "rating": 5,
+        "reviews": 207
+      },
+      {
+        "name": "Lenox Hill Radiology | East 95th Street Radiology",
+        "rating": 4.8,
+        "reviews": 2498
+      },
+      {
+        "name": "Lenox Hill Radiology | East 77th Street",
+        "rating": 4.7,
+        "reviews": 8025
+      },
+      {
+        "name": "USA Hemorrhoid Centers - East Harlem",
+        "rating": 4.6,
+        "reviews": 12
+      },
+      {
+        "name": "Premier Hematology and Oncology - Manhattan",
+        "rating": 4.9,
+        "reviews": 143
+      },
+      {
+        "name": "SimonMed Imaging - Carnegie Hill",
+        "rating": 4.7,
+        "reviews": 1082
+      },
+      {
+        "name": "Dr. Haideh Hirmand",
+        "rating": 5,
+        "reviews": 15
+      },
+      {
+        "name": "Shulman Vein & Laser Center",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "Jeffrey P Greenfield MD PhD",
+        "rating": 4.9,
+        "reviews": 373
+      },
+      {
+        "name": "Debra Jaliman MD - Cosmetic Dermatologist and Botox NYC",
+        "rating": 4.8,
+        "reviews": 116
+      },
+      {
+        "name": "Vascular Surgical Associates PLLC Elizabeth Harrington MD",
+        "rating": 3.9,
+        "reviews": 19
+      },
+      {
+        "name": "Michael Marin, MD",
+        "rating": 5,
+        "reviews": 45
+      },
+      {
+        "name": "Daniel Han, MD",
+        "rating": 4.7,
+        "reviews": 43
+      },
+      {
+        "name": "Peter Faries, MD",
+        "rating": 4.5,
+        "reviews": 33
+      },
+      {
+        "name": "Michael Steven Shapiro, MD",
+        "rating": 4.7,
+        "reviews": 24
+      },
+      {
+        "name": "Vascular and Endovascular Surgery at Mount Sinai",
+        "rating": 3,
+        "reviews": 2
+      },
+      {
+        "name": "Windsor Ting, MD",
+        "rating": 4.7,
+        "reviews": 12
+      },
+      {
+        "name": "Justin George, MD",
+        "rating": 5,
+        "reviews": 2
+      },
+      {
+        "name": "Glenn Robert Jacobowitz, MD",
+        "rating": 4.5,
+        "reviews": 13
+      },
+      {
+        "name": "Ajit Rao, MD",
+        "rating": 4.9,
+        "reviews": 105
+      },
+      {
+        "name": "Northwell Health Physician Partners Vascular Surgery at Lenox Hill",
+        "rating": 0,
+        "reviews": 0
+      }
+    ]
+  },
+  "West Islip": {
+    "all": 15,
+    "tier2": 5,
+    "tier3": 5,
+    "lat": 40.697070426937,
+    "lon": -73.310426704111,
+    "places": [
+      {
+        "name": "Dr. Gulshan Sethi MD, DABVLM",
+        "rating": 5,
+        "reviews": 14
+      },
+      {
+        "name": "Lenox Hill Radiology | West Islip",
+        "rating": 4.9,
+        "reviews": 1417
+      },
+      {
+        "name": "Deep Blue Med Spa",
+        "rating": 4.9,
+        "reviews": 256
+      },
+      {
+        "name": "Care Access Clinic",
+        "rating": 4.6,
+        "reviews": 106
+      },
+      {
+        "name": "Dr. Michael H Chu",
+        "rating": 3.1,
+        "reviews": 15
+      },
+      {
+        "name": "South Shore Laser Inc",
+        "rating": 4.3,
+        "reviews": 48
+      },
+      {
+        "name": "Eli Anker, MD",
+        "rating": 4.2,
+        "reviews": 5
+      },
+      {
+        "name": "Michael Joseph Sacca",
+        "rating": 5,
+        "reviews": 5
+      },
+      {
+        "name": "Garri Pasklinsky",
+        "rating": 3.4,
+        "reviews": 5
+      },
+      {
+        "name": "John Francfort",
+        "rating": 2.7,
+        "reviews": 7
+      },
+      {
+        "name": "Dr.Jason Schneider, M.D., F.A.C.S.",
+        "rating": 2.6,
+        "reviews": 18
+      },
+      {
+        "name": "Babylon Village Medical Associates",
+        "rating": 4.8,
+        "reviews": 65
+      },
+      {
+        "name": "Advanced Dermatology P.C. | West Islip",
+        "rating": 4.6,
+        "reviews": 979
+      },
+      {
+        "name": "Zwanger-Pesiri Radiology",
+        "rating": 4.1,
+        "reviews": 94
+      },
+      {
+        "name": "Great South Bay Surgical Associates",
+        "rating": 3.3,
+        "reviews": 23
+      }
+    ]
+  },
+  "West Orange": {
+    "all": 1,
+    "tier2": 1,
+    "tier3": 1,
+    "lat": 40.772864733221,
+    "lon": -74.267301853639,
+    "places": [
+      {
+        "name": "Pain Treatment Specialists",
+        "rating": 4.9,
+        "reviews": 92
+      }
+    ]
+  },
+  "Woodbridge": {
+    "all": 2,
+    "tier2": 2,
+    "tier3": 0,
+    "lat": 40.582391419365,
+    "lon": -74.336770322645,
+    "places": [
+      {
+        "name": "Vein Specialist Centers - Woodbridge Township",
+        "rating": 5,
+        "reviews": 33
+      },
+      {
+        "name": "Dr. Dina Ibrahim, DPM",
+        "rating": 5,
+        "reviews": 27
+      }
+    ]
+  },
+  "Woodland": {
+    "all": 6,
+    "tier2": 3,
+    "tier3": 3,
+    "lat": 40.891549203159,
+    "lon": -74.212783202944,
+    "places": [
+      {
+        "name": "Center for Vein Restoration | Dr. David Shevitz",
+        "rating": 4.8,
+        "reviews": 134
+      },
+      {
+        "name": "Gastroenterology Diagnostics of Northern New Jersey",
+        "rating": 4.9,
+        "reviews": 1051
+      },
+      {
+        "name": "Northeast Laser Vein Institute",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "Azura Vascular Care Woodland Park",
+        "rating": 5,
+        "reviews": 128
+      },
+      {
+        "name": "Hudson Pain and Spine: Dr. Saurabh Dang",
+        "rating": 5,
+        "reviews": 7
+      },
+      {
+        "name": "John Danks, MD",
+        "rating": 5,
+        "reviews": 2
+      }
+    ]
+  },
+  "Woodland Park": {
+    "all": 6,
+    "tier2": 3,
+    "tier3": 3,
+    "lat": 40.891549203159,
+    "lon": -74.212783202944,
+    "places": [
+      {
+        "name": "Center for Vein Restoration | Dr. David Shevitz",
+        "rating": 4.8,
+        "reviews": 134
+      },
+      {
+        "name": "Gastroenterology Diagnostics of Northern New Jersey",
+        "rating": 4.9,
+        "reviews": 1051
+      },
+      {
+        "name": "Northeast Laser Vein Institute",
+        "rating": 5,
+        "reviews": 1
+      },
+      {
+        "name": "Azura Vascular Care Woodland Park",
+        "rating": 5,
+        "reviews": 128
+      },
+      {
+        "name": "Hudson Pain and Spine: Dr. Saurabh Dang",
+        "rating": 5,
+        "reviews": 7
+      },
+      {
+        "name": "John Danks, MD",
+        "rating": 5,
+        "reviews": 2
+      }
+    ]
+  },
+  "Yonkers": {
+    "all": 0,
+    "tier2": 0,
+    "tier3": 0,
+    "lat": 40.933581599726,
+    "lon": -73.897465474317,
+    "places": []
+  }
+}

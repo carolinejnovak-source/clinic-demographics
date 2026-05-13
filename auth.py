@@ -13,10 +13,10 @@ def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if not session.get("logged_in"):
-            return redirect(url_for("login", next=request.path))
+            return redirect("/clinic-demographics/login?next=" + request.path)
         return f(*args, **kwargs)
     return decorated
 
 
 def check_credentials(username, password):
-    return username == APP_USERNAME and password == APP_PASSWORD
+    return username.lower() == APP_USERNAME.lower() and password == APP_PASSWORD

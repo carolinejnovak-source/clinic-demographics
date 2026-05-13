@@ -65,37 +65,12 @@
     .clinic-btn:hover { background: #eef3ff; }
     .clinic-btn.active { background: #dbeafe; border-left: 3px solid #1a56db; }
     .clinic-btn .cname { font-size: .82rem; font-weight: 600; color: #1e293b; }
-    .ring-btns { display:flex; gap:3px; margin-left:auto; flex-shrink:0; }
-    .ring-btn { font-size:.6rem; font-weight:700; width:18px; height:18px; border-radius:4px; border:1.5px solid #93c5fd; background:transparent; color:#1a56db; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; }
-    .ring-btn.active-10 { background:#1a56db; color:#fff; border-color:#1a56db; }
-    .ring-btn.active-20 { background:#5ba3f5; color:#fff; border-color:#5ba3f5; }
-    .ring-btn:hover { opacity:.8; }
-    .bulk-ring-controls { display:flex; gap:4px; padding:6px 14px 4px; border-bottom:1px solid #e5e7eb; }
-    .bulk-ring-btn { font-size:.65rem; padding:2px 7px; border-radius:5px; border:1px solid #93c5fd; background:transparent; color:#1d4ed8; cursor:pointer; white-space:nowrap; }
-    .bulk-ring-btn:hover { background:#eff6ff; }
-    .bulk-ring-btn.clear { border-color:#fca5a5; color:#dc2626; }
-    .bulk-ring-btn.clear:hover { background:#fef2f2; }
     .clinic-btn .caddr { font-size: .7rem; color: #9ca3af; }
-    .territory-header { padding:5px 14px 3px; font-size:.67rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:#1e40af; background:#eff6ff; border-top:1px solid #dbeafe; cursor:pointer; display:flex; align-items:center; justify-content:space-between; user-select:none; }
-    .territory-header:hover { background:#dbeafe; }
-    .territory-chevron { font-size:.6rem; transition:transform .2s; }
-    #sidebar-panels { display:flex; flex-direction:column; flex:1; overflow:hidden; min-height:0; }
-    #clinic-panel { flex:3; overflow-y:auto; min-height:120px; border-bottom:2px solid #cbd5e1; }
-    #clinic-panel::-webkit-scrollbar { width:4px; }
-    #clinic-panel::-webkit-scrollbar-thumb { background:#ddd; border-radius:4px; }
-    #partner-panel { flex:2; overflow-y:auto; min-height:80px; max-height:40%; background:#f8fdf9; }
-    #partner-panel::-webkit-scrollbar { width:4px; }
-    #partner-panel::-webkit-scrollbar-thumb { background:#bbf7d0; border-radius:4px; }
-    .partner-state-header { padding:5px 14px 3px; font-size:.67rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:#166534; background:#dcfce7; border-top:1px solid #bbf7d0; cursor:pointer; display:flex; align-items:center; justify-content:space-between; user-select:none; }
-    .partner-state-header:hover { background:#bbf7d0; }
-    .partner-row { padding:4px 14px 4px 18px; border-bottom:1px solid #f0fdf4; cursor:pointer; display:flex; align-items:center; gap:6px; }
-    .partner-row:hover { background:#f0fdf4; }
-    .partner-badge { font-size:.58rem; font-weight:700; padding:1px 4px; border-radius:3px; flex-shrink:0; }
-    .badge-uspi { background:#dbeafe; color:#1d4ed8; }
-    .badge-sca { background:#fef9c3; color:#854d0e; }
-    .badge-nue { background:#dcfce7; color:#14532d; }
-    .partner-name { font-size:.72rem; color:#1e293b; line-height:1.2; }
-    .partner-city { font-size:.64rem; color:#94a3b8; }
+    .territory-header { padding: 5px 14px 3px; font-size: .67rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: #1e40af; background: #eff6ff; border-top: 1px solid #dbeafe; cursor: pointer; display: flex; align-items: center; justify-content: space-between; user-select: none; }
+    .territory-header:hover { background: #dbeafe; }
+    .territory-header:first-child { border-top: none; }
+    .territory-body { }
+    .territory-chevron { font-size: .6rem; transition: transform .2s; }
     #sidebar-footer { padding: 12px 14px; border-top: 1px solid #e5e7eb; background: #f8fafc; flex-shrink: 0; }
     #sidebar-legend { padding: 8px 14px; border-top: 1px solid #f0f0f0; font-size: .7rem; flex-shrink: 0; }
 
@@ -153,6 +128,25 @@
     .full-tab-bar { flex-shrink:0; background:#fff; border-bottom:1px solid #e5e7eb; padding:8px 16px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
     .full-tab-map { flex:1; position:relative; }
     .full-tab-map > div[id^="map"] { position:absolute; top:0;left:0;right:0;bottom:0; }
+
+#sidebar-panels { display:flex; flex-direction:column; flex:1; overflow:hidden; min-height:0; }
+#clinic-panel { flex:3; overflow-y:auto; min-height:120px; border-bottom:2px solid #cbd5e1; }
+#clinic-panel::-webkit-scrollbar { width:4px; }
+#clinic-panel::-webkit-scrollbar-thumb { background:#ddd; border-radius:4px; }
+#partner-panel { flex:2; overflow-y:auto; min-height:80px; max-height:40%; background:#f8fdf9; }
+#partner-panel::-webkit-scrollbar { width:4px; }
+#partner-panel::-webkit-scrollbar-thumb { background:#bbf7d0; border-radius:4px; }
+.partner-state-header { padding:5px 14px 3px; font-size:.67rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:#166534; background:#dcfce7; border-top:1px solid #bbf7d0; cursor:pointer; display:flex; align-items:center; justify-content:space-between; user-select:none; }
+.partner-state-header:hover { background:#bbf7d0; }
+.partner-state-body { }
+.partner-row { padding:4px 14px 4px 18px; border-bottom:1px solid #f0fdf4; cursor:pointer; display:flex; align-items:center; gap:6px; }
+.partner-row:hover { background:#f0fdf4; }
+.partner-badge { font-size:.58rem; font-weight:700; padding:1px 4px; border-radius:3px; flex-shrink:0; }
+.badge-uspi { background:#dbeafe; color:#1d4ed8; }
+.badge-sca { background:#fef9c3; color:#854d0e; }
+.badge-nue { background:#dcfce7; color:#14532d; }
+.partner-name { font-size:.72rem; color:#1e293b; line-height:1.2; }
+.partner-city { font-size:.64rem; color:#94a3b8; }
   </style>
 </head>
 <body>
@@ -180,67 +174,59 @@
       <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search clinics..."/>
     </div>
     <div id="sidebar-panels" style="display:flex;flex-direction:column;flex:1;overflow:hidden;min-height:0;">
-      <div id="clinic-panel" style="flex:3;overflow-y:auto;min-height:120px;border-bottom:2px solid #cbd5e1;">
-    <div id="clinic-list">
-      <div class="bulk-ring-controls">
-        <button class="bulk-ring-btn" onclick="bulkRings(10)" title="Show 10-min rings for all clinics">All <b>10</b></button>
-        <button class="bulk-ring-btn" onclick="bulkRings(20)" title="Show 20-min rings for all clinics">All <b>20</b></button>
-        <button class="bulk-ring-btn clear" onclick="clearAllRings()" title="Clear all rings">Clear All</button>
+      <!-- TOP PANEL: VIP Clinics -->
+      <div id="clinic-panel" style="flex:1;overflow-y:auto;min-height:80px;border-bottom:2px solid #cbd5e1;">
+        <div id="clinic-list">
+          {% if territories %}
+            {% for territory, tclinics in territories.items() %}
+            <div class="territory-header" onclick="toggleTerritory(this)">
+              <span>{{ territory }} <span style="color:#93c5fd;font-weight:400;">({{ tclinics|length }})</span></span>
+              <span class="territory-chevron">&#9660;</span>
+            </div>
+            <div class="territory-body" style="display:none;">
+              {% for clinic in tclinics %}
+              <button class="clinic-btn"
+                      data-address="{{ clinic.address }}"
+                      data-name="{{ clinic.name }}"
+                      onclick="selectClinic(this)">
+                <div class="cname">{{ clinic.name }}</div>
+                <div class="caddr">{{ clinic.address }}</div>
+              </button>
+              {% endfor %}
+            </div>
+            {% endfor %}
+          {% else %}
+            {% for clinic in clinics %}
+            <button class="clinic-btn"
+                    data-address="{{ clinic.address }}"
+                    data-name="{{ clinic.name }}"
+                    onclick="selectClinic(this)">
+              <div class="cname">{{ clinic.name }}</div>
+              <div class="caddr">{{ clinic.address }}</div>
+            </button>
+            {% endfor %}
+          {% endif %}
+        </div>
       </div>
-      {% if territories %}
-        {% for territory, tclinics in territories.items() %}
-        <div class="territory-header" onclick="toggleTerritory(this)">
-          <span>{{ territory }} <span style="color:#93c5fd;font-weight:400;">({{ tclinics|length }})</span></span>
-          <span class="territory-chevron">&#9660;</span>
-        </div>
-        <div class="territory-body" style="display:none;">
-          {% for clinic in tclinics %}
-          <div class="clinic-btn-wrap" style="display:flex;align-items:center;">
-          <button class="clinic-btn" style="flex:1;min-width:0;"
-                  data-address="{{ clinic.address }}"
-                  data-name="{{ clinic.name }}"
-                  onclick="selectClinic(this)">
-            <div class="cname">{{ clinic.name }}</div>
-            <div class="caddr" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ clinic.address }}</div>
-          </button>
-          <div class="ring-btns" style="padding:0 6px;">
-            <button class="ring-btn" data-ring="10" data-address="{{ clinic.address }}" data-name="{{ clinic.name }}" onclick="toggleRing(this,10)" title="Toggle 10-min ring">10</button>
-            <button class="ring-btn" data-ring="20" data-address="{{ clinic.address }}" data-name="{{ clinic.name }}" onclick="toggleRing(this,20)" title="Toggle 20-min ring">20</button>
-          </div>
-          </div>
-          {% endfor %}
-        </div>
-        {% endfor %}
-      {% else %}
-        {% for clinic in clinics %}
-        <div class="clinic-btn-wrap" style="display:flex;align-items:center;">
-        <button class="clinic-btn" style="flex:1;min-width:0;"
-                data-address="{{ clinic.address }}"
-                data-name="{{ clinic.name }}"
-                onclick="selectClinic(this)">
-          <div class="cname">{{ clinic.name }}</div>
-          <div class="caddr" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ clinic.address }}</div>
-        </button>
-        <div class="ring-btns" style="padding:0 6px;">
-          <button class="ring-btn" data-ring="10" data-address="{{ clinic.address }}" data-name="{{ clinic.name }}" onclick="toggleRing(this,10)" title="Toggle 10-min ring">10</button>
-          <button class="ring-btn" data-ring="20" data-address="{{ clinic.address }}" data-name="{{ clinic.name }}" onclick="toggleRing(this,20)" title="Toggle 20-min ring">20</button>
-        </div>
-        </div>
-        {% endfor %}
-      {% endif %}
-    </div>
-      </div><!-- /clinic-panel -->
-      <div id="partner-panel" style="flex:2;overflow-y:auto;min-height:80px;max-height:40%;background:#f8fdf9;">
-        <div style="padding:6px 14px;background:#14532d;color:#fff;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;justify-content:space-between;">
+      <!-- BOTTOM PANEL: Partner Facilities -->
+      <div id="partner-panel" style="flex:1;overflow-y:auto;min-height:80px;background:#f8fdf9;">
+        <div style="padding:6px 14px;background:#14532d;color:#fff;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
           <span><i class="fa fa-hospital me-1"></i>Partner Facilities</span>
           <div style="display:flex;align-items:center;gap:6px;">
-            <span id="partner-panel-count" style="font-weight:400;font-size:.65rem;opacity:.8;"></span>
+            <span id="partner-panel-count" style="font-weight:400;font-size:.65rem;opacity:.8"></span>
             <button id="partner-map-btn" onclick="togglePartnerFacilities()" style="font-size:.62rem;padding:2px 7px;border-radius:8px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:#fff;cursor:pointer;white-space:nowrap;">Show on Map</button>
           </div>
         </div>
-        <div id="partner-list-body"><div style="padding:12px 14px;color:#94a3b8;font-size:.75rem;"><i class="fa fa-spinner fa-spin me-1"></i>Loading...</div></div>
-      </div><!-- /partner-panel -->
-    </div><!-- /sidebar-panels -->
+        <div id="partner-list-body">
+          <div style="padding:12px 14px;color:#94a3b8;font-size:.75rem;"><i class="fa fa-spinner fa-spin me-1"></i>Loading...</div>
+        </div>
+      </div>
+    </div>
+    <div id="sidebar-legend">
+      <span class="dot" style="background:#1a56db;"></span>10-min drive &nbsp;
+      <span class="dot" style="background:#5ba3f5;"></span>20-min drive<br>
+      <span style="color:#bbb;">Valhalla · OSM speed limits · avg conditions</span>
+    </div>
   </div>
 
   <!-- Map + Data -->
@@ -264,66 +250,31 @@
       </div>
       <div id="metrics-row">
         <div class="m-card">
-          <div class="m-icon text-primary"><i class="fa fa-city"></i></div>
-          <div class="m-val" id="m-daytime-pop">—</div>
-          <div class="m-lbl">Daytime Population</div>
-          <div class="m-sub" id="m-daytime-pop-sub">20-min drive ring</div>
-          <div class="m-src">ESRI GeoEnrich</div>
+          <div class="m-icon text-primary"><i class="fa fa-users"></i></div>
+          <div class="m-val" id="m-density">—</div>
+          <div class="m-lbl">Pop. Density</div>
+          <div class="m-sub">people/sq mi</div>
+          <div class="m-src">Census ACS 2022</div>
         </div>
         <div class="m-card">
           <div class="m-icon text-success"><i class="fa fa-dollar-sign"></i></div>
           <div class="m-val" id="m-income">—</div>
-          <div class="m-lbl">Median HH Income</div>
-          <div class="m-sub" id="m-income-sub">20-min drive ring</div>
-          <div class="m-src">ESRI GeoEnrich</div>
-        </div>
-        <div class="m-card">
-          <div class="m-icon text-success"><i class="fa fa-map-marker-alt"></i></div>
-          <div class="m-val" id="m-hhi-10min">—</div>
-          <div class="m-lbl">Avg HHI 10-min</div>
-          <div class="m-sub">10-min drive ring</div>
-          <div class="m-src">ESRI GeoEnrich</div>
-        </div>
-        <div class="m-card" id="m-ctr-card">
-          <div class="m-icon text-warning"><i class="fa fa-mouse-pointer"></i></div>
-          <div class="m-val" id="m-ctr">—</div>
-          <div class="m-lbl">Test Campaign CTR</div>
-          <div class="m-sub" id="m-ctr-sub">1AC campaign data</div>
-          <div class="m-src">Google Ads</div>
-        </div>
-        <div class="m-card">
-          <div class="m-icon text-info"><i class="fa fa-chart-line"></i></div>
-          <div class="m-val" id="m-growth">—</div>
-          <div class="m-lbl">Pop. Growth</div>
-          <div class="m-sub">current→forecast</div>
-          <div class="m-src">ESRI GeoEnrich</div>
-        </div>
-        <div class="m-card" style="border-top:3px solid #1D4ED8;">
-          <div class="m-icon" style="color:#1D4ED8;"><i class="fa fa-star"></i></div>
-          <div class="m-val" id="m-base-score" style="font-size:1.6rem;font-weight:700;color:#1D4ED8;">—</div>
-          <div class="m-lbl" style="font-weight:600;">Base Score</div>
-          <div class="m-sub">HHI 70% + Daytime Pop 30%</div>
-          <div class="m-src">VIP Model · all sites</div>
-        </div>
-        <div class="m-card" id="m-enhanced-card" style="border-top:3px solid #16A34A;">
-          <div class="m-icon" style="color:#16A34A;"><i class="fa fa-star-half-alt"></i></div>
-          <div class="m-val" id="m-enhanced-score" style="font-size:1.6rem;font-weight:700;color:#16A34A;">—</div>
-          <div class="m-lbl" style="font-weight:600;">Enhanced Score</div>
-          <div class="m-sub">HHI 50% + CTR 30% + Pop 20%</div>
-          <div class="m-src">VIP Model · requires CTR data</div>
+          <div class="m-lbl">Median Income</div>
+          <div class="m-sub">per household</div>
+          <div class="m-src">Census ACS 2022</div>
         </div>
         <div class="m-card">
           <div class="m-icon text-info"><i class="fa fa-shield-alt"></i></div>
           <div class="m-val" id="m-insured">—</div>
           <div class="m-lbl">% Insured</div>
-          <div class="m-sub">county</div>
+          <div class="m-sub">county population</div>
           <div class="m-src">SAHIE 2022</div>
         </div>
         <div class="m-card">
           <div class="m-icon text-warning"><i class="fa fa-syringe"></i></div>
           <div class="m-val" id="m-cpt">—</div>
           <div class="m-lbl">CPT 36475 Vol.</div>
-          <div class="m-sub">Medicare · state</div>
+          <div class="m-sub">Medicare · ZIP</div>
           <div class="m-src">CMS Medicare</div>
         </div>
         <div class="m-card">
@@ -345,6 +296,11 @@
 
         <!-- ─── VIP SITE SCORE ─── -->
         <div class="m-section-label" style="background:#eff6ff;color:#1d4ed8;">🏆 VIP Site Score (Buxton Methodology)</div>
+        <div style="display:flex;gap:8px;align-items:center;padding:4px 0 6px 0;">
+          <div style="font-size:.68rem;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:.04em;">Buxton Score:</div>
+          <div id="buxton-score-display" style="font-size:1.1rem;font-weight:700;color:#7c3aed;">--</div>
+          <div id="buxton-score-grade" style="font-size:.75rem;font-weight:600;color:#9ca3af;"></div>
+        </div>
         <div id="site-score-card" style="width:100%;padding:8px 0;">
           <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
             <div id="site-score-spinner" style="color:#94a3b8;font-size:.78rem;display:none;">
@@ -488,32 +444,39 @@ document.addEventListener('DOMContentLoaded', () => {
   // Load all clinic coords from server (pre-cached by background thread)
   loadClinicCoords();
   pollPreload();
+
+  // Defer partner sidebar 2s so map + clinics render first
+  setTimeout(function() {
+    fetch('/clinic-demographics/api/partner-facilities')
+      .then(function(r){ return r.json(); })
+      .then(function(data){ _partnerData = data; buildPartnerSidebar(data); })
+      .catch(function(){
+        var el = document.getElementById('partner-list-body');
+        if (el) el.innerHTML = '<div style="padding:10px 14px;color:#dc2626;font-size:.72rem;">Failed to load.</div>';
+      });
+  }, 2000);
 });
 
+// ── Tab switching ─────────────────────────────────────
 function loadClinicCoords() {
-  fetch('/clinic-demographics/clinic-coords')
+  fetch('/clinic-coords')
     .then(r => r.json())
     .then(data => {
       data.forEach(c => {
         clinicCache[c.address] = c;
-        // Add a small dot marker — color by status (blue=open, orange=potential, purple=pending)
-        const _sc = {'blue':'#1a56db','orange':'#f97316','purple':'#7c3aed'};
-        const markerColor = _sc[c.color] || '#1a56db';
+        // Add a small dot marker for every clinic
         const icon = L.divIcon({
           className: '',
-          html: `<div style="background:${markerColor};width:8px;height:8px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3);"></div>`,
+          html: `<div style="background:#1a56db;width:8px;height:8px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3);"></div>`,
           iconSize: [8,8], iconAnchor: [4,4]
         });
         L.marker([c.lat, c.lon], {icon})
           .bindPopup(`<b>${c.name}</b><br><span style="font-size:.78rem;color:#666;">${c.address}</span>`)
           .addTo(map1);
 
-        // Cache isochrone data (rings only drawn when user toggles 10/20 buttons)
+        // If isochrone already cached by server, draw it lightly
         if (c.isochrone) {
-          if (!clinicCache[c.address]) clinicCache[c.address] = {};
-          clinicCache[c.address].lat = c.lat;
-          clinicCache[c.address].lon = c.lon;
-          clinicCache[c.address].isochrone = c.isochrone;
+          drawIsochrones(map1, c.isochrone, c.name, {inner:'#1a56db', outer:'#5ba3f5'}, 0.07, 0.04);
         }
       });
     })
@@ -521,7 +484,7 @@ function loadClinicCoords() {
 }
 
 function pollPreload() {
-  fetch('/clinic-demographics/preload-status')
+  fetch('/preload-status')
     .then(r => r.json())
     .then(s => {
       const el = document.getElementById('preload-msg');
@@ -595,22 +558,37 @@ function showClinic(address, name) {
   document.getElementById('strip-zip').style.display = 'none';
   resetMetrics();
 
-  // Check if we have cached coords — just zoom, do NOT auto-draw rings
+  // Check if we have cached coords
   const cached = clinicCache[address];
   if (cached && cached.lat) {
+    // Immediately zoom map to clinic
     map1.setView([cached.lat, cached.lon], 12);
+
+    // Clear old isochrone highlight layers
+    map1IsoLayers.forEach(l => map1.removeLayer(l));
+    map1IsoLayers = [];
+
+    if (cached.isochrone) {
+      // Draw isochrones right away from cache
+      map1IsoLayers = drawIsochrones(map1, cached.isochrone, name,
+        {inner:'#1a56db', outer:'#5ba3f5'});
+      fitToIsochrone(cached.isochrone);
+    } else {
+      // Fetch isochrone in background
+      fetchAndDrawIsochrone(address, name, cached.lat, cached.lon);
+    }
   } else {
-    // Geocode only (no ring drawing) — cache coords for later ring toggles
-    geocodeOnly(address, name);
+    // Need to geocode + fetch isochrone
+    fetchAndDrawIsochrone(address, name, null, null);
   }
 
   // Load demographics separately (slower)
   loadDemographics(address, name);
   // Load site score async
   (function() {
-    var cc = clinicCache[address];
-    if (cc && cc.lat) {
-      fetchSiteScore(cc.lat, cc.lon, address);
+    var c = clinicCache[address];
+    if (c && c.lat) {
+      fetchSiteScore(c.lat, c.lon, address);
     } else {
       setTimeout(function() {
         var c2 = clinicCache[address];
@@ -620,35 +598,8 @@ function showClinic(address, name) {
   })();
 }
 
-function geocodeOnly(address, name) {
-  // Fetch coords + cache isochrone data for ring toggles, but don't draw anything
-  fetch('/clinic-demographics/isochrone', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({address, name})
-  })
-  .then(r => r.json())
-  .then(d => {
-    if (d.error || !d.lat) return;
-    if (!clinicCache[address]) clinicCache[address] = {};
-    clinicCache[address].lat = d.lat;
-    clinicCache[address].lon = d.lon;
-    clinicCache[address].isochrone = d.isochrone;
-    map1.setView([d.lat, d.lon], 12);
-    // Re-draw any active toggle rings for this clinic now that we have data
-    [10, 20].forEach(function(min) {
-      var key = address + '|' + min;
-      var btn = document.querySelector('.ring-btn[data-ring="'+min+'"][data-address="'+address.replace(/"/g,'&quot;')+'"]');
-      if (btn && btn.classList.contains('active-' + min) && !_ringLayers[key]) {
-        _drawRingForMinutes(address, d.isochrone, min, key);
-      }
-    });
-  })
-  .catch(e => console.warn('Geocode error:', e));
-}
-
 function fetchAndDrawIsochrone(address, name, knownLat, knownLon) {
-  fetch('/clinic-demographics/isochrone', {
+  fetch('/isochrone', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({address, name})
@@ -667,7 +618,7 @@ function fetchAndDrawIsochrone(address, name, knownLat, knownLon) {
 
     if (!knownLat) map1.setView([d.lat, d.lon], 12);
 
-    // rings only drawn via toggle buttons — do not auto-draw here
+    map1IsoLayers = drawIsochrones(map1, d.isochrone, name, {inner:'#1a56db', outer:'#5ba3f5'});
     fitToIsochrone(d.isochrone);
   })
   .catch(e => console.warn('Isochrone error:', e));
@@ -683,10 +634,10 @@ function fitToIsochrone(isoData) {
 }
 
 function loadDemographics(address, name) {
-  fetch('/clinic-demographics/demographics', {
+  fetch('/demographics', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({address, name: name || ''})
+    body: JSON.stringify({address})
   })
   .then(r => r.json())
   .then(d => {
@@ -696,48 +647,8 @@ function loadDemographics(address, name) {
       zEl.textContent = 'ZIP ' + d.zip;
       zEl.style.display = 'inline';
     }
-    // ── ESRI demographics ─────────────────────────────────────
-    // Daytime population
-    document.getElementById('m-daytime-pop').textContent = d.daytime_population != null ? d.daytime_population.toLocaleString() : '—';
-    document.getElementById('m-daytime-pop-sub').textContent = d.esri_label || '20-min drive ring';
-    // Median HHI
+    document.getElementById('m-density').textContent = d.population_density != null ? d.population_density.toLocaleString() : '—';
     document.getElementById('m-income').textContent = d.median_income ? '$' + d.median_income.toLocaleString() : '—';
-    document.getElementById('m-income-sub').textContent = d.esri_label || '20-min drive ring';
-    // Avg HHI 10-min
-    document.getElementById('m-hhi-10min').textContent = d.avg_hhi_10min ? '$' + d.avg_hhi_10min.toLocaleString() : '—';
-    // CTR
-    var ctrEl = document.getElementById('m-ctr');
-    if (d.ctr_pct != null) {
-      ctrEl.textContent = d.ctr_pct.toFixed(1) + '%';
-      ctrEl.style.color = d.ctr_pct >= 12 ? '#16a34a' : d.ctr_pct >= 9 ? '#d97706' : '#dc2626';
-      document.getElementById('m-ctr-sub').textContent = d.ctr_pct >= 12 ? 'Strong demand signal' : d.ctr_pct >= 9 ? 'Baseline demand' : 'Weak demand signal';
-    } else {
-      ctrEl.textContent = '—';
-      document.getElementById('m-ctr-sub').textContent = 'No test campaign yet';
-    }
-    // Pop growth
-    document.getElementById('m-growth').textContent = d.population_growth_pct != null
-      ? (d.population_growth_pct > 0 ? '+' : '') + d.population_growth_pct.toFixed(1) + '%/yr' : '—';
-    var growthEl = document.getElementById('m-growth');
-    if (d.population_growth_pct != null) {
-      growthEl.style.color = d.population_growth_pct >= 0.5 ? '#16a34a' : d.population_growth_pct >= 0 ? '#d97706' : '#dc2626';
-    }
-    // ── Scores ────────────────────────────────────────────────
-    var baseEl = document.getElementById('m-base-score');
-    if (d.base_score != null) {
-      baseEl.textContent = d.base_score;
-      baseEl.style.color = d.base_score >= 60 ? '#16a34a' : d.base_score >= 45 ? '#d97706' : '#dc2626';
-    } else { baseEl.textContent = '—'; }
-    var enhEl = document.getElementById('m-enhanced-score');
-    if (d.enhanced_score != null) {
-      enhEl.textContent = d.enhanced_score;
-      enhEl.style.color = d.enhanced_score >= 60 ? '#16a34a' : d.enhanced_score >= 45 ? '#d97706' : '#dc2626';
-      document.getElementById('m-enhanced-card').style.opacity = '1';
-    } else {
-      enhEl.textContent = '—';
-      document.getElementById('m-enhanced-card').style.opacity = '0.45';
-    }
-    // ── SAHIE + CMS ───────────────────────────────────────────
     document.getElementById('m-insured').textContent = d.insured_pct != null ? d.insured_pct + '%' : '—';
     document.getElementById('m-cpt').textContent = d.cpt36475_volume != null ? d.cpt36475_volume.toLocaleString() : '—';
     const zip = d.zip || '';
@@ -751,24 +662,17 @@ function loadDemographics(address, name) {
   });
 }
 
+
+
 function resetMetrics() {
-  ['m-daytime-pop','m-income','m-hhi-10min','m-ctr','m-growth','m-insured','m-cpt','m-base-score','m-enhanced-score'].forEach(id => {
+  ['m-density','m-income','m-insured','m-cpt'].forEach(id => {
     document.getElementById(id).textContent = '…';
   });
   document.getElementById('fh-link').innerHTML = '';
   document.getElementById('ucr-link').innerHTML = '';
 }
 
-// ── Search filter ─────────────────────────────────────
-document.getElementById('searchInput').addEventListener('input', function() {
-  const q = this.value.toLowerCase();
-  document.querySelectorAll('.clinic-btn').forEach(btn => {
-    btn.style.display = (btn.dataset.name.toLowerCase().includes(q) ||
-                         btn.dataset.address.toLowerCase().includes(q)) ? '' : 'none';
-  });
-});
 
-// ── Tab switching ─────────────────────────────────────
 function switchTab(tab) {
   ['clinic','allclinics','market'].forEach(t => {
     document.getElementById('btn-'+t).classList.remove('active');
@@ -814,7 +718,7 @@ async function loadAllClinics() {
   for (const chunk of chunks) {
     await Promise.allSettled(chunk.map(async clinic => {
       try {
-        const r = await fetch('/clinic-demographics/isochrone',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:clinic.address,name:clinic.name})});
+        const r = await fetch('/isochrone',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:clinic.address,name:clinic.name})});
         const d = await r.json();
         if (!d.error && d.lat) {
           drawIsochrones(map2, d.isochrone, clinic.name, {inner:'#1a56db',outer:'#5ba3f5'});
@@ -839,7 +743,7 @@ async function loadExistingOnMarket() {
   for (const chunk of chunks) {
     await Promise.allSettled(chunk.map(async clinic => {
       try {
-        const r = await fetch('/clinic-demographics/isochrone',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:clinic.address,name:clinic.name})});
+        const r = await fetch('/isochrone',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:clinic.address,name:clinic.name})});
         const d = await r.json();
         if (!d.error && d.lat) {
           drawIsochrones(map3, d.isochrone, clinic.name, {inner:'#1a56db',outer:'#5ba3f5'});
@@ -860,7 +764,7 @@ async function addPotential() {
   status.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>Loading...';
   if (!map3) return;
   try {
-    const r = await fetch('/clinic-demographics/isochrone',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr,name:addr})});
+    const r = await fetch('/isochrone',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr,name:addr})});
     const d = await r.json();
     if (d.error || !d.lat) { status.textContent = '⚠ Could not geocode'; return; }
     potentialSites.push({address:addr, lat:d.lat, lon:d.lon});
@@ -892,56 +796,9 @@ function clearPotentials() {
   renderPotentialList();
 }
 
-// ── Territory collapse ───────────────────────────────────────────────────
-function toggleTerritory(header) {
-  var body = header.nextElementSibling;
-  var chev = header.querySelector('.territory-chevron');
-  var collapsed = body.style.display === 'none';
-  body.style.display = collapsed ? '' : 'none';
-  if (chev) chev.style.transform = collapsed ? '' : 'rotate(-90deg)';
-}
-
-// ── Search (works across territories) ────────────────────────────────────
-document.getElementById('searchInput').addEventListener('input', function() {
-  var q = this.value.toLowerCase().trim();
-  document.querySelectorAll('.territory-header').forEach(function(header) {
-    var body = header.nextElementSibling;
-    var chev = header.querySelector('.territory-chevron');
-    var anyVisible = false;
-    body.querySelectorAll('.clinic-btn').forEach(function(btn) {
-      var match = !q || btn.dataset.name.toLowerCase().includes(q) || btn.dataset.address.toLowerCase().includes(q);
-      btn.style.display = match ? '' : 'none';
-      if (match) anyVisible = true;
-    });
-    header.style.display = anyVisible || !q ? '' : 'none';
-    if (q && anyVisible) { body.style.display = ''; if (chev) chev.style.transform = ''; }
-    else if (!q) { body.style.display = 'none'; if (chev) chev.style.transform = 'rotate(-90deg)'; }
-  });
-  document.querySelectorAll('#clinic-list > .clinic-btn').forEach(function(btn) {
-    btn.style.display = (!q || btn.dataset.name.toLowerCase().includes(q) || btn.dataset.address.toLowerCase().includes(q)) ? '' : 'none';
-  });
-});
-
-// ── Sync Sheet ────────────────────────────────────────────────────────────
-function syncSheet() {
-  var btn = event.target.closest('button');
-  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>Syncing...'; }
-  fetch('/clinic-demographics/sync', {method: 'POST'})
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa fa-sync me-1"></i>Refresh Sheet'; }
-      if (d.count) { alert('Synced ' + d.count + ' sites! Refreshing...'); location.reload(); }
-      else { alert('Sync error: ' + (d.error || 'Unknown')); }
-    })
-    .catch(function(e){
-      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa fa-sync me-1"></i>Refresh Sheet'; }
-    });
-}
-
 // ── Partner Facilities ────────────────────────────────────────────────────
 var _partnerData = null;
 var _partnerLayerGroup = null;
-var _partnerRingLayers = [];
 
 var USPI_ICON = L.divIcon({className:'', html:'<div style="width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:14px solid #16a34a;"></div>', iconSize:[14,14], iconAnchor:[7,14]});
 var SCA_ICON = L.divIcon({className:'', html:'<div style="color:#16a34a;font-weight:900;font-size:16px;line-height:1;margin-top:-8px;">+</div>', iconSize:[14,14], iconAnchor:[7,7]});
@@ -957,28 +814,32 @@ function togglePartnerFacilities() {
   if (!_partnerData) {
     fetch('/clinic-demographics/api/partner-facilities')
       .then(function(r){ return r.json(); })
-      .then(function(data){ _partnerData = data; buildPartnerSidebar(data); _showPartnerOnMap(data, btn); });
+      .then(function(data){
+        _partnerData = data;
+        buildPartnerSidebar(data);
+        _showPartnerOnMap(data, btn);
+      });
     return;
   }
   _showPartnerOnMap(_partnerData, btn);
 }
 
 function _showPartnerOnMap(data, btn) {
-  var uspiM = (data.uspi||[]).filter(function(f){return f.lat&&f.lng;}).map(function(f){
+  var uspiMarkers = (data.uspi||[]).filter(function(f){return f.lat&&f.lng;}).map(function(f){
     return L.marker([f.lat,f.lng],{icon:USPI_ICON}).bindTooltip(f.name+' (USPI)',{sticky:true});
   });
-  var scaM = (data.sca||[]).filter(function(f){return f.lat&&f.lng;}).map(function(f){
+  var scaMarkers = (data.sca||[]).filter(function(f){return f.lat&&f.lng;}).map(function(f){
     return L.marker([f.lat,f.lng],{icon:SCA_ICON}).bindTooltip(f.name+' (SCA)',{sticky:true});
   });
-  var nueM = (data.nuehealth||[]).filter(function(f){return f.lat&&f.lng;}).map(function(f){
+  var nueMarkers = (data.nuehealth||[]).filter(function(f){return f.lat&&f.lng;}).map(function(f){
     return L.marker([f.lat,f.lng],{icon:NUEHEALTH_ICON}).bindTooltip(f.name+' (NueHealth)',{sticky:true});
   });
-  var all = uspiM.concat(scaM).concat(nueM);
-  if (typeof L.markerClusterGroup === 'function') {
+  var allMarkers = uspiMarkers.concat(scaMarkers).concat(nueMarkers);
+  if (typeof L.markerClusterGroup === "function") {
     _partnerLayerGroup = L.markerClusterGroup({maxClusterRadius:40, showCoverageOnHover:false});
-    _partnerLayerGroup.addLayers(all);
+    _partnerLayerGroup.addLayers(allMarkers);
   } else {
-    _partnerLayerGroup = L.layerGroup(all);
+    _partnerLayerGroup = L.layerGroup(allMarkers);
   }
   _partnerLayerGroup.addTo(map1);
   if (btn) { btn.textContent = 'Hide from Map'; btn.style.background = 'rgba(255,255,255,.3)'; }
@@ -990,24 +851,31 @@ function buildPartnerSidebar(data) {
     .concat((data.sca||[]).map(function(f){ return Object.assign({},f,{ptype:'SCA'}); }))
     .concat((data.nuehealth||[]).map(function(f){ return Object.assign({},f,{ptype:'NueHealth'}); }))
     .filter(function(f){ return f.lat&&f.lng; });
+
   var byState = {};
-  all.forEach(function(f){
-    var s=(f.state||'??').toUpperCase();
-    if(!byState[s]) byState[s]=[];
+  all.forEach(function(f) {
+    var s = (f.state||'??').toUpperCase();
+    if (!byState[s]) byState[s] = [];
     byState[s].push(f);
   });
   var states = Object.keys(byState).sort();
-  var SF={AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming'};
-  window._partnerByState = byState;
-  var html='';
-  states.forEach(function(state){
-    var n=byState[state].length;
-    var sn=SF[state]||state;
-    html+='<div class="partner-state-header" onclick="expandPartnerState(this)" data-state="'+state+'">'
-         +'<span>'+sn+' <span style="color:#4ade80;font-weight:400;">('+n+')</span></span>'
-         +'<span class="pstate-chevron" style="font-size:.6rem;transition:transform .2s">&#9660;</span></div>'
-         +'<div class="partner-state-body" style="display:none;" data-loaded="false"></div>';
+  states.forEach(function(s){ byState[s].sort(function(a,b){return a.name.localeCompare(b.name);}); });
+
+  var SF = {AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming'};
+
+  // Lazy: render only state headers; rows rendered on first expand
+  var html = '';
+  states.forEach(function(state) {
+    var facilities = byState[state];
+    var stateName = SF[state] || state;
+    html += '<div class="partner-state-header" onclick="expandPartnerState(this)" data-state="' + state + '">'
+          + '<span>' + stateName + ' <span style="color:#4ade80;font-weight:400;">(' + facilities.length + ')</span></span>'
+          + '<span class="pstate-chevron" style="font-size:.6rem;transition:transform .2s">&#9660;</span></div>'
+          + '<div class="partner-state-body" style="display:none;" data-loaded="false"></div>';
   });
+
+  // Store data globally for lazy rendering
+  window._partnerByState = byState;
   document.getElementById('partner-list-body').innerHTML = html;
   document.getElementById('partner-panel-count').textContent = all.length + ' facilities';
 }
@@ -1016,19 +884,20 @@ function expandPartnerState(header) {
   var body = header.nextElementSibling;
   var chev = header.querySelector('.pstate-chevron');
   var collapsed = body.style.display === 'none';
+  // Lazy-render rows on first expand
   if (collapsed && body.dataset.loaded === 'false') {
     var state = header.dataset.state;
-    var facilities = (window._partnerByState||{})[state]||[];
-    var rows='';
-    facilities.forEach(function(f){
-      var badge=f.ptype==='USPI'?'badge-uspi':f.ptype==='SCA'?'badge-sca':'badge-nue';
-      rows+='<div class="partner-row" onclick="selectPartnerFacility('+f.lat+','+f.lng+',this)"'
-           +' data-pname="'+(f.name||'').replace(/"/g,'&quot;')+'"'
-           +' data-paddr="'+(f.address||f.address1||'').replace(/"/g,'&quot;')+'"'
-           +' data-ptype="'+f.ptype+'">'
-           +'<span class="partner-badge '+badge+'">'+f.ptype+'</span>'
-           +'<div><div class="partner-name">'+f.name+'</div>'
-           +'<div class="partner-city">'+(f.city||'')+'</div></div></div>';
+    var facilities = (window._partnerByState||{})[state] || [];
+    var rows = '';
+    facilities.forEach(function(f) {
+      var badge = f.ptype==='USPI'?'badge-uspi':f.ptype==='SCA'?'badge-sca':'badge-nue';
+      rows += '<div class="partner-row" onclick="selectPartnerFacility(' + f.lat + ',' + f.lng + ',this)"'
+            + ' data-pname="' + (f.name||'').replace(/"/g,'&quot;') + '"'
+            + ' data-paddr="' + (f.address||f.address1||'').replace(/"/g,'&quot;') + '"'
+            + ' data-ptype="' + f.ptype + '">'
+            + '<span class="partner-badge ' + badge + '">' + f.ptype + '</span>'
+            + '<div><div class="partner-name">' + f.name + '</div>'
+            + '<div class="partner-city">' + (f.city||'') + '</div></div></div>';
     });
     body.innerHTML = rows;
     body.dataset.loaded = 'true';
@@ -1039,34 +908,54 @@ function expandPartnerState(header) {
 
 function selectPartnerFacility(lat, lng, el) {
   var row = el.closest ? el.closest('.partner-row') : el;
-  var name = row.dataset.pname||'';
-  var addr = row.dataset.paddr||'';
-  var ptype = row.dataset.ptype||'';
+  var name = row.dataset.pname || '';
+  var addr = row.dataset.paddr || '';
+  var partnerType = row.dataset.ptype || '';
   if (window.innerWidth <= 768) closeSidebar();
   document.querySelectorAll('.clinic-btn').forEach(function(b){ b.classList.remove('active'); });
   document.querySelectorAll('.partner-row').forEach(function(r){ r.style.background=''; });
-  row.style.background='#bbf7d0';
+  row.style.background = '#bbf7d0';
   document.getElementById('map-hint').classList.add('hidden');
   var strip = document.getElementById('data-strip');
-  strip.style.display='block';
-  document.getElementById('strip-title').textContent = name+' ('+ptype+')';
-  document.getElementById('strip-addr').textContent = addr||(lat.toFixed(4)+', '+lng.toFixed(4));
-  document.getElementById('strip-spinner').style.display='inline';
-  document.getElementById('strip-zip').style.display='none';
+  strip.style.display = 'block';
+  document.getElementById('strip-title').textContent = name + ' (' + partnerType + ')';
+  displayBuxtonScore(name);
+  document.getElementById('strip-addr').textContent = addr || (lat.toFixed(4)+', '+lng.toFixed(4));
+  document.getElementById('strip-spinner').style.display = 'inline';
+  document.getElementById('strip-zip').style.display = 'none';
   resetMetrics();
-  map1.setView([lat,lng],13);
+  map1.setView([lat, lng], 13);
+  if (addr) loadRingAds(addr, lat, lng);
   _partnerRingLayers.forEach(function(l){ try{map1.removeLayer(l);}catch(e){} });
-  _partnerRingLayers=[];
-  fetch('/clinic-demographics/isochrone',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr,lat:lat,lon:lng,name:name})})
+  _partnerRingLayers = [];
+  fetch('/clinic-demographics/isochrone', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr,lat:lat,lon:lng,name:name})})
   .then(function(r){return r.json();}).then(function(d){
     document.getElementById('strip-spinner').style.display='none';
-    if(d.isochrone){
-      var layers = drawIsochrones(map1, d.isochrone, name, {inner:'#1a56db',outer:'#5ba3f5'});
-      _partnerRingLayers = layers;
-      fitToIsochrone(d.isochrone);
+    if (d.isochrone) {
+      d.isochrone.features.forEach(function(f){
+        var color = (f.properties&&f.properties.contour)===10?'#1a56db':'#93c5fd';
+        var layer = L.geoJSON(f,{style:{color:color,weight:2,fillOpacity:.08,fillColor:color}}).addTo(map1);
+        _partnerRingLayers.push(layer);
+      });
+      fetch('/clinic-demographics/ring-pop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr,lat:lat,lon:lng})})
+      .then(function(r){return r.json();}).then(function(pop){
+        if(pop.population_10min) document.getElementById('pop10').textContent=pop.population_10min.toLocaleString();
+        if(pop.population_20min) document.getElementById('pop20').textContent=pop.population_20min.toLocaleString();
+        if(pop.female_35plus_10min) document.getElementById('fem10').textContent=pop.female_35plus_10min.toLocaleString();
+        if(pop.female_35plus_20min) document.getElementById('fem20').textContent=pop.female_35plus_20min.toLocaleString();
+      }).catch(function(){});
     }
+    fetch('/clinic-demographics/demographics',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr,lat:lat,lon:lng})})
+    .then(function(r){return r.json();}).then(function(dem){
+      if(dem.median_income) document.getElementById('income').textContent='$'+parseInt(dem.median_income).toLocaleString();
+      if(dem.zip_code){document.getElementById('strip-zip').textContent='ZIP '+dem.zip_code;document.getElementById('strip-zip').style.display='inline';}
+      if(dem.insured_pct) document.getElementById('insured').textContent=dem.insured_pct+'%';
+      if(dem.competitors!==undefined) document.getElementById('competitors').textContent=dem.competitors;
+    }).catch(function(){});
+    loadSiteScore(lat, lng, addr);
   }).catch(function(){ document.getElementById('strip-spinner').style.display='none'; });
 }
+var _partnerRingLayers = [];
 
 // ── Buxton Scores ─────────────────────────────────────────────────────────
 var _buxtonScores = null;
@@ -1074,135 +963,58 @@ function loadBuxtonScores() {
   if (_buxtonScores) return Promise.resolve(_buxtonScores);
   return fetch('/clinic-demographics/api/buxton-scores')
     .then(function(r){ return r.json(); })
-    .then(function(d){ _buxtonScores=d; return d; })
-    .catch(function(){ _buxtonScores={}; return {}; });
+    .then(function(d){ _buxtonScores = d; return d; })
+    .catch(function(){ _buxtonScores = {}; return {}; });
 }
 function displayBuxtonScore(clinicName) {
-  var bd=document.getElementById('buxton-score-display');
-  var bg=document.getElementById('buxton-score-grade');
-  if(!bd) return;
-  bd.textContent='--'; bg.textContent='';
-  loadBuxtonScores().then(function(scores){
-    var score=scores[clinicName];
-    if(!score){
-      var nl=(clinicName||'').toLowerCase().trim();
-      Object.keys(scores).forEach(function(k){
-        if(!score&&(k.toLowerCase().trim()===nl||k.toLowerCase().includes(nl)||nl.includes(k.toLowerCase()))) score=scores[k];
+  var bd = document.getElementById('buxton-score-display');
+  var bg = document.getElementById('buxton-score-grade');
+  if (!bd) return;
+  bd.textContent = '--'; bg.textContent = '';
+  loadBuxtonScores().then(function(scores) {
+    var score = scores[clinicName];
+    if (!score) {
+      var nl = (clinicName||'').toLowerCase().trim();
+      Object.keys(scores).forEach(function(k) {
+        if (!score && (k.toLowerCase().trim()===nl || k.toLowerCase().includes(nl) || nl.includes(k.toLowerCase()))) score = scores[k];
       });
     }
-    if(score){
-      var grade=score>=110?'Excellent':score>=100?'Good':score>=90?'Average':'Below Avg';
-      var color=score>=110?'#16a34a':score>=100?'#1d4ed8':score>=90?'#d97706':'#dc2626';
+    if (score) {
+      var grade = score>=110?'Excellent':score>=100?'Good':score>=90?'Average':'Below Avg';
+      var color = score>=110?'#16a34a':score>=100?'#1d4ed8':score>=90?'#d97706':'#dc2626';
       bd.textContent=score; bd.style.color=color; bg.textContent=grade;
     } else { bd.textContent='N/A'; bg.textContent='not scored'; }
   });
 }
 
-// ── Auto-load partner sidebar (deferred) ──────────────────────────────────
-document.addEventListener('DOMContentLoaded', function() {
-  setTimeout(function() {
-    fetch('/clinic-demographics/api/partner-facilities')
-      .then(function(r){ return r.json(); })
-      .then(function(data){ _partnerData=data; buildPartnerSidebar(data); })
-      .catch(function(){
-        var el=document.getElementById('partner-list-body');
-        if(el) el.innerHTML='<div style="padding:10px 14px;color:#dc2626;font-size:.72rem;">Failed to load.</div>';
-      });
-  }, 2000);
-});
 
-// ── Ring toggle state ─────────────────────────────────────────────────────
-var _ringLayers = {};  // address+ring → layer array
 
-function toggleRing(btn, minutes) {
-  event.stopPropagation();
-  var address = btn.dataset.address;
-  var name = btn.dataset.name;
-  var key = address + '|' + minutes;
-  var activeClass = 'active-' + minutes;
+function toggleTerritory(header) {
+  var body = header.nextElementSibling;
+  var chev = header.querySelector('.territory-chevron');
+  var collapsed = body.style.display === 'none';
+  body.style.display = collapsed ? '' : 'none';
+  if (chev) chev.style.transform = collapsed ? '' : 'rotate(-90deg)';
+}
 
-  if (btn.classList.contains(activeClass)) {
-    // Turn off — remove layers
-    btn.classList.remove(activeClass);
-    if (_ringLayers[key]) {
-      _ringLayers[key].forEach(function(l){ try{map1.removeLayer(l);}catch(e){} });
-      delete _ringLayers[key];
-    }
-    return;
-  }
-
-  // Turn on — fetch isochrone if needed
-  btn.classList.add(activeClass);
-  var cached = clinicCache[address];
-  if (cached && cached.isochrone) {
-    _drawRingForMinutes(address, cached.isochrone, minutes, key);
-  } else {
-    btn.style.opacity = '0.5';
-    fetch('/clinic-demographics/isochrone', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({address: address, name: name})
-    })
+function syncSheet() {
+  var btn = event.target.closest('button');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>Syncing...'; }
+  fetch('/clinic-demographics/sync', {method: 'POST'})
     .then(function(r){ return r.json(); })
     .then(function(d){
-      btn.style.opacity = '1';
-      if (d.error || !d.lat) { btn.classList.remove(activeClass); return; }
-      if (!clinicCache[address]) clinicCache[address] = {};
-      clinicCache[address].lat = d.lat;
-      clinicCache[address].lon = d.lon;
-      clinicCache[address].isochrone = d.isochrone;
-      _drawRingForMinutes(address, d.isochrone, minutes, key);
+      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa fa-sync me-1"></i>Refresh Sheet'; }
+      if (d.count) {
+        alert('Synced ' + d.count + ' sites! Refreshing page...');
+        location.reload();
+      } else {
+        alert('Sync error: ' + (d.error || 'Unknown'));
+      }
     })
-    .catch(function(){ btn.style.opacity='1'; btn.classList.remove(activeClass); });
-  }
-}
-
-function _drawRingForMinutes(address, isoData, minutes, key) {
-  if (!isoData || !isoData.features) return;
-  var targetContour = minutes;
-  var feature = isoData.features.find(function(f){
-    return (f.properties && (f.properties.contour === targetContour || f.properties.contour >= targetContour));
-  });
-  if (!feature) feature = isoData.features[minutes === 10 ? 0 : isoData.features.length - 1];
-  if (!feature) return;
-
-  // Match ring color to marker status (blue=open, orange=potential, purple=pending)
-  var _statusColor = (clinicCache[address] && clinicCache[address].color) || 'blue';
-  var _ringPalettes = {
-    'blue':   {inner: '#1a56db', outer: '#5ba3f5'},
-    'orange': {inner: '#f97316', outer: '#fdba74'},
-    'purple': {inner: '#7c3aed', outer: '#a78bfa'},
-  };
-  var _palette = _ringPalettes[_statusColor] || _ringPalettes['blue'];
-  var color = minutes === 10 ? _palette.inner : _palette.outer;
-  var layer = L.geoJSON(feature, {
-    style: {color: color, weight: 2, fillOpacity: 0.08, fillColor: color}
-  }).addTo(map1);
-
-  _ringLayers[key] = [layer];
-}
-
-function bulkRings(minutes) {
-  // Activate ring buttons for all visible clinics
-  document.querySelectorAll('.ring-btn[data-ring="' + minutes + '"]').forEach(function(btn) {
-    var activeClass = 'active-' + minutes;
-    if (!btn.classList.contains(activeClass)) {
-      toggleRing(btn, minutes);
-    }
-  });
-}
-
-function clearAllRings() {
-  // Remove all toggle rings
-  Object.keys(_ringLayers).forEach(function(key) {
-    (_ringLayers[key]||[]).forEach(function(l){ try{map1.removeLayer(l);}catch(e){} });
-  });
-  _ringLayers = {};
-  // Reset all ring buttons
-  document.querySelectorAll('.ring-btn').forEach(function(btn){
-    btn.classList.remove('active-10','active-20');
-    btn.style.opacity = '1';
-  });
+    .catch(function(e){
+      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa fa-sync me-1"></i>Refresh Sheet'; }
+      alert('Sync failed: ' + e.message);
+    });
 }
 
 </script>

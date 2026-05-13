@@ -14,6 +14,53 @@ from ring_ads import compute_ring_ads
 from patient_heatmap import get_heatmap_points
 from clinic_performance import get_clinic_performance, get_campaigns_list
 
+# ── CTR% data from test campaigns (35 clinics) ──────────────────────────────
+CTR_DATA = {
+    'Midtown':10.8,'FiDi':11.0,'Brooklyn':11.0,'Upper East Side':11.0,
+    'Harrison':11.0,'Clifton':10.8,'Edgewater':10.9,'Paramus':11.0,
+    'Woodland':10.8,'Hoboken':10.7,'West Orange':10.9,'Astoria':10.8,
+    'Forest Hills':10.7,'Brighton Beach':13.2,'Bronx':11.1,
+    'Morris County':11.2,'Morristown':11.2,'Yonkers':11.8,
+    'Woodbridge':10.3,'West Islip':13.1,'Hartsdale':12.9,
+    'Staten Island':14.1,'Port Jefferson':11.4,'San Diego':8.5,
+    'National City':9.1,'Cedar Park':14.5,'Fort Worth':11.2,
+    'Huntington Beach':9.7,'Newport Beach':9.5,'Arlington':10.8,
+    'Princeton':8.3,'Kyle':10.9,'Hamden':8.3,'Temecula':16.7,'Addison':4.0,
+}
+
+# ── Scoring helpers ──────────────────────────────────────────────────────────
+import math as _math
+
+# Reference distribution built from feature_matrix for normalisation
+_SCORE_REFS = {
+    'hhi_mean': 11.75, 'hhi_std': 0.38,   # log(median HHI)
+    'dpop_mean': 11.60, 'dpop_std': 0.80,  # log(daytime pop)
+    'ctr_mean': 2.40,  'ctr_std': 0.35,    # log(CTR%)
+}
+
+def _zscore(val, mean, std):
+    if val is None or std == 0: return None
+    return (val - mean) / std
+
+def compute_base_score(median_hhi, daytime_pop):
+    """HHI 70% + Daytime Pop 30% — greenfield-safe"""
+    z_hhi  = _zscore(_math.log(median_hhi)  if median_hhi  and median_hhi>0  else None, _SCORE_REFS['hhi_mean'],  _SCORE_REFS['hhi_std'])
+    z_dpop = _zscore(_math.log(daytime_pop) if daytime_pop and daytime_pop>0 else None, _SCORE_REFS['dpop_mean'], _SCORE_REFS['dpop_std'])
+    if z_hhi is None and z_dpop is None: return None
+    z = (0.70*(z_hhi or 0) + 0.30*(z_dpop or 0))
+    return max(0, min(100, round(50 + z*15)))
+
+def compute_enhanced_score(median_hhi, daytime_pop, ctr_pct):
+    """HHI 50% + CTR 30% + Daytime Pop 20% — requires test campaign data"""
+    z_hhi  = _zscore(_math.log(median_hhi)  if median_hhi  and median_hhi>0  else None, _SCORE_REFS['hhi_mean'],  _SCORE_REFS['hhi_std'])
+    z_dpop = _zscore(_math.log(daytime_pop) if daytime_pop and daytime_pop>0 else None, _SCORE_REFS['dpop_mean'], _SCORE_REFS['dpop_std'])
+    z_ctr  = _zscore(_math.log(ctr_pct)     if ctr_pct     and ctr_pct>0     else None, _SCORE_REFS['ctr_mean'],  _SCORE_REFS['ctr_std'])
+    if z_hhi is None or z_ctr is None: return None
+    z = (0.50*(z_hhi or 0) + 0.30*(z_ctr or 0) + 0.20*(z_dpop or 0))
+    return max(0, min(100, round(50 + z*15)))
+
+
+
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "vtc-clinic-demo-secret-2024")
 app.config["SESSION_COOKIE_PATH"] = "/"
@@ -795,16 +842,43 @@ def demographics():
     esri = esri_poly if esri_poly.get("total_population") else esri_point
     esri_label = "20-min drive ring" if esri_poly.get("total_population") else "1-mile ring"
 
+    # ── 10-min ring HHI: use cached isochrone + ESRI polygon enrich ──
+    hhi_10min = None
+    try:
+        from esri_scorer import get_esri_demographics_polygon
+        cached_iso_raw = _cache.get(f"iso:{lat:.4f},{lon:.4f}")
+        if cached_iso_raw:
+            iso_10 = get_esri_demographics_polygon(lat, lon, cached_iso_raw, minutes=10)
+            if iso_10:
+                hhi_10min = iso_10.get('avg_hhi') or iso_10.get('median_income')
+    except Exception as _e10:
+        print(f"10-min HHI error: {_e10}")
+
+    # ── CTR lookup by clinic name ──
+    ctr_pct = CTR_DATA.get(name) if name else None
+
+    # ── Scores ──
+    median_hhi_val = esri.get("median_income")
+    daytime_pop_val = esri.get("daytime_population")
+    base_score     = compute_base_score(median_hhi_val, daytime_pop_val)
+    enhanced_score = compute_enhanced_score(median_hhi_val, daytime_pop_val, ctr_pct)
+
     return jsonify({
         "lat": lat, "lon": lon, "zip": zipcode,
         # ── ESRI demographics ──
         "total_population": esri.get("total_population"),
+        "daytime_population": esri.get("daytime_population"),
         "population_45plus": esri.get("population_45plus"),
         "pop45_pct": esri.get("pop45_pct"),
         "median_income": esri.get("median_income"),
-        "population_growth_pct": esri_point.get("population_growth_pct"),  # from point (reliable)
+        "avg_hhi_10min": hhi_10min,
+        "population_growth_pct": esri_point.get("population_growth_pct"),
         "esri_source": bool(esri.get("total_population")),
         "esri_label": esri_label,
+        # ── CTR & scores ──
+        "ctr_pct": ctr_pct,
+        "base_score": base_score,
+        "enhanced_score": enhanced_score,
         # ── SAHIE (county insured%) ──
         "insured_pct": sahie.get("insured_pct"),
         # ── CMS procedure volumes ──

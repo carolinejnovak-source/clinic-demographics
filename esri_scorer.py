@@ -161,13 +161,18 @@ def get_esri_demographics_polygon(lat, lng, isochrone_geojson, minutes=20):
         median_inc = attrs.get('MEDHINC_CY', 0) or 0
         growth = attrs.get('POPGRWCYFY', None)
 
+        daytime_pop = attrs.get('DPOP_CY', 0) or 0
+        avg_hhi     = attrs.get('AVGHINC_CY', 0) or 0
+
         result = {
             'source': 'esri_polygon',
             'minutes': minutes,
             'total_population': total_pop if total_pop > 0 else None,
+            'daytime_population': daytime_pop if daytime_pop > 0 else None,
             'population_45plus': pop45 if pop45 > 0 else None,
             'pop45_pct': round(pop45 / total_pop * 100, 1) if total_pop > 0 and pop45 > 0 else None,
             'median_income': median_inc if median_inc > 0 else None,
+            'avg_hhi': avg_hhi if avg_hhi > 0 else None,
             'population_growth_pct': round(float(growth) * 100, 2) if growth is not None else None,
         }
 
