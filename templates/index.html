@@ -475,10 +475,12 @@ function loadClinicCoords() {
     .then(data => {
       data.forEach(c => {
         clinicCache[c.address] = c;
-        // Add a small dot marker for every clinic
+        // Add a small dot marker — color by status (blue=open, orange=potential, purple=pending)
+        const _sc = {'blue':'#1a56db','orange':'#f97316','purple':'#7c3aed'};
+        const markerColor = _sc[c.color] || '#1a56db';
         const icon = L.divIcon({
           className: '',
-          html: `<div style="background:#1a56db;width:8px;height:8px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3);"></div>`,
+          html: `<div style="background:${markerColor};width:8px;height:8px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3);"></div>`,
           iconSize: [8,8], iconAnchor: [4,4]
         });
         L.marker([c.lat, c.lon], {icon})
