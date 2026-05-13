@@ -1115,7 +1115,15 @@ function _drawRingForMinutes(address, isoData, minutes, key) {
   if (!feature) feature = isoData.features[minutes === 10 ? 0 : isoData.features.length - 1];
   if (!feature) return;
 
-  var color = minutes === 10 ? '#1a56db' : '#5ba3f5';
+  // Match ring color to marker status (blue=open, orange=potential, purple=pending)
+  var _statusColor = (clinicCache[address] && clinicCache[address].color) || 'blue';
+  var _ringPalettes = {
+    'blue':   {inner: '#1a56db', outer: '#5ba3f5'},
+    'orange': {inner: '#f97316', outer: '#fdba74'},
+    'purple': {inner: '#7c3aed', outer: '#a78bfa'},
+  };
+  var _palette = _ringPalettes[_statusColor] || _ringPalettes['blue'];
+  var color = minutes === 10 ? _palette.inner : _palette.outer;
   var layer = L.geoJSON(feature, {
     style: {color: color, weight: 2, fillOpacity: 0.08, fillColor: color}
   }).addTo(map1);
