@@ -69,6 +69,8 @@
     .ring-btn { font-size:.6rem; font-weight:700; width:18px; height:18px; border-radius:4px; border:1.5px solid #93c5fd; background:transparent; color:#1a56db; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; }
     .ring-btn.active-10 { background:#1a56db; color:#fff; border-color:#1a56db; }
     .ring-btn.active-20 { background:#5ba3f5; color:#fff; border-color:#5ba3f5; }
+    .ring-btn.comp-ind { border-color:#fca5a5; color:#dc2626; font-size:.55rem; }
+    .ring-btn.comp-ind.active-comp { background:#dc2626; color:#fff; border-color:#dc2626; }
     .ring-btn:hover { opacity:.8; }
     .bulk-ring-controls { display:flex; gap:4px; padding:6px 14px 4px; border-bottom:1px solid #e5e7eb; }
     .bulk-ring-btn { font-size:.65rem; padding:2px 7px; border-radius:5px; border:1px solid #93c5fd; background:transparent; color:#1d4ed8; cursor:pointer; white-space:nowrap; }
@@ -213,6 +215,7 @@
           <div class="ring-btns" style="padding:0 6px;">
             <button class="ring-btn" data-ring="10" data-address="{{ clinic.address }}" data-name="{{ clinic.name }}" onclick="toggleRing(this,10)" title="Toggle 10-min ring">10</button>
             <button class="ring-btn" data-ring="20" data-address="{{ clinic.address }}" data-name="{{ clinic.name }}" onclick="toggleRing(this,20)" title="Toggle 20-min ring">20</button>
+            <button class="ring-btn comp-ind" data-name="{{ clinic.name }}" onclick="toggleCompetitorsForClinic(this)" title="Toggle competitors">C</button>
           </div>
           </div>
           {% endfor %}
@@ -231,6 +234,7 @@
         <div class="ring-btns" style="padding:0 6px;">
           <button class="ring-btn" data-ring="10" data-address="{{ clinic.address }}" data-name="{{ clinic.name }}" onclick="toggleRing(this,10)" title="Toggle 10-min ring">10</button>
           <button class="ring-btn" data-ring="20" data-address="{{ clinic.address }}" data-name="{{ clinic.name }}" onclick="toggleRing(this,20)" title="Toggle 20-min ring">20</button>
+          <button class="ring-btn comp-ind" data-name="{{ clinic.name }}" onclick="toggleCompetitorsForClinic(this)" title="Toggle competitors">C</button>
         </div>
         </div>
         {% endfor %}
@@ -951,6 +955,47 @@ function toggleCompetitors() {
     _compVisible = true;
     document.getElementById('comp-toggle-btn').classList.add('comp-active');
     if (_compClinic) _loadCompetitors(_compClinic);
+  }
+}
+
+// Per-clinic competitor toggle (the C button on each row)
+var _perClinicCompLayers = {}; // name -> [layers]
+
+function toggleCompetitorsForClinic(btn) {
+  const name = btn.dataset.name;
+  if (btn.classList.contains('active-comp')) {
+    // Turn off
+    btn.classList.remove('active-comp');
+    if (_perClinicCompLayers[name]) {
+      _perClinicCompLayers[name].forEach(function(l){ map1.removeLayer(l); });
+      delete _perClinicCompLayers[name];
+    }
+  } else {
+    // Turn on
+    btn.classList.add('active-comp');
+    fetch('/clinic-demographics/api/competitors', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({name: name})
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(comps) {
+      _perClinicCompLayers[name] = [];
+      comps.forEach(function(c) {
+        var iconHtml = c.tier >= 2
+          ? '<span class="comp-t2"></span>'
+          : '<span class="comp-t1"></span>';
+        var icon = L.divIcon({html: iconHtml, className:'', iconSize:[10,10], iconAnchor:[5,5]});
+        var stars = c.rating ? '★ ' + c.rating.toFixed(1) : 'No rating';
+        var revs  = c.reviews ? ' · ' + c.reviews + ' reviews' : '';
+        var tier_label = c.tier >= 2 ? '<b style="color:#dc2626;">■ Tier 2</b>' : '<span style="color:#6b7280;">● Tier 1</span>';
+        var popup = '<div class="comp-popup"><b>' + c.name + '</b><br>' + tier_label + '<br>' + stars + revs + '</div>';
+        var mk = L.marker([c.lat, c.lon], {icon: icon}).bindPopup(popup);
+        mk.addTo(map1);
+        _perClinicCompLayers[name].push(mk);
+      });
+    })
+    .catch(function(e){ console.warn('competitor load error', e); btn.classList.remove('active-comp'); });
   }
 }
 
