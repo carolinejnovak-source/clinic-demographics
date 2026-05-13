@@ -954,7 +954,19 @@ function toggleCompetitors() {
   } else {
     _compVisible = true;
     document.getElementById('comp-toggle-btn').classList.add('comp-active');
-    if (_compClinic) _loadCompetitors(_compClinic);
+    // Auto-detect active clinic if none explicitly selected
+    if (!_compClinic) {
+      var activeBtn = document.querySelector('.clinic-btn.active');
+      if (activeBtn) _compClinic = activeBtn.dataset.name;
+    }
+    if (_compClinic) {
+      document.getElementById('map-hint').classList.add('hidden');
+      _loadCompetitors(_compClinic);
+    } else {
+      alert('Select a clinic first, then click Competitors.');
+      _compVisible = false;
+      document.getElementById('comp-toggle-btn').classList.remove('comp-active');
+    }
   }
 }
 
@@ -973,6 +985,15 @@ function toggleCompetitorsForClinic(btn) {
   } else {
     // Turn on
     btn.classList.add('active-comp');
+    document.getElementById('map-hint').classList.add('hidden');
+    // Zoom to clinic if we have coords
+    var clinicBtn = document.querySelector('.ring-btn.comp-ind[data-name="' + name.replace(/"/g, '&quot;') + '"]');
+    var addr = clinicBtn ? document.querySelector('.clinic-btn[data-name="' + name.replace(/"/g,'&quot;') + '"]') : null;
+    if (addr) {
+      var addrVal = addr.dataset.address;
+      var cc = clinicCache[addrVal];
+      if (cc && cc.lat) map1.setView([cc.lat, cc.lon], 12);
+    }
     fetch('/clinic-demographics/api/competitors', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -1244,11 +1265,15 @@ function toggleRing(btn, minutes) {
     return;
   }
 
+  // Always hide hint when interacting with a clinic
+  document.getElementById('map-hint').classList.add('hidden');
+
   // Turn on — fetch isochrone if needed
   btn.classList.add(activeClass);
   var cached = clinicCache[address];
   if (cached && cached.isochrone) {
     _drawRingForMinutes(address, cached.isochrone, minutes, key);
+    if (cached.lat) map1.setView([cached.lat, cached.lon], 12);
   } else {
     btn.style.opacity = '0.5';
     fetch('/clinic-demographics/isochrone', {
@@ -1264,6 +1289,7 @@ function toggleRing(btn, minutes) {
       clinicCache[address].lat = d.lat;
       clinicCache[address].lon = d.lon;
       clinicCache[address].isochrone = d.isochrone;
+      map1.setView([d.lat, d.lon], 12);
       _drawRingForMinutes(address, d.isochrone, minutes, key);
     })
     .catch(function(){ btn.style.opacity='1'; btn.classList.remove(activeClass); });
