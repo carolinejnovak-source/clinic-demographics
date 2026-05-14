@@ -1207,7 +1207,7 @@ def api_competitors():
     if not entry:
         # Try fuzzy match
         for k in comp_cache:
-            if k.lower() == name.lower() or name.lower() in k.lower():
+            if k.lower() == name.lower() or name.lower() in k.lower() or k.lower() in name.lower():
                 entry = comp_cache[k]
                 break
     if not entry:
