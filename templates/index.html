@@ -123,15 +123,17 @@
 
     /* ─ Data strip ─ */
     #data-strip {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
+      position: fixed;
+      bottom: 0;
+      left: 290px;
+      right: 0;
       background: #fff;
       border-top: 2px solid #1a56db;
       display: none;
       max-height: 220px;
       overflow-y: auto;
-      z-index: 800;
-      box-shadow: 0 -4px 16px rgba(0,0,0,.12);
+      z-index: 9999;
+      box-shadow: 0 -4px 16px rgba(0,0,0,.15);
     }
     #strip-header {
       display: flex; align-items: center; gap: 10px;
