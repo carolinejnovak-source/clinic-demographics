@@ -499,14 +499,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Delegated click handler for clinic buttons ──────────────────────────
   document.getElementById('clinic-list').addEventListener('click', function(e) {
     var btn = e.target.closest('.clinic-btn');
-    if (!btn) return;                          // clicked something else
+    if (!btn) return;
     e.stopPropagation();
     document.querySelectorAll('.clinic-btn').forEach(function(b){ b.classList.remove('active'); });
     btn.classList.add('active');
     var address = btn.dataset.address || '';
     var name    = btn.dataset.name    || '';
-    _compClinic = name;
-    if (_compVisible) _loadCompetitors(name);
+    try { _compClinic = name; if (_compVisible) _loadCompetitors(name); } catch(ex) {}
     showClinic(address, name);
   });
 
@@ -618,12 +617,13 @@ function analyzeCustom() {
 
 function showClinic(address, name) {
   // Hide the hint
-  document.getElementById('map-hint').classList.add('hidden');
+  var mhint = document.getElementById('map-hint');
+  if (mhint) mhint.classList.add('hidden');
 
-  // Show data strip with loading state
+  // Show data strip
   var strip = document.getElementById('data-strip');
-  if (!strip) { console.error('STRIP NOT FOUND'); return; }
-  strip.style.cssText = 'position:fixed!important;bottom:0!important;left:290px!important;right:0!important;display:block!important;z-index:99999!important;background:#fff!important;border-top:3px solid #1a56db!important;max-height:220px!important;overflow-y:auto!important;box-shadow:0 -4px 16px rgba(0,0,0,.2)!important;';
+  if (!strip) return;
+  strip.style.display = 'block';
   try { map1.invalidateSize(); } catch(e) {}
   document.getElementById('strip-title').textContent = name;
   document.getElementById('strip-addr').textContent = address;
