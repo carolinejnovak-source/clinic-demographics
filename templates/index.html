@@ -214,8 +214,7 @@
           <div class="clinic-btn-wrap" style="display:flex;align-items:center;">
           <button class="clinic-btn" style="flex:1;min-width:0;"
                   data-address="{{ clinic.address }}"
-                  data-name="{{ clinic.name }}"
-                  onclick="selectClinic(this)">
+                  data-name="{{ clinic.name }}">
             <div class="cname">{{ clinic.name }}</div>
             <div class="caddr" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ clinic.address }}</div>
           </button>
@@ -233,8 +232,7 @@
         <div class="clinic-btn-wrap" style="display:flex;align-items:center;">
         <button class="clinic-btn" style="flex:1;min-width:0;"
                 data-address="{{ clinic.address }}"
-                data-name="{{ clinic.name }}"
-                onclick="selectClinic(this)">
+                data-name="{{ clinic.name }}">
           <div class="cname">{{ clinic.name }}</div>
           <div class="caddr" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ clinic.address }}</div>
         </button>
@@ -497,6 +495,21 @@ let potentialSites = [];
 
 // ── Boot: init map1 + load all clinic coords ──────────
 document.addEventListener('DOMContentLoaded', () => {
+
+  // ── Delegated click handler for clinic buttons ──────────────────────────
+  document.getElementById('clinic-list').addEventListener('click', function(e) {
+    var btn = e.target.closest('.clinic-btn');
+    if (!btn) return;                          // clicked something else
+    e.stopPropagation();
+    document.querySelectorAll('.clinic-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    var address = btn.dataset.address || '';
+    var name    = btn.dataset.name    || '';
+    _compClinic = name;
+    if (_compVisible) _loadCompetitors(name);
+    showClinic(address, name);
+  });
+
   // Initialize map1 immediately
   map1 = L.map('map1', {zoomControl: true}).setView([39.8, -97.5], 4);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -608,8 +621,9 @@ function showClinic(address, name) {
   document.getElementById('map-hint').classList.add('hidden');
 
   // Show data strip with loading state
-  const strip = document.getElementById('data-strip');
-  strip.style.display = 'block';
+  var strip = document.getElementById('data-strip');
+  if (!strip) { console.error('STRIP NOT FOUND'); return; }
+  strip.style.cssText = 'position:fixed!important;bottom:0!important;left:290px!important;right:0!important;display:block!important;z-index:99999!important;background:#fff!important;border-top:3px solid #1a56db!important;max-height:220px!important;overflow-y:auto!important;box-shadow:0 -4px 16px rgba(0,0,0,.2)!important;';
   try { map1.invalidateSize(); } catch(e) {}
   document.getElementById('strip-title').textContent = name;
   document.getElementById('strip-addr').textContent = address;
