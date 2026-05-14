@@ -797,6 +797,7 @@ def demographics():
     """Fetch ESRI (primary) + CMS/SAHIE data for a single address."""
     data = request.get_json()
     address = (data.get("address") or "").strip()
+    name = (data.get("name") or "").strip()
     if not address:
         return jsonify({"error": "No address"}), 400
     # Accept direct lat/lon for partner facilities (skip geocoding)
