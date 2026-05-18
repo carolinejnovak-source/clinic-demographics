@@ -648,8 +648,9 @@ function showClinic(address, name) {
     geocodeOnly(address, name);
   }
 
-  // Load demographics separately (slower)
+  // Load demographics and payer mix separately (slower)
   loadDemographics(address, name);
+  fetchPayerMix(address);
   // Load site score async
   (function() {
     var cc = clinicCache[address];
@@ -787,8 +788,7 @@ function loadDemographics(address, name) {
     const fhUrl = `https://fairhealthconsumer.org/hcp/procedure-detail?code=36475&zipcode=${zip}&network=2`;
     document.getElementById('fh-link').innerHTML = `<a href="${fhUrl}" target="_blank" class="btn btn-xs btn-outline-danger">Look up</a>`;
     document.getElementById('ucr-link').innerHTML = `<a href="${fhUrl}" target="_blank" class="btn btn-xs btn-outline-secondary">Look up</a><div style="font-size:.6rem;color:#aaa;">Select 95th pct on Fair Health</div>`;
-    // ── Payer Mix (Mark Farrah) ────────────────────────────────
-    fetchPayerMix(currentAddress);
+
   })
   .catch(e => {
     document.getElementById('strip-spinner').style.display = 'none';
@@ -802,6 +802,7 @@ function fetchPayerMix(address) {
   fetch('/clinic-demographics/payer-mix', {
     method: 'POST',
     headers: {'Content-Type':'application/json'},
+    credentials: 'include',
     body: JSON.stringify({address: address})
   })
   .then(r => r.json())
