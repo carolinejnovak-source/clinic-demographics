@@ -1,0 +1,407 @@
+{
+  "290 Madison Ave Suite 202 New York NY 10017": {
+    "fips": 36061,
+    "county": "New York County",
+    "state": "NY"
+  },
+  "188 Montague St 10th floor, Brooklyn, NY 11201": {
+    "fips": 36047,
+    "county": "Kings County",
+    "state": "NY"
+  },
+  "156 William St Suite 302, New York, NY 10038": {
+    "fips": 36061,
+    "county": "New York County",
+    "state": "NY"
+  },
+  "107-30 71st Rd, Queens, NY 11375": {
+    "fips": 36081,
+    "county": "Queens County",
+    "state": "NY"
+  },
+  "280 North Central Ave, Suite 450, Hartsdale, NY 10530": {
+    "fips": 36119,
+    "county": "Westchester County",
+    "state": "NY"
+  },
+  "23 Brighton 11th Street Brooklyn NY\u202f11235\u202f\u2060": {
+    "fips": 36047,
+    "county": "Kings County",
+    "state": "NY"
+  },
+  "2100 bartow avenue, bronx NY": {
+    "fips": 36005,
+    "county": "Bronx County",
+    "state": "NY"
+  },
+  "1111 Park Avenue New York New York": {
+    "fips": 36061,
+    "county": "New York County",
+    "state": "NY"
+  },
+  "23-25 21st St, Long Island City, NY, 11105": {
+    "fips": 36081,
+    "county": "Queens County",
+    "state": "NY"
+  },
+  "124 New Main St, Yonkers, NY": {
+    "fips": 36119,
+    "county": "Westchester County",
+    "state": "NY"
+  },
+  "4236 Hylan Boulevard, Staten Island, 10306": {
+    "fips": 36085,
+    "county": "Richmond County",
+    "state": "NY"
+  },
+  "416 Metropolitan Avenue, Brooklyn, New York 11211": {
+    "fips": 36047,
+    "county": "Kings County",
+    "state": "NY"
+  },
+  "1117 US-46, Suite 205, Clifton, NJ, 07013": {
+    "fips": 34031,
+    "county": "Passaic County",
+    "state": "NJ"
+  },
+  "968 River Rd. Suite 200, Edgewater, NJ 07020": {
+    "fips": 34003,
+    "county": "Bergen County",
+    "state": "NJ"
+  },
+  "310 Madison Ave, 3rd floor, Morristown, NJ 07960": {
+    "fips": 34027,
+    "county": "Morris County",
+    "state": "NJ"
+  },
+  "140 NJ-17, Suite 269, Paramus, NJ, 07652": {
+    "fips": 34003,
+    "county": "Bergen County",
+    "state": "NJ"
+  },
+  "8 Forrestal Road South Suite 203, Princeton, NJ 08540": {
+    "fips": 34023,
+    "county": "Middlesex County",
+    "state": "NJ"
+  },
+  "405 Northfield Avenue, Suite 204, West Orange, NJ 07052": {
+    "fips": 34013,
+    "county": "Essex County",
+    "state": "NJ"
+  },
+  "1167 McBride Ave, Suite 2, Woodland Park, NJ, 07424": {
+    "fips": 34031,
+    "county": "Passaic County",
+    "state": "NJ"
+  },
+  "517 US-1, Suite 1100, Iselin, NJ 08830": {
+    "fips": 34023,
+    "county": "Middlesex County",
+    "state": "NJ"
+  },
+  "70 Hudson St, Basement, Hoboken, NJ 07030": {
+    "fips": 34017,
+    "county": "Hudson County",
+    "state": "NJ"
+  },
+  "620 Essex St, Suite 202, Harrison, NJ": {
+    "fips": 34017,
+    "county": "Hudson County",
+    "state": "NJ"
+  },
+  "561 Cranbury Rd, East Brunswick, NJ 08816": {
+    "fips": 34023,
+    "county": "Middlesex County",
+    "state": "NJ"
+  },
+  "500 W Main St, Freehold, NJ 07728": {
+    "fips": 34025,
+    "county": "Monmouth County",
+    "state": "NJ"
+  },
+  "2211 Chapel Ave W #301, Cherry Hill Township, NJ 08002": {
+    "fips": 34007,
+    "county": "Camden County",
+    "state": "NJ"
+  },
+  "195 US-46 #202, Mine Hill Township, NJ 07803": {
+    "fips": 34027,
+    "county": "Morris County",
+    "state": "NJ"
+  },
+  "1600 Market Street, Philadelphia PA": {
+    "fips": 42101,
+    "county": "Philadelphia County",
+    "state": "PA"
+  },
+  "1205 Langhorne-Yardley Rd., Suite 103  Langhorne  PA 19047": {
+    "fips": 42017,
+    "county": "Bucks County",
+    "state": "PA"
+  },
+  "700 Henderson Rd., Suite 33, King of Prussia, PA 19406": {
+    "fips": 42091,
+    "county": "Montgomery County",
+    "state": "PA"
+  },
+  "2211 Chapel Avenue W, Cherry Hill, NJ 08002": {
+    "fips": 34007,
+    "county": "Camden County",
+    "state": "NJ"
+  },
+  "500 Montauk Hwy, Suite G, West Islip, NY, 11795": {
+    "fips": 36103,
+    "county": "Suffolk County",
+    "state": "NY"
+  },
+  "70 North Country Road, Suite 201, Port Jefferson, NY, 11777": {
+    "fips": 36103,
+    "county": "Suffolk County",
+    "state": "NY"
+  },
+  "100 Merrick Road Rockville Centre, NY 11570": {
+    "fips": 36059,
+    "county": "Nassau County",
+    "state": "NY"
+  },
+  "2277 Fair Oaks Blvd, Suite #325, Sacramento, CA 95825": {
+    "fips": 6067,
+    "county": "Sacramento County",
+    "state": "CA"
+  },
+  "1600 Eureka Rd, Roseville CA 95661": {
+    "fips": 6061,
+    "county": "Placer County",
+    "state": "CA"
+  },
+  "7677 Center Avenue Suite 310, Huntington Beach, California 92647": {
+    "fips": 6059,
+    "county": "Orange County",
+    "state": "CA"
+  },
+  "1525 Superior Avenue, Suite 202, Newport Beach, CA 92663": {
+    "fips": 6059,
+    "county": "Orange County",
+    "state": "CA"
+  },
+  "5330 Carroll Canyon Rd, Suite 140, San Diego, CA, 92121": {
+    "fips": 6073,
+    "county": "San Diego County",
+    "state": "CA"
+  },
+  "27290 Madison Ave Suite 102 Temecula, CA 92590": {
+    "fips": 6065,
+    "county": "Riverside County",
+    "state": "CA"
+  },
+  "15708 Pomerado Road, Suite N202, Poway, CA 92064": {
+    "fips": 6073,
+    "county": "San Diego County",
+    "state": "CA"
+  },
+  "22 W 35th St, National City, CA 91950": {
+    "fips": 6073,
+    "county": "San Diego County",
+    "state": "CA"
+  },
+  "16260 Ventura Blvd, Encino, CA": {
+    "fips": 6037,
+    "county": "Los Angeles County",
+    "state": "CA"
+  },
+  "2780 Skypark Dr, Torrance CA 90505": {
+    "fips": 6037,
+    "county": "Los Angeles County",
+    "state": "CA"
+  },
+  "630 S Raymond Ave, Pasadena, CA 91105": {
+    "fips": 6037,
+    "county": "Los Angeles County",
+    "state": "CA"
+  },
+  "824 N Glendale Ave, Glendale CA, 91206": {
+    "fips": 6037,
+    "county": "Los Angeles County",
+    "state": "CA"
+  },
+  "614 West Duarte Rd, Arcadia, CA 91007": {
+    "fips": 6037,
+    "county": "Los Angeles County",
+    "state": "CA"
+  },
+  "500 E. Colorado": {
+    "fips": 8059,
+    "county": "Jefferson County",
+    "state": "CO"
+  },
+  "681 S Parker St, Orange CA 92868": {
+    "fips": 6059,
+    "county": "Orange County",
+    "state": "CA"
+  },
+  "2300 Wankel Way, Oxnard CA 93030": {
+    "fips": 6111,
+    "county": "Ventura County",
+    "state": "CA"
+  },
+  "North East Alliance Surgery Center, 2080 Whitney Ave., Hamden": {
+    "fips": 9009,
+    "county": "New Haven County",
+    "state": "CT"
+  },
+  "65 Lasalle Road Hartford": {
+    "fips": 9003,
+    "county": "Hartford County",
+    "state": "CT"
+  },
+  "3050 S. Center St, Suite 110 Arlington, TX 76014": {
+    "fips": 48439,
+    "county": "Tarrant County",
+    "state": "TX"
+  },
+  "3455 Locke Ave, Suite 300\nFort Worth, TX 76107": {
+    "fips": 48439,
+    "county": "Tarrant County",
+    "state": "TX"
+  },
+  "351 Cypress Creek Rd, #102\nCedar Park, TX 78613": {
+    "fips": 48491,
+    "county": "Williamson County",
+    "state": "TX"
+  },
+  "135 Bunton Rd, #200\n Kyle, TX 78640": {
+    "fips": 48209,
+    "county": "Hays County",
+    "state": "TX"
+  },
+  "9230 Katy Fwy #601\nHouston, TX 77055": {
+    "fips": 48201,
+    "county": "Harris County",
+    "state": "TX"
+  },
+  "17980 Dallas Pkwy\nDallas, TX 75287": {
+    "fips": 48085,
+    "county": "Collin County",
+    "state": "TX"
+  },
+  "3900 Junius St, Dallas, TX 75246": {
+    "fips": 48113,
+    "county": "Dallas County",
+    "state": "TX"
+  },
+  "1434 US-287 #100, Waxahachie, TX 75165": {
+    "fips": 48139,
+    "county": "Ellis County",
+    "state": "TX"
+  },
+  "1301 W 38th St\nAustin, TX 78705": {
+    "fips": 48453,
+    "county": "Travis County",
+    "state": "TX"
+  },
+  "2459 South Braeswood Boulevard\nHouston, TX 77030": {
+    "fips": 48201,
+    "county": "Harris County",
+    "state": "TX"
+  },
+  "1400 Creekway Drive Suite 110\nSugar Land, TX 77478": {
+    "fips": 48157,
+    "county": "Fort Bend County",
+    "state": "TX"
+  },
+  "1927 Rogers Rd, San Antonio, TX 78251": {
+    "fips": 48029,
+    "county": "Bexar County",
+    "state": "TX"
+  },
+  "240 W Thomas Rd, Phoenix, AZ 85013": {
+    "fips": 4013,
+    "county": "Maricopa County",
+    "state": "AZ"
+  },
+  "1313 E. Osborn Road, Suite B-150, Phoenix, AZ 85014": {
+    "fips": 4013,
+    "county": "Maricopa County",
+    "state": "AZ"
+  },
+  "9700 N 91st St suite c-100, Scottsdale, AZ 85258": {
+    "fips": 4013,
+    "county": "Maricopa County",
+    "state": "AZ"
+  },
+  "9787 N 91st St, Scottsdale, AZ 85258": {
+    "fips": 4013,
+    "county": "Maricopa County",
+    "state": "AZ"
+  },
+  "20940 N Tatum Blvd, Phoenix, AZ 85050": {
+    "fips": 4013,
+    "county": "Maricopa County",
+    "state": "AZ"
+  },
+  "2262 E Rose Garden Ln, Phoenix, AZ 85024": {
+    "fips": 4013,
+    "county": "Maricopa County",
+    "state": "AZ"
+  },
+  "18555 N 79th Ave Bldg C, Glendale, AZ 85308": {
+    "fips": 4013,
+    "county": "Maricopa County",
+    "state": "AZ"
+  },
+  "18699 North 67th Ave, Suite 140, Glendale, Arizona 85308": {
+    "fips": 4013,
+    "county": "Maricopa County",
+    "state": "AZ"
+  },
+  "1910 E Thomas Rd Ste 101, Phoenix, AZ 85016": {
+    "fips": 4013,
+    "county": "Maricopa County",
+    "state": "AZ"
+  },
+  "8573 E princess, scottsdale az": {
+    "fips": 4013,
+    "county": "Maricopa County",
+    "state": "AZ"
+  },
+  "77 12th Street Northeast\r\nAtlanta GA 30309": {
+    "fips": 13121,
+    "county": "Fulton County",
+    "state": "GA"
+  },
+  "5730 Glenridge Dr, Sandy Spring (Atlanta), 30328": {
+    "fips": 13121,
+    "county": "Fulton County",
+    "state": "GA"
+  },
+  "77 12th Street Northeast\nAtlanta GA 30309": {
+    "fips": 13121,
+    "county": "Fulton County",
+    "state": "GA"
+  },
+  "1000 Johnson Ferry Road Marietta, GA 30068": {
+    "fips": 13067,
+    "county": "Cobb County",
+    "state": "GA"
+  },
+  "10750 Medlock Bridge Rd, Duluth, GA 30097": {
+    "fips": 13121,
+    "county": "Fulton County",
+    "state": "GA"
+  },
+  "11005 Jones Bridge Rd, Johns Creek, GA 30022": {
+    "fips": 13121,
+    "county": "Fulton County",
+    "state": "GA"
+  },
+  "1400 Montreal Rd, Tucker, GA 30084": {
+    "fips": 13089,
+    "county": "DeKalb County",
+    "state": "GA"
+  },
+  "1501 Johnson Ferry Rd, Marietta, GA 30062 suite 200": {
+    "fips": 13067,
+    "county": "Cobb County",
+    "state": "GA"
+  }
+}

@@ -897,6 +897,57 @@ def demographics():
 
 
 
+@app.route("/payer-mix", methods=["POST"])
+@login_required
+def payer_mix_PLACEHOLDER():
+    pass
+
+
+@app.route("/payer-mix", methods=["POST"])
+@login_required
+def payer_mix():
+    """Return Mark Farrah county-level payer mix for a clinic address."""
+    data    = request.get_json()
+    address = (data.get("address") or "").strip()
+    MF_DIR  = '/opt/mikala-apps/clinic-demographics/mark_farrah'
+    try:
+        fips_cache = json.load(open(f'{MF_DIR}/clinic_fips_cache.json'))
+        prod_db    = json.load(open(f'{MF_DIR}/county_product_db.json'))
+        carr_db    = json.load(open(f'{MF_DIR}/county_carrier_db.json'))
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    entry = fips_cache.get(address)
+    if not entry:
+        return jsonify({'error': 'county not found'}), 404
+    fips     = str(entry['fips'])
+    county   = entry.get('county','')
+    state    = entry.get('state','')
+    prod     = prod_db.get(fips, {})
+    carr_key = f"{state}|{county}"
+    carr     = carr_db.get(carr_key, {})
+    priv = prod.get('priv_total', 0)
+    if not priv:
+        return jsonify({'error': 'no data for county'}), 404
+    plan_type = [
+        {'label': 'PPO',     'val': prod.get('ppo',0),     'pct': prod.get('pct_ppo',0)},
+        {'label': 'ASO',     'val': prod.get('aso',0),     'pct': prod.get('pct_aso',0)},
+        {'label': 'POS',     'val': prod.get('pos',0),     'pct': round(prod.get('pos',0)/priv*100,1)},
+        {'label': 'HMO/EPO', 'val': prod.get('hmo_epo',0), 'pct': prod.get('pct_hmo_epo',0)},
+    ]
+    carriers = [
+        {'label': c[0], 'val': c[1], 'pct': c[2]}
+        for c in (carr.get('carriers') or [])[:6]
+    ]
+    return jsonify({
+        'county': county, 'state': state, 'fips': fips,
+        'priv_total': priv,
+        'addressable': prod.get('addressable',0),
+        'pct_addressable': prod.get('pct_addressable',0),
+        'plan_type': plan_type,
+        'carriers': carriers,
+    })
+
+
 @app.route("/ring-pop", methods=["POST"])
 @login_required
 def ring_pop():

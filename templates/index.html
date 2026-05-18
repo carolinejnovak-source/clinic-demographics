@@ -335,12 +335,18 @@
           <div class="m-sub">county</div>
           <div class="m-src">SAHIE 2022</div>
         </div>
-        <div class="m-card">
-          <div class="m-icon text-warning"><i class="fa fa-syringe"></i></div>
-          <div class="m-val" id="m-cpt">—</div>
-          <div class="m-lbl">CPT 36475 Vol.</div>
-          <div class="m-sub">Medicare · state</div>
-          <div class="m-src">CMS Medicare</div>
+        <!-- Payer Mix cards (Mark Farrah county data) -->
+        <div class="m-card" id="m-payer-plan-card" style="min-width:160px;">
+          <div class="m-icon" style="color:#1a7a3c;"><i class="fa fa-hospital"></i></div>
+          <div class="m-lbl" style="font-weight:700;margin-bottom:4px;">Plan Type Mix</div>
+          <div id="m-payer-plan-list" style="font-size:.78rem;line-height:1.7;">—</div>
+          <div class="m-src" id="m-payer-county">Mark Farrah · 3Q25</div>
+        </div>
+        <div class="m-card" id="m-payer-carr-card" style="min-width:160px;">
+          <div class="m-icon" style="color:#1a56db;"><i class="fa fa-building"></i></div>
+          <div class="m-lbl" style="font-weight:700;margin-bottom:4px;">Top Carriers</div>
+          <div id="m-payer-carr-list" style="font-size:.78rem;line-height:1.7;">—</div>
+          <div class="m-src">Mark Farrah · 3Q25</div>
         </div>
         <div class="m-card">
           <div class="m-icon text-danger"><i class="fa fa-chart-bar"></i></div>
@@ -615,7 +621,9 @@ function analyzeCustom() {
   showClinic(addr, 'Custom Location');
 }
 
+var currentAddress = '';
 function showClinic(address, name) {
+  currentAddress = address;
   // Hide the hint
   var mhint = document.getElementById('map-hint');
   if (mhint) mhint.classList.add('hidden');
@@ -773,13 +781,14 @@ function loadDemographics(address, name) {
       enhEl.textContent = '—';
       document.getElementById('m-enhanced-card').style.opacity = '0.45';
     }
-    // ── SAHIE + CMS ───────────────────────────────────────────
+    // ── SAHIE ─────────────────────────────────────────────────
     document.getElementById('m-insured').textContent = d.insured_pct != null ? d.insured_pct + '%' : '—';
-    document.getElementById('m-cpt').textContent = d.cpt36475_volume != null ? d.cpt36475_volume.toLocaleString() : '—';
     const zip = d.zip || '';
     const fhUrl = `https://fairhealthconsumer.org/hcp/procedure-detail?code=36475&zipcode=${zip}&network=2`;
     document.getElementById('fh-link').innerHTML = `<a href="${fhUrl}" target="_blank" class="btn btn-xs btn-outline-danger">Look up</a>`;
     document.getElementById('ucr-link').innerHTML = `<a href="${fhUrl}" target="_blank" class="btn btn-xs btn-outline-secondary">Look up</a><div style="font-size:.6rem;color:#aaa;">Select 95th pct on Fair Health</div>`;
+    // ── Payer Mix (Mark Farrah) ────────────────────────────────
+    fetchPayerMix(currentAddress);
   })
   .catch(e => {
     document.getElementById('strip-spinner').style.display = 'none';
@@ -787,12 +796,55 @@ function loadDemographics(address, name) {
   });
 }
 
+
+function fetchPayerMix(address) {
+  if (!address) return;
+  fetch('/clinic-demographics/payer-mix', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({address: address})
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.error) {
+      document.getElementById('m-payer-plan-list').textContent = 'No county data';
+      document.getElementById('m-payer-carr-list').textContent = 'No county data';
+      return;
+    }
+    const planColors = {'PPO':'#1a7a3c','ASO':'#3dba6a','POS':'#90d4a8','HMO/EPO':'#e05c2a'};
+    const hmoWarn = ['EmblemHealth','Healthfirst','Centene','Molina','Kaiser','Oscar Health'];
+    // Plan type list
+    const planHtml = (d.plan_type || []).map(p => {
+      const bar = `<span style="display:inline-block;width:${Math.min(p.pct,100)*0.7}px;height:6px;background:${planColors[p.label]||'#aaa'};border-radius:3px;vertical-align:middle;margin-right:4px;"></span>`;
+      return `<div>${bar}<b>${p.label}</b> ${p.pct}%</div>`;
+    }).join('');
+    const addrPct = d.pct_addressable || 0;
+    const addrColor = addrPct >= 88 ? '#16A34A' : addrPct >= 80 ? '#d97706' : '#dc2626';
+    document.getElementById('m-payer-plan-list').innerHTML =
+      planHtml + `<div style="margin-top:4px;padding-top:3px;border-top:1px solid #e5e7eb;"><b style="color:${addrColor};">▶ ${addrPct}% VIP addressable</b></div>`;
+    // Carrier list
+    const carrHtml = (d.carriers || []).map(c => {
+      const warn = hmoWarn.some(h => c.label.includes(h)) ? ' ⚠' : '';
+      return `<div><b>${c.label}${warn}</b> ${c.pct}%</div>`;
+    }).join('');
+    document.getElementById('m-payer-carr-list').innerHTML = carrHtml || '—';
+    document.getElementById('m-payer-county').textContent = `${d.county}, ${d.state} · Mark Farrah 3Q25`;
+  })
+  .catch(() => {
+    document.getElementById('m-payer-plan-list').textContent = '—';
+    document.getElementById('m-payer-carr-list').textContent = '—';
+  });
+}
+
 function resetMetrics() {
-  ['m-daytime-pop','m-income','m-hhi-10min','m-ctr','m-growth','m-insured','m-cpt','m-base-score','m-enhanced-score'].forEach(id => {
+  ['m-daytime-pop','m-income','m-hhi-10min','m-ctr','m-growth','m-insured','m-base-score','m-enhanced-score'].forEach(id => {
     document.getElementById(id).textContent = '…';
   });
   document.getElementById('fh-link').innerHTML = '';
   document.getElementById('ucr-link').innerHTML = '';
+  document.getElementById('m-payer-plan-list').textContent = '…';
+  document.getElementById('m-payer-carr-list').textContent = '…';
+  document.getElementById('m-payer-county').textContent = 'Mark Farrah · 3Q25';
 }
 
 // ── Search filter ─────────────────────────────────────
