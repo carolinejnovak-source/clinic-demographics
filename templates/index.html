@@ -1109,17 +1109,6 @@ function refreshCompetitorLayer(clinicName) {
   if (_compLayerOn) _loadCompetitorLayer(clinicName);
   else document.getElementById('comp-panel-count').textContent = 'Select a clinic';
 }
-  fetch('/clinic-demographics/sync', {method: 'POST'})
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa fa-sync me-1"></i>Refresh Sheet'; }
-      if (d.count) { alert('Synced ' + d.count + ' sites! Refreshing...'); location.reload(); }
-      else { alert('Sync error: ' + (d.error || 'Unknown')); }
-    })
-    .catch(function(e){
-      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa fa-sync me-1"></i>Refresh Sheet'; }
-    });
-}
 
 // ── Partner Facilities ────────────────────────────────────────────────────
 var _partnerData = null;
