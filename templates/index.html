@@ -825,10 +825,7 @@ function fetchPayerMix(address) {
       const bar = `<span style="display:inline-block;width:${Math.min(p.pct,100)*0.7}px;height:6px;background:${planColors[p.label]||'#aaa'};border-radius:3px;vertical-align:middle;margin-right:4px;"></span>`;
       return `<div>${bar}<b>${p.label}</b> ${p.pct}%</div>`;
     }).join('');
-    const addrPct = d.pct_addressable || 0;
-    const addrColor = addrPct >= 88 ? '#16A34A' : addrPct >= 80 ? '#d97706' : '#dc2626';
-    document.getElementById('m-payer-plan-list').innerHTML =
-      planHtml + `<div style="margin-top:4px;padding-top:3px;border-top:1px solid #e5e7eb;"><b style="color:${addrColor};">▶ ${addrPct}% VIP addressable</b></div>`;
+    document.getElementById('m-payer-plan-list').innerHTML = planHtml;
     // Carrier list
     const carrHtml = (d.carriers || []).map(c => {
       const warn = hmoWarn.some(h => c.label.includes(h)) ? ' ⚠' : '';
