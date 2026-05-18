@@ -221,7 +221,7 @@
           <div class="ring-btns" style="padding:0 6px;">
             <button class="ring-btn" data-ring="10" data-address="{{ clinic.address }}" data-name="{{ clinic.name }}" onclick="toggleRing(this,10)" title="Toggle 10-min ring">10</button>
             <button class="ring-btn" data-ring="20" data-address="{{ clinic.address }}" data-name="{{ clinic.name }}" onclick="toggleRing(this,20)" title="Toggle 20-min ring">20</button>
-            <button class="ring-btn comp-ind" data-name="{{ clinic.name }}" onclick="event.stopPropagation();toggleCompetitorsForClinic(this)" title="Toggle competitors (T1=dot, T2=square)">C</button>
+            <button class="ring-btn comp-ind" data-name="{{ clinic.name }}" title="Toggle competitors (T1=dot, T2=square)">C</button>
           </div>
           </div>
           {% endfor %}
@@ -239,7 +239,7 @@
         <div class="ring-btns" style="padding:0 6px;">
           <button class="ring-btn" data-ring="10" data-address="{{ clinic.address }}" data-name="{{ clinic.name }}" onclick="toggleRing(this,10)" title="Toggle 10-min ring">10</button>
           <button class="ring-btn" data-ring="20" data-address="{{ clinic.address }}" data-name="{{ clinic.name }}" onclick="toggleRing(this,20)" title="Toggle 20-min ring">20</button>
-          <button class="ring-btn comp-ind" data-name="{{ clinic.name }}" onclick="event.stopPropagation();toggleCompetitorsForClinic(this)" title="Toggle competitors (T1=dot, T2=square)">C</button>
+          <button class="ring-btn comp-ind" data-name="{{ clinic.name }}" title="Toggle competitors (T1=dot, T2=square)">C</button>
         </div>
         </div>
         {% endfor %}
@@ -514,6 +514,14 @@ document.addEventListener('DOMContentLoaded', () => {
     try { _compClinic = name; if (_compVisible) _loadCompetitors(name); } catch(ex) {}
     showClinic(address, name);
   });
+
+  // Competitor C-button delegated listener (separate from clinic-btn listener)
+  document.getElementById('clinic-list').addEventListener('click', function(e) {
+    var btn = e.target.closest('.comp-ind');
+    if (!btn) return;
+    e.stopPropagation();
+    toggleCompetitorsForClinic(btn);
+  }, true); // capture phase — fires before bubbling, guaranteed first
 
   // Initialize map1 immediately
   map1 = L.map('map1', {zoomControl: true}).setView([39.8, -97.5], 4);
