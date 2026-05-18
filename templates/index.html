@@ -1095,39 +1095,6 @@ function refreshCompetitorLayer(clinicName) {
   if (_compLayerOn) _loadCompetitorLayer(clinicName);
   else document.getElementById('comp-panel-count').textContent = 'Select a clinic';
 }
-);
-}
-,
-    credentials: 'include',
-    body: JSON.stringify({name: clinicName})
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(comps) {
-    comps.forEach(function(c) {
-      var iconHtml = c.tier >= 2
-        ? '<span class="comp-t2"></span>'
-        : '<span class="comp-t1"></span>';
-      var icon = L.divIcon({
-        html: iconHtml,
-        className: '',
-        iconSize: [10, 10],
-        iconAnchor: [5, 5]
-      });
-      var stars = c.rating ? '★ ' + c.rating.toFixed(1) : 'No rating';
-      var revs  = c.reviews ? ' · ' + c.reviews + ' reviews' : '';
-      var tier_label = c.tier >= 2 ? '<b style="color:#dc2626;">■ Tier 2</b>' : '<span style="color:#6b7280;">● Tier 1</span>';
-      var popup = '<div class="comp-popup"><b>' + c.name + '</b><br>'
-                + tier_label + '<br>' + stars + revs + '</div>';
-      var mk = L.marker([c.lat, c.lon], {icon: icon}).bindPopup(popup);
-      mk.addTo(map1);
-    });
-  })
-  .catch(function(e){ console.warn('competitor load error', e); });
-}
-
-// Hook into clinic selection to auto-refresh competitors
-var _origSelectClinic = window.selectClinic;
-
   fetch('/clinic-demographics/sync', {method: 'POST'})
     .then(function(r){ return r.json(); })
     .then(function(d){
