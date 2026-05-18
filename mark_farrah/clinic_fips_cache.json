@@ -403,5 +403,85 @@
     "fips": 13067,
     "county": "Cobb County",
     "state": "GA"
+  },
+  "2253 South Avenue, Suite 2, Scotch Plains, NJ, 07076": {
+    "fips": 34039,
+    "county": "Union County",
+    "state": "NJ"
+  },
+  "1 Holtec Dr, Marlton, New Jersey, 08053": {
+    "fips": 34005,
+    "county": "Burlington County",
+    "state": "NJ"
+  },
+  "Three, 3 Crescent Dr Ste 310, Philadelphia, PA 19112": {
+    "fips": 42101,
+    "county": "Philadelphia County",
+    "state": "PA"
+  },
+  "350 Jericho Turnpike, Suite 310, Jericho, NY, 11753": {
+    "fips": 36059,
+    "county": "Nassau County",
+    "state": "NY"
+  },
+  "4482 Barranca parkway, Irvine, CA": {
+    "fips": 6059,
+    "county": "Orange County",
+    "state": "CA"
+  },
+  "2600 California Ave, Signal Hill, CA 90755": {
+    "fips": 6037,
+    "county": "Los Angeles County",
+    "state": "CA"
+  },
+  "339 S Moorpark Rd, Thousand Oaks CA 91361": {
+    "fips": 6111,
+    "county": "Ventura County",
+    "state": "CA"
+  },
+  "399 Farmington Ave, LL2, Farmington, CT": {
+    "fips": 9003,
+    "county": "Hartford County",
+    "state": "CT"
+  },
+  "5000 Long Prairie Rd, Suite 202\nFlower Mound, TX 75028": {
+    "fips": 48121,
+    "county": "Denton County",
+    "state": "TX"
+  },
+  "1502 Blue Ridge Dr\nGeorgetown, TX 78626": {
+    "fips": 48491,
+    "county": "Williamson County",
+    "state": "TX"
+  },
+  "21703 Kingsland Blvd., Suite 100 Katy, Texas, 77450": {
+    "fips": 48201,
+    "county": "Harris County",
+    "state": "TX"
+  },
+  "17766 Verde Pkwy Suite 100, Schertz, TX 78154": {
+    "fips": 48187,
+    "county": "Guadalupe County",
+    "state": "TX"
+  },
+  "6245 N. 24th Pkwy, Ste. 112": {
+    "fips": 4013,
+    "county": "Maricopa County",
+    "state": "AZ"
+  },
+  "8415 N. Pima Rd., Ste. 190": {
+    "fips": 4013,
+    "county": "Maricopa County",
+    "state": "AZ"
+  },
+  "20565 n 19th ave, Phoenix AZ 85027": {
+    "fips": 4013,
+    "county": "Maricopa County",
+    "state": "AZ"
+  },
+  "2001 W Main St Suite 225, Stamford, CT 06902": {
+    "fips": 9001,
+    "county": "Fairfield County",
+    "state": "CT"
   }
 }

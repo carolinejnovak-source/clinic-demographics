@@ -918,7 +918,35 @@ def payer_mix():
         return jsonify({'error': str(e)}), 500
     entry = fips_cache.get(address)
     if not entry:
-        return jsonify({'error': 'county not found'}), 404
+        # Live fallback: geocode then Census county lookup
+        try:
+            HERE_KEY = 'WYqJdDCGYmTRFQT5zxM_aUNTb8XH0_MwezLgqvRkCbE'
+            gr = requests.get('https://geocode.search.hereapi.com/v1/geocode',
+                              params={'q': address, 'apiKey': HERE_KEY}, timeout=8)
+            items = gr.json().get('items', [])
+            if not items:
+                return jsonify({'error': 'county not found'}), 404
+            lat = items[0]['position']['lat']
+            lon = items[0]['position']['lng']
+            cr = requests.get(
+                f'https://geocoding.geo.census.gov/geocoder/geographies/coordinates'
+                f'?x={lon}&y={lat}&benchmark=Public_AR_Current'
+                f'&vintage=Census2020_Current&layers=Counties&format=json', timeout=8)
+            counties = cr.json().get('result',{}).get('geographies',{}).get('Counties',[])
+            if not counties:
+                return jsonify({'error': 'county not found'}), 404
+            fips_val = int(counties[0]['GEOID'])
+            pd_entry = prod_db.get(str(fips_val), {})
+            entry = {'fips': fips_val,
+                     'county': pd_entry.get('county', counties[0].get('NAME','')),
+                     'state':  pd_entry.get('state', '')}
+            # Cache it for next time
+            fips_cache[address] = entry
+            import json as _json
+            with open(f'{MF_DIR}/clinic_fips_cache.json','w') as _f:
+                _json.dump(fips_cache, _f, indent=2)
+        except Exception as e:
+            return jsonify({'error': f'live lookup failed: {e}'}), 500
     fips     = str(entry['fips'])
     county   = entry.get('county','')
     state    = entry.get('state','')
