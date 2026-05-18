@@ -1035,8 +1035,13 @@ function toggleCompetitorLayer() {
   if (_compLayerOn) {
     btn.textContent = 'Hide from Map';
     btn.style.background = 'rgba(255,255,255,.3)';
+    // Fall back to active clinic in DOM if variable not set
+    if (!_compClinicName) {
+      var activeBtn = document.querySelector('.clinic-btn.active');
+      if (activeBtn) _compClinicName = activeBtn.dataset.name;
+    }
     if (_compClinicName) _loadCompetitorLayer(_compClinicName);
-    else document.getElementById('comp-panel-count').textContent = 'Select a clinic';
+    else document.getElementById('comp-panel-count').textContent = 'Select a clinic first';
   } else {
     btn.textContent = 'Show on Map';
     btn.style.background = 'rgba(255,255,255,.15)';
