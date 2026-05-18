@@ -899,12 +899,6 @@ def demographics():
 
 @app.route("/payer-mix", methods=["POST"])
 @login_required
-def payer_mix_PLACEHOLDER():
-    pass
-
-
-@app.route("/payer-mix", methods=["POST"])
-@login_required
 def payer_mix():
     """Return Mark Farrah county-level payer mix for a clinic address."""
     data    = request.get_json()
