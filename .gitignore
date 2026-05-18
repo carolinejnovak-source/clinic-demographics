@@ -7,3 +7,6 @@ venv/
 *.egg-info/
 dist/
 build/
+google_sheets_config.json
+mark_farrah/county_carrier_db.json
+mark_farrah/county_product_db.json
