@@ -221,7 +221,6 @@
           <div class="ring-btns" style="padding:0 6px;">
             <button class="ring-btn" data-ring="10" data-address="{{ clinic.address }}" data-name="{{ clinic.name }}" onclick="toggleRing(this,10)" title="Toggle 10-min ring">10</button>
             <button class="ring-btn" data-ring="20" data-address="{{ clinic.address }}" data-name="{{ clinic.name }}" onclick="toggleRing(this,20)" title="Toggle 20-min ring">20</button>
-            <button class="ring-btn comp-ind" data-name="{{ clinic.name }}" title="Toggle competitors (T1=dot, T2=square)">C</button>
           </div>
           </div>
           {% endfor %}
@@ -246,6 +245,16 @@
       {% endif %}
     </div>
       </div><!-- /clinic-panel -->
+      <!-- ── Competitor Layer Panel ────────────────────────────── -->
+      <div id="comp-panel" style="flex:0 0 auto;background:#fff5f5;border-bottom:1px solid #fecaca;">
+        <div style="padding:6px 14px;background:#991b1b;color:#fff;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;justify-content:space-between;">
+          <span><i class="fa fa-circle me-1" style="color:#fca5a5;font-size:.55rem;"></i>Competitor Layer</span>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span id="comp-panel-count" style="font-weight:400;font-size:.65rem;opacity:.8;">Select a clinic</span>
+            <button id="comp-layer-btn" onclick="toggleCompetitorLayer()" style="font-size:.62rem;padding:2px 7px;border-radius:8px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:#fff;cursor:pointer;white-space:nowrap;">Show on Map</button>
+          </div>
+        </div>
+      </div><!-- /comp-panel -->
       <div id="partner-panel" style="flex:2;overflow-y:auto;min-height:80px;max-height:40%;background:#f8fdf9;">
         <div style="padding:6px 14px;background:#14532d;color:#fff;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;justify-content:space-between;">
           <span><i class="fa fa-hospital me-1"></i>Partner Facilities</span>
@@ -511,17 +520,9 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.classList.add('active');
     var address = btn.dataset.address || '';
     var name    = btn.dataset.name    || '';
-    try { _compClinic = name; if (_compVisible) _loadCompetitors(name); } catch(ex) {}
+    
     showClinic(address, name);
   });
-
-  // Competitor C-button delegated listener (separate from clinic-btn listener)
-  document.getElementById('clinic-list').addEventListener('click', function(e) {
-    var btn = e.target.closest('.comp-ind');
-    if (!btn) return;
-    e.stopPropagation();
-    toggleCompetitorsForClinic(btn);
-  }, true); // capture phase — fires before bubbling, guaranteed first
 
   // Initialize map1 immediately
   map1 = L.map('map1', {zoomControl: true}).setView([39.8, -97.5], 4);
@@ -659,6 +660,7 @@ function showClinic(address, name) {
   // Load demographics and payer mix separately (slower)
   loadDemographics(address, name);
   fetchPayerMix(address);
+  refreshCompetitorLayer(name);
   // Load site score async
   (function() {
     var cc = clinicCache[address];
@@ -1025,16 +1027,10 @@ function syncSheet() {
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>Syncing...'; }
   
 // ── Competitor markers ────────────────────────────────────────────────────
-var _compLayers = [];
+
 var _compVisible = false;
 var _compClinic  = null;
-
-function toggleCompetitors() {
-  if (_compVisible) {
-    _clearCompetitors();
-    _compVisible = false;
-    document.getElementById('comp-toggle-btn').classList.remove('comp-active');
-  } else {
+ else {
     _compVisible = true;
     document.getElementById('comp-toggle-btn').classList.add('comp-active');
     // Auto-detect active clinic if none explicitly selected
@@ -1053,71 +1049,81 @@ function toggleCompetitors() {
   }
 }
 
-// Per-clinic competitor toggle (the C button on each row)
-var _perClinicCompLayers = {}; // name -> [layers]
+// ── Global Competitor Layer ───────────────────────────────────────────────
+var _compLayerOn    = false;
+var _compLayerMarkers = [];
+var _compClinicName = '';
 
-function toggleCompetitorsForClinic(btn) {
-  const name = btn.dataset.name;
-  if (btn.classList.contains('active-comp')) {
-    // Turn off
-    btn.classList.remove('active-comp');
-    if (_perClinicCompLayers[name]) {
-      _perClinicCompLayers[name].forEach(function(l){ map1.removeLayer(l); });
-      delete _perClinicCompLayers[name];
-    }
+function toggleCompetitorLayer() {
+  _compLayerOn = !_compLayerOn;
+  var btn = document.getElementById('comp-layer-btn');
+  if (_compLayerOn) {
+    btn.textContent = 'Hide from Map';
+    btn.style.background = 'rgba(255,255,255,.3)';
+    if (_compClinicName) _loadCompetitorLayer(_compClinicName);
+    else document.getElementById('comp-panel-count').textContent = 'Select a clinic';
   } else {
-    // Turn on
-    btn.classList.add('active-comp');
-    document.getElementById('map-hint').classList.add('hidden');
-    // Zoom to clinic if we have coords — find address from sibling clinic-btn
-    var wrap = btn.closest('.clinic-btn-wrap');
-    var siblingBtn = wrap ? wrap.querySelector('.clinic-btn') : null;
-    if (siblingBtn) {
-      var addrVal = siblingBtn.dataset.address;
-      var cc = clinicCache[addrVal];
-      if (cc && cc.lat) map1.setView([cc.lat, cc.lon], 12);
-    }
-    fetch('/clinic-demographics/api/competitors', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      credentials: 'include',
-      body: JSON.stringify({name: name})
-    })
-    .then(function(r){
-      if (!r.ok) { console.error('Competitors fetch failed:', r.status, r.statusText); btn.classList.remove('active-comp'); return []; }
-      return r.json();
-    })
-    .then(function(comps) {
-      if (!comps || !comps.length) { console.warn('No competitors found for', name); return; }
-      _perClinicCompLayers[name] = [];
-      comps.forEach(function(c) {
-        var iconHtml = c.tier >= 2
-          ? '<span class="comp-t2"></span>'
-          : '<span class="comp-t1"></span>';
-        var icon = L.divIcon({html: iconHtml, className:'', iconSize:[10,10], iconAnchor:[5,5]});
-        var stars = c.rating ? '★ ' + c.rating.toFixed(1) : 'No rating';
-        var revs  = c.reviews ? ' · ' + c.reviews + ' reviews' : '';
-        var tier_label = c.tier >= 2 ? '<b style="color:#dc2626;">■ Tier 2</b>' : '<span style="color:#6b7280;">● Tier 1</span>';
-        var popup = '<div class="comp-popup"><b>' + c.name + '</b><br>' + tier_label + '<br>' + stars + revs + '</div>';
-        var mk = L.marker([c.lat, c.lon], {icon: icon}).bindPopup(popup);
-        mk.addTo(map1);
-        _perClinicCompLayers[name].push(mk);
-      });
-    })
-    .catch(function(e){ console.warn('competitor load error', e); btn.classList.remove('active-comp'); });
+    btn.textContent = 'Show on Map';
+    btn.style.background = 'rgba(255,255,255,.15)';
+    _clearCompetitorLayer();
+    document.getElementById('comp-panel-count').textContent = 'Off';
   }
 }
 
-function _clearCompetitors() {
-  _compLayers.forEach(function(l){ map1.removeLayer(l); });
-  _compLayers = [];
+function _clearCompetitorLayer() {
+  _compLayerMarkers.forEach(function(l){ try { map1.removeLayer(l); } catch(e){} });
+  _compLayerMarkers = [];
 }
 
-function _loadCompetitors(clinicName) {
-  _clearCompetitors();
+function _loadCompetitorLayer(clinicName) {
+  _clearCompetitorLayer();
+  if (!clinicName) return;
+  document.getElementById('comp-panel-count').textContent = 'Loading…';
   fetch('/clinic-demographics/api/competitors', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
+    credentials: 'include',
+    body: JSON.stringify({name: clinicName})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(comps) {
+    if (!comps || !comps.length) {
+      document.getElementById('comp-panel-count').textContent = 'No data';
+      return;
+    }
+    comps.forEach(function(c) {
+      var iconHtml = c.tier >= 2 ? '<span class="comp-t2"></span>' : '<span class="comp-t1"></span>';
+      var icon = L.divIcon({html: iconHtml, className:'', iconSize:[10,10], iconAnchor:[5,5]});
+      var stars = c.rating ? '★ ' + c.rating.toFixed(1) : 'No rating';
+      var revs  = c.reviews ? ' · ' + c.reviews + ' reviews' : '';
+      var tier_label = c.tier >= 2
+        ? '<b style="color:#dc2626;">■ Tier 2</b>'
+        : '<span style="color:#6b7280;">● Tier 1</span>';
+      var popup = '<div class="comp-popup"><b>' + c.name + '</b><br>' + tier_label + '<br>' + stars + revs + '</div>';
+      var mk = L.marker([c.lat, c.lon], {icon: icon}).bindPopup(popup);
+      mk.addTo(map1);
+      _compLayerMarkers.push(mk);
+    });
+    var t2 = comps.filter(function(c){ return c.tier >= 2; }).length;
+    document.getElementById('comp-panel-count').textContent =
+      comps.length + ' competitors · ' + t2 + ' T2';
+  })
+  .catch(function(e){
+    console.warn('competitor load error', e);
+    document.getElementById('comp-panel-count').textContent = 'Error loading';
+  });
+}
+
+// Called from showClinic — refresh competitor layer if it's on
+function refreshCompetitorLayer(clinicName) {
+  _compClinicName = clinicName;
+  if (_compLayerOn) _loadCompetitorLayer(clinicName);
+  else document.getElementById('comp-panel-count').textContent = 'Select a clinic';
+}
+);
+  _compLayers = [];
+}
+,
     credentials: 'include',
     body: JSON.stringify({name: clinicName})
   })
