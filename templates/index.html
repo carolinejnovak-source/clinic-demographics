@@ -201,7 +201,6 @@
         <button class="bulk-ring-btn" onclick="bulkRings(10)" title="Show 10-min rings for all clinics">All <b>10</b></button>
         <button class="bulk-ring-btn" onclick="bulkRings(20)" title="Show 20-min rings for all clinics">All <b>20</b></button>
         <button class="bulk-ring-btn clear" onclick="clearAllRings()" title="Clear all rings">Clear All</button>
-        <button class="bulk-ring-btn comp-btn" id="comp-toggle-btn" onclick="toggleCompetitors()" title="Show competitors in selected clinic's ring (T1=dot, T2=square)">🔴 Competitors</button>
       </div>
       {% if territories %}
         {% for territory, tclinics in territories.items() %}
@@ -238,7 +237,6 @@
         <div class="ring-btns" style="padding:0 6px;">
           <button class="ring-btn" data-ring="10" data-address="{{ clinic.address }}" data-name="{{ clinic.name }}" onclick="toggleRing(this,10)" title="Toggle 10-min ring">10</button>
           <button class="ring-btn" data-ring="20" data-address="{{ clinic.address }}" data-name="{{ clinic.name }}" onclick="toggleRing(this,20)" title="Toggle 20-min ring">20</button>
-          <button class="ring-btn comp-ind" data-name="{{ clinic.name }}" title="Toggle competitors (T1=dot, T2=square)">C</button>
         </div>
         </div>
         {% endfor %}
@@ -619,8 +617,6 @@ function selectClinic(btn) {
   const address = btn.dataset.address;
   const name = btn.dataset.name;
   // Update competitor clinic and refresh if visible
-  _compClinic = name;
-  if (_compVisible) _loadCompetitors(name);
   showClinic(address, name);
 }
 
@@ -1026,29 +1022,8 @@ function syncSheet() {
   var btn = event.target.closest('button');
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>Syncing...'; }
   
-// ── Competitor markers ────────────────────────────────────────────────────
 
-var _compVisible = false;
-var _compClinic  = null;
- else {
-    _compVisible = true;
-    document.getElementById('comp-toggle-btn').classList.add('comp-active');
-    // Auto-detect active clinic if none explicitly selected
-    if (!_compClinic) {
-      var activeBtn = document.querySelector('.clinic-btn.active');
-      if (activeBtn) _compClinic = activeBtn.dataset.name;
-    }
-    if (_compClinic) {
-      document.getElementById('map-hint').classList.add('hidden');
-      _loadCompetitors(_compClinic);
-    } else {
-      alert('Select a clinic first, then click Competitors.');
-      _compVisible = false;
-      document.getElementById('comp-toggle-btn').classList.remove('comp-active');
-    }
-  }
-}
-
+// ── Global Competitor Layer ─────────────────────────────────────────────
 // ── Global Competitor Layer ───────────────────────────────────────────────
 var _compLayerOn    = false;
 var _compLayerMarkers = [];
@@ -1121,7 +1096,6 @@ function refreshCompetitorLayer(clinicName) {
   else document.getElementById('comp-panel-count').textContent = 'Select a clinic';
 }
 );
-  _compLayers = [];
 }
 ,
     credentials: 'include',
@@ -1146,7 +1120,6 @@ function refreshCompetitorLayer(clinicName) {
                 + tier_label + '<br>' + stars + revs + '</div>';
       var mk = L.marker([c.lat, c.lon], {icon: icon}).bindPopup(popup);
       mk.addTo(map1);
-      _compLayers.push(mk);
     });
   })
   .catch(function(e){ console.warn('competitor load error', e); });
