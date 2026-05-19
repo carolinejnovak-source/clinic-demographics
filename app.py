@@ -1300,8 +1300,10 @@ def api_competitors():
         seen.add(key)
         rating  = p.get('rating') or 0
         reviews = p.get('reviews') or 0
-        # Tier classification
-        if rating >= 4.5 and reviews >= 20:
+        # Tier classification (locked definition)
+        # T1 = all results from Places search (vein treatment / vein clinic / varicose vein, type=health)
+        # T2 = T1 subset: rating > 4.5 AND reviews > 20
+        if rating > 4.5 and reviews > 20:
             tier = 2
         else:
             tier = 1
